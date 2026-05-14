@@ -1,0 +1,43 @@
+{
+  "chain": "arc-testnet",
+  "chain_id": 5042002,
+  "rpc_url": "https://rpc.testnet.arc.network",
+  "explorer": "https://testnet.arcscan.app",
+  "deployed_at": "2026-05-14T01:36:42Z",
+  "deployer": "0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa",
+  "contracts": {
+    "PantheonConstitution": {
+      "address": "0xA9cdB1F40f31e683184555b856F252456544e4fd",
+      "tx": "0x08d9c14406e697145420c26b767fd56355d4cc02780896a29ce84ad60ca2b2b4",
+      "block": 42133121,
+      "version": "1.0.0",
+      "sealed_at": 1778745400,
+      "constructor_args": []
+    },
+    "ThesisRegistry": {
+      "address": "0x3bcD258187aDB614b3f45c4b54df7482928bc800",
+      "tx": "0xf933f70279f89c4bf2cb859a6a3248b94a1b31813e26c0b7d03fd85a2d8cd67b",
+      "block": 42133122,
+      "admin": "0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa",
+      "constructor_args": ["0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa"]
+    }
+  },
+  "verifications": {
+    "anchor_e2e": {
+      "manifest_cid": "QmPantheonE2E001",
+      "merkle_root": "0x14c1608153e879e74683416aff23eb2106c8afab4b390c8eb6b8c584b1849886",
+      "tx": "0x2e934b8606885c97497bf78a29b689ff6eb243ec23fba2e18fba711238372bd9",
+      "block": 42133219,
+      "gas_used": 120161,
+      "verifyProof_signal_leaf": true,
+      "verifyProof_thesis_leaf": true
+    }
+  },
+  "costs": {
+    "starting_balance_usdc": 40.0,
+    "ending_balance_usdc": 39.967142617213,
+    "total_spent_usdc": 0.032857382787,
+    "deploy_gas_used": 1979413,
+    "anchor_gas_used": 120161
+  }
+}

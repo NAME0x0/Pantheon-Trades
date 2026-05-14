@@ -1,5 +1,12 @@
 # Deploy to Arc Testnet
 
+> **Live deployment (2026-05-14)** — see `deployments/arc-testnet.json`:
+> - PantheonConstitution: [`0xA9cdB1F40f31e683184555b856F252456544e4fd`](https://testnet.arcscan.app/address/0xA9cdB1F40f31e683184555b856F252456544e4fd)
+> - ThesisRegistry: [`0x3bcD258187aDB614b3f45c4b54df7482928bc800`](https://testnet.arcscan.app/address/0x3bcD258187aDB614b3f45c4b54df7482928bc800)
+> - End-to-end `anchor()` verified, both Merkle proofs return `true` on-chain.
+> - Total cost: 0.033 USDC.
+
+
 End-to-end guide for putting `PantheonConstitution` and `ThesisRegistry`
 on Arc Testnet (chain id 5042002). Everything in this guide except the
 actual broadcast has been dry-run against the live RPC.

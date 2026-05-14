@@ -34,7 +34,19 @@ def _hash_pair(a: bytes, b: bytes) -> bytes:
 
 
 def leaf_hash(leaf: str | bytes) -> str:
+    """Hash a single content leaf the same way the tree's first layer does.
+
+    Use this when calling the on-chain ``verifyProof(...)`` since
+    OpenZeppelin's ``MerkleProof.verify`` does **not** pre-hash the leaf —
+    the caller must pass ``leaf_hash(content_hash)`` rather than the raw
+    content hash.
+    """
     return "0x" + _hash(_to_bytes(leaf) if not isinstance(leaf, bytes) else leaf).hex()
+
+
+def onchain_leaf(content_hash_hex: str) -> str:
+    """Convenience alias — clearer name for ``ThesisRegistry.verifyProof`` callers."""
+    return leaf_hash(content_hash_hex)
 
 
 def build_merkle_tree(leaves: list[str]) -> tuple[str, list[list[str]]]:
