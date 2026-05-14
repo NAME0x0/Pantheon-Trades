@@ -86,3 +86,17 @@ export async function listTrades(token?: string | null) {
 export async function getArcStatus(token?: string | null) {
   return api<ArcStatus>("/arc/status", { token });
 }
+
+export type RestraintSummary = {
+  proof_id: string;
+  signal_id: string;
+  market_id: string;
+  reason_code: string;
+  note: string;
+  signal_hash: string;
+  created_at: string;
+};
+
+export async function listRestraint(token?: string | null) {
+  return api<{ items: RestraintSummary[]; count: number }>("/restraint/", { token });
+}
