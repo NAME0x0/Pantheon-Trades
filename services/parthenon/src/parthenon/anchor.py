@@ -43,7 +43,7 @@ class AnchorService:
 
     def __init__(self, config: AnchorConfig | None = None) -> None:
         self._config = config or AnchorConfig(
-            rpc_url=os.environ.get("RPC_URL", "https://rpc.arc.network"),
+            rpc_url=os.environ.get("RPC_URL", "https://rpc.testnet.arc.network"),
             chain_id=int(os.environ.get("CHAIN_ID", "5042002")),
             private_key=os.environ["PRIVATE_KEY"],
             registry_address=os.environ["PARTHENON_REGISTRY_ADDRESS"],
