@@ -1,0 +1,35 @@
+{
+  "name": "pantheon-trades",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered prediction market trading system. Council of agents debates every trade.",
+  "license": "MIT",
+  "packageManager": "pnpm@9.7.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev":         "turbo run dev --parallel",
+    "build":       "turbo run build",
+    "lint":        "turbo run lint",
+    "test":        "turbo run test",
+    "type-check":  "turbo run type-check",
+    "format":      "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "bench":       "python tests/bench.py",
+    "syntax":      "python tests/_syntax_check.py",
+    "forge:test":  "forge test --root contracts",
+    "forge:build": "forge build --root contracts",
+    "compose:up":  "docker compose up -d",
+    "compose:down":"docker compose down"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "turbo": "^2.1.0",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}
