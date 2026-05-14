@@ -20,6 +20,21 @@
       "block": 42133122,
       "admin": "0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa",
       "constructor_args": ["0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa"]
+    },
+    "SignalRegistry": {
+      "address": "0x4b0cAa55C17A3D7890C7db169dEBAAE25faBBdaB",
+      "admin": "0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa",
+      "constructor_args": ["0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa"]
+    },
+    "ProofOfRestraint": {
+      "address": "0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895",
+      "admin": "0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa",
+      "constructor_args": ["0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa"]
+    },
+    "NoTradeAlpha": {
+      "address": "0xd3Eb5E4107b9D7d7fa1E5Dd3D4f521374b47fAD2",
+      "admin": "0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa",
+      "constructor_args": ["0x640569E56f75C5Db2bc59B2AEcedb6e83E8740Fa"]
     }
   },
   "verifications": {
@@ -35,9 +50,7 @@
   },
   "costs": {
     "starting_balance_usdc": 40.0,
-    "ending_balance_usdc": 39.967142617213,
-    "total_spent_usdc": 0.032857382787,
-    "deploy_gas_used": 1979413,
-    "anchor_gas_used": 120161
+    "ending_balance_usdc": 39.92507085373,
+    "total_spent_usdc": 0.07492914627
   }
 }
