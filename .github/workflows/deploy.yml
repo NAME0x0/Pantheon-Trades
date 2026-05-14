@@ -1,0 +1,36 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment target"
+        type: choice
+        options: [arc-testnet]
+        default: arc-testnet
+
+jobs:
+  forge-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+      - name: forge script DeployPantheon
+        env:
+          PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
+        run: |
+          forge script --root contracts \
+            script/DeployPantheon.s.sol:DeployPantheon \
+            --rpc-url https://rpc.testnet.arc.network \
+            --broadcast \
+            -vvv
+      - name: Upload broadcast artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: broadcast-${{ inputs.environment }}
+          path: contracts/broadcast/DeployPantheon.s.sol/5042002/run-latest.json
