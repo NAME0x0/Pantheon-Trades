@@ -32,6 +32,7 @@ from pantheon_api.routers import (
     trades,
     underworld,
 )
+from pantheon_api.ws import stream as ws_stream
 
 log = structlog.get_logger("pantheon_api")
 
@@ -82,3 +83,4 @@ app.include_router(adversarial.router, prefix="/adversarial", tags=["adversarial
 app.include_router(counterfactual.router, prefix="/counterfactuals", tags=["counterfactuals"])
 app.include_router(underworld.router, prefix="/underworld", tags=["underworld"])
 app.include_router(arc.router, prefix="/arc", tags=["arc"])
+app.include_router(ws_stream.router, tags=["ws"])
