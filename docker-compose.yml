@@ -1,0 +1,177 @@
+name: pantheon-trades
+
+x-python-env: &python-env
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+  POLYMARKET_API_KEY: ${POLYMARKET_API_KEY:-}
+  POLYMARKET_API_SECRET: ${POLYMARKET_API_SECRET:-}
+  POLYMARKET_API_PASSPHRASE: ${POLYMARKET_API_PASSPHRASE:-}
+  DATABASE_URL: postgresql+asyncpg://pantheon:pantheon@postgres:5432/pantheon
+  REDIS_URL: redis://redis:6379/0
+  IPFS_API_URL: http://ipfs:5001
+  RPC_URL: ${RPC_URL:-https://rpc.testnet.arc.network}
+  CHAIN_ID: ${CHAIN_ID:-5042002}
+  PRIVATE_KEY: ${PRIVATE_KEY:-}
+  PARTHENON_REGISTRY_ADDRESS: ${PARTHENON_REGISTRY_ADDRESS:-}
+  ERC8004_REGISTRY_ADDRESS: ${ERC8004_REGISTRY_ADDRESS:-}
+  REDDIT_CLIENT_ID: ${REDDIT_CLIENT_ID:-}
+  REDDIT_CLIENT_SECRET: ${REDDIT_CLIENT_SECRET:-}
+  IRYS_JWK_PATH: ${IRYS_JWK_PATH:-}
+  EXECUTION_MODE: ${EXECUTION_MODE:-paper}
+  SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+  STRUCTLOG_JSON: "1"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pantheon
+      POSTGRES_PASSWORD: pantheon
+      POSTGRES_DB: pantheon
+    ports: ["5432:5432"]
+    volumes:
+      - pantheon-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pantheon -d pantheon"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["6379:6379"]
+    volumes:
+      - pantheon-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - pantheon-ipfs:/data/ipfs
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5001/api/v0/version"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      <<: *python-env
+      CORS_ORIGINS: "http://localhost:3000"
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis:    { condition: service_healthy }
+      ipfs:     { condition: service_started }
+    restart: unless-stopped
+
+  pythia:
+    build:
+      context: .
+      dockerfile: services/pythia/Dockerfile
+    environment: *python-env
+    ports: ["8008:8008"]
+    depends_on:
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+
+  apollo:
+    build:
+      context: .
+      dockerfile: services/apollo/Dockerfile
+    environment: *python-env
+    ports: ["8001:8001"]
+    depends_on:
+      redis: { condition: service_healthy }
+      pythia: { condition: service_started }
+    restart: unless-stopped
+
+  boule:
+    build:
+      context: .
+      dockerfile: services/boule/Dockerfile
+    environment: *python-env
+    ports: ["8002:8002"]
+    depends_on:
+      redis: { condition: service_healthy }
+      apollo: { condition: service_started }
+    restart: unless-stopped
+
+  areopagus:
+    build:
+      context: .
+      dockerfile: services/areopagus/Dockerfile
+    environment: *python-env
+    ports: ["8003:8003"]
+    depends_on:
+      redis: { condition: service_healthy }
+      boule: { condition: service_started }
+    restart: unless-stopped
+
+  strategos:
+    build:
+      context: .
+      dockerfile: services/strategos/Dockerfile
+    environment: *python-env
+    ports: ["8004:8004"]
+    depends_on:
+      redis: { condition: service_healthy }
+      areopagus: { condition: service_started }
+    restart: unless-stopped
+
+  argos:
+    build:
+      context: .
+      dockerfile: services/argos/Dockerfile
+    environment: *python-env
+    ports: ["8005:8005"]
+    depends_on:
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+
+  parthenon:
+    build:
+      context: .
+      dockerfile: services/parthenon/Dockerfile
+    environment: *python-env
+    ports: ["8007:8007"]
+    depends_on:
+      redis: { condition: service_healthy }
+      ipfs:  { condition: service_started }
+    restart: unless-stopped
+
+  ostrakon:
+    build:
+      context: .
+      dockerfile: services/ostrakon/Dockerfile
+    environment: *python-env
+    ports: ["8006:8006"]
+    depends_on:
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports: ["3000:3000"]
+    depends_on:
+      api: { condition: service_started }
+    restart: unless-stopped
+
+volumes:
+  pantheon-pg:
+  pantheon-redis:
+  pantheon-ipfs:
