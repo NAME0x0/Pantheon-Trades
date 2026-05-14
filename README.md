@@ -40,7 +40,7 @@ services/
   strategos/    Execution routing — live and paper
   underworld/   Post-mortems and failure analysis
 
-contracts/      Foundry — Polygon smart contracts
+contracts/      Foundry — Arc Testnet smart contracts
 docs/           Full design documentation
 ```
 
