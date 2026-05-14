@@ -15,12 +15,12 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 WORKDIR /repo
 COPY packages/pantheon-core /repo/packages/pantheon-core
-COPY apps/api /repo/apps/api
+COPY services/apollo /repo/services/apollo
 
-WORKDIR /repo/apps/api
+WORKDIR /repo/services/apollo
 RUN uv sync --frozen --no-dev || uv sync --no-dev
 
-ENV PYTHONPATH=/repo/packages/pantheon-core/src:/repo/apps/api/src
+ENV PYTHONPATH=/repo/packages/pantheon-core/src:/repo/services/apollo/src
 
-EXPOSE 8000
-CMD ["uv", "run", "uvicorn", "pantheon_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8001
+CMD ["uv", "run", "python", "-m", "apollo.cli", "serve"]
