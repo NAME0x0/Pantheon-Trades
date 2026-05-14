@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# uv / venv
+.venv/
+venv/
+env/
+*.egg
+uv.lock.bak
+
+# Node / pnpm
+node_modules/
+.next/
+.turbo/
+.vercel/
+*.tsbuildinfo
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Local secrets
+.env
+.env.local
+.env.*.local
+
+# Claude Code local state
+.claude/
+
+# Foundry
+contracts/cache/
+contracts/out/
+contracts/broadcast/
+
+# Logs
+*.log
+logs/

@@ -69,7 +69,7 @@ cd contracts && forge test
 | Services | Python 3.12, uv per service |
 | AI agents | Anthropic Claude API |
 | Contracts | Solidity 0.8.x, Foundry |
-| Chain | Polygon (PoS) |
+| Chain | Arc Testnet (Chain ID: 5042002) |
 | Prediction market | Polymarket CLOB |
 | Cache | Redis |
 | DB | PostgreSQL |
