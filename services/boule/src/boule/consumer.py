@@ -30,6 +30,8 @@ import structlog
 
 from pantheon_core.schema import Signal, Thesis
 
+from boule.healing.circuit_breaker import CircuitBreaker
+from boule.healing.schema_repair import repair_and_validate
 from boule.swarm import deliberate
 
 log = structlog.get_logger("boule.consumer")
@@ -130,23 +132,42 @@ async def _process_one(
     redis: aioredis.Redis,
     anthropic_client: anthropic.AsyncAnthropic,
     raw_signal: dict[str, Any],
+    breaker: CircuitBreaker,
 ) -> Thesis | None:
+    # First try strict validation; fall back to tolerant repair before giving up.
     try:
         signal = Signal.model_validate(raw_signal)
-    except Exception as e:  # noqa: BLE001
-        log.warning("boule.consumer.bad_signal", error=str(e))
+    except Exception:
+        signal = repair_and_validate(Signal, json.dumps(raw_signal))
+        if signal is None:
+            log.warning("boule.consumer.unrepairable_signal")
+            return None
+        log.info("boule.consumer.signal_repaired", signal_id=signal.signal_id)
+
+    if not breaker.allow():
+        log.warning(
+            "boule.consumer.breaker_open",
+            state=breaker.state.value,
+            failures=breaker.failures,
+        )
         return None
+
     log.info(
         "boule.consumer.deliberating",
         signal_id=signal.signal_id,
         market=signal.market_id,
         band=signal.band,
     )
-    thesis = await deliberate(
-        signal,
-        anthropic_client=anthropic_client,
-        redis_client=redis,
-    )
+    try:
+        thesis = await deliberate(
+            signal,
+            anthropic_client=anthropic_client,
+            redis_client=redis,
+        )
+    except Exception:
+        breaker.record_failure()
+        raise
+    breaker.record_success()
     await _publish_thesis(redis, thesis)
     await _maybe_archive(thesis, signal)
     return thesis
@@ -161,6 +182,7 @@ async def consume_forever(
         decode_responses=True,
     )
     anthropic_client = anthropic.AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    breaker = CircuitBreaker(name="boule.deliberate", failure_threshold=5, reset_timeout_seconds=60.0)
 
     await _ensure_group(redis)
     log.info("boule.consumer.start", consumer=consumer_name)
@@ -189,7 +211,7 @@ async def consume_forever(
                         await redis.xack(APOLLO_STREAM, CONSUMER_GROUP, entry_id)
                         continue
                     try:
-                        await _process_one(redis, anthropic_client, raw_signal)
+                        await _process_one(redis, anthropic_client, raw_signal, breaker)
                     except Exception as e:  # noqa: BLE001
                         log.exception(
                             "boule.consumer.process_failed",
