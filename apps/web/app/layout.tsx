@@ -1,9 +1,11 @@
 import "../styles/globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { Cinzel, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+
+import { ChainTicker } from "@/components/chain-ticker";
+import { BRAND_MARK } from "@/lib/cdn";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -14,7 +16,7 @@ const cinzel = Cinzel({
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
@@ -29,7 +31,7 @@ const mono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Pantheon Trades — AI council deliberation for prediction markets",
+    default: "Pantheon Trades — A council of ten gods debates every trade",
     template: "%s · Pantheon Trades",
   },
   description:
@@ -63,34 +65,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`dark ${cinzel.variable} ${cormorant.variable} ${mono.variable}`}
     >
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        {/* Subtle parchment / marble veining behind everything */}
-        <div
-          aria-hidden
-          className="pointer-events-none fixed inset-0 -z-10 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 20% 10%, rgba(200,168,90,0.6), transparent 45%), radial-gradient(circle at 80% 70%, rgba(247,243,233,0.4), transparent 50%)",
-          }}
-        />
-        <header className="border-b border-primary/25 bg-background/85 backdrop-blur-md">
-          <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <ChainTicker />
+
+        <header className="sticky top-0 z-40 border-b border-primary/12 bg-background/70 backdrop-blur-xl">
+          <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
             <Link
               href="/"
-              className="group flex items-center gap-3 text-primary transition-opacity hover:opacity-90"
+              className="group flex items-center gap-3 transition-opacity hover:opacity-90"
             >
-              <Image
-                src="/mark.svg"
-                alt=""
-                width={36}
-                height={36}
-                priority
-                className="drop-shadow-[0_0_8px_rgba(200,168,90,0.25)]"
+              {/* Iconify CDN — gold-tinted Greek temple line art */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={BRAND_MARK}
+                alt="Pantheon Trades emblem"
+                width={34}
+                height={34}
+                className="drop-shadow-[0_0_12px_rgba(212,168,94,0.25)]"
               />
-              <span className="font-display text-lg font-semibold tracking-[0.32em]">
-                PANTHEON&nbsp;TRADES
-              </span>
+              <div className="flex flex-col leading-none">
+                <span className="display text-base font-semibold tracking-[0.32em] text-foreground">
+                  PANTHEON
+                </span>
+                <span className="display mt-1 text-[10px] font-medium tracking-[0.45em] text-primary">
+                  TRADES
+                </span>
+              </div>
             </Link>
-            <ul className="flex gap-7 font-display text-xs uppercase tracking-[0.22em]">
+            <ul className="display flex gap-8 text-[11px] uppercase tracking-[0.3em]">
               {NAV.map((item) => (
                 <li key={item.href}>
                   <Link
@@ -104,19 +105,54 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </ul>
           </nav>
         </header>
-        <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
-        <footer className="mx-auto mt-16 max-w-6xl border-t border-primary/20 px-6 py-8 text-center">
-          <Image
-            src="/meander.svg"
-            alt=""
-            width={240}
-            height={16}
-            className="mx-auto mb-4 opacity-70"
-          />
-          <p className="font-serif text-sm italic text-muted-foreground">
-            The council deliberates. Areopagus gates. Parthenon anchors on Arc Testnet.
-          </p>
+
+        <main className="mx-auto max-w-6xl px-6">{children}</main>
+
+        <footer className="mx-auto mt-24 max-w-6xl px-6 pb-12 pt-16">
+          <div className="rule mx-auto mb-10 max-w-xs" />
+          <div className="text-center">
+            <div className="display mb-6 text-[10px] uppercase tracking-[0.45em] text-primary/80">
+              ✦  ΠΑΝΘΕΟΝ  ✦  ΤRADES  ✦
+            </div>
+            <p className="serif mx-auto max-w-xl text-base italic leading-relaxed text-muted-foreground">
+              &ldquo;The council deliberates. Areopagus gates. Parthenon anchors on Arc Testnet.
+              Discipline is alpha. Restraint is witnessed.&rdquo;
+            </p>
+            <div className="mono mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[10px] uppercase tracking-[0.25em] text-muted-foreground/60">
+              <a
+                href="https://github.com/NAME0x0/Pantheon-Trades"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-primary"
+              >
+                Source
+              </a>
+              <span>·</span>
+              <a
+                href="https://testnet.arcscan.app/address/0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-primary"
+              >
+                On Arc
+              </a>
+              <span>·</span>
+              <Link href="/demo" className="transition-colors hover:text-primary">
+                Live demo
+              </Link>
+              <span>·</span>
+              <a
+                href="https://polymarket.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-primary"
+              >
+                Polymarket
+              </a>
+            </div>
+          </div>
         </footer>
+
         <Analytics />
       </body>
     </html>
