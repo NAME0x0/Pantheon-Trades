@@ -1,20 +1,33 @@
 # Deploying the Pantheon demo site to Vercel
 
-The marketing site lives at `apps/web` inside the monorepo. The repo
-root contains a `vercel.json` that wires the pnpm + Turborepo build
-pipeline into Vercel's defaults.
+The marketing site lives at `apps/web` inside the monorepo.
+`apps/web/vercel.json` wires the pnpm + Turborepo build pipeline so
+Vercel can build only the Next.js workspace member from inside a
+pnpm-managed monorepo.
 
 ## One-time setup
 
 1. Push the repo to GitHub (`origin/main`).
 2. Sign in to <https://vercel.com> with the GitHub account that owns
-   the repo.
+   the repo. (Hobby tier; no credit card required.)
 3. Click **Add New → Project**.
 4. Select the Pantheon-Trades repository.
-5. **Leave Root Directory as the repo root** (`.`). The `vercel.json`
-   tells Vercel everything it needs to know.
-6. Framework preset auto-detects as **Next.js**.
-7. Hit **Deploy**. First build takes ~3 minutes (pnpm install + turbo
+5. **Important:** when the wizard offers a Turborepo / monorepo
+   project layout that lists every `services/*` Python dir as a
+   separate Web Service, do **not** pick that. Choose Application
+   Preset = **Other** at the top so you create a single project.
+6. Override **Root Directory** to `apps/web`.
+7. Framework preset auto-detects as **Next.js**.
+8. The build commands come from `apps/web/vercel.json` — no manual
+   overrides needed:
+   ```
+   installCommand:  cd ../.. && pnpm install --frozen-lockfile
+   buildCommand:    cd ../.. && pnpm turbo run build --filter=@pantheon/web...
+   outputDirectory: .next
+   ```
+   The `cd ../..` jumps back to the repo root so pnpm sees the
+   workspace + lockfile + Turborepo config.
+9. Hit **Deploy**. First build takes ~3 minutes (pnpm install + turbo
    build). Subsequent builds are cached and finish in ~30 seconds.
 
 The site lands at `https://<project-name>.vercel.app`. Every PR auto-
