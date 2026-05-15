@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 16" fill="none" stroke="#c8a85a" stroke-width="1.4" stroke-linecap="square">
+  <!-- centered Greek key (meander) — fade to gold-50% at edges via opacity on side groups -->
+  <g opacity="0.55">
+    <path d="M0 12 L0 4 L8 4 L8 10 L4 10 L4 6"/>
+    <path d="M16 12 L16 4 L24 4 L24 10 L20 10 L20 6"/>
+  </g>
+  <g opacity="0.85">
+    <path d="M32 12 L32 4 L40 4 L40 10 L36 10 L36 6"/>
+    <path d="M48 12 L48 4 L56 4 L56 10 L52 10 L52 6"/>
+    <path d="M64 12 L64 4 L72 4 L72 10 L68 10 L68 6"/>
+    <path d="M80 12 L80 4 L88 4 L88 10 L84 10 L84 6"/>
+  </g>
+  <g opacity="1">
+    <path d="M96 12 L96 4 L104 4 L104 10 L100 10 L100 6"/>
+    <path d="M112 12 L112 4 L120 4 L120 10 L116 10 L116 6"/>
+    <path d="M128 12 L128 4 L136 4 L136 10 L132 10 L132 6"/>
+  </g>
+  <g opacity="0.85">
+    <path d="M144 12 L144 4 L152 4 L152 10 L148 10 L148 6"/>
+    <path d="M160 12 L160 4 L168 4 L168 10 L164 10 L164 6"/>
+    <path d="M176 12 L176 4 L184 4 L184 10 L180 10 L180 6"/>
+    <path d="M192 12 L192 4 L200 4 L200 10 L196 10 L196 6"/>
+  </g>
+  <g opacity="0.55">
+    <path d="M208 12 L208 4 L216 4 L216 10 L212 10 L212 6"/>
+    <path d="M224 12 L224 4 L232 4 L232 10 L228 10 L228 6"/>
+  </g>
+  <line x1="0" y1="12" x2="240" y2="12" stroke-width="1.2" opacity="0.85"/>
+</svg>

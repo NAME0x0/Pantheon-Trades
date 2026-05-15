@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" fill="none">
+  <!-- ─── icon mark ─────────────────────────────────────────── -->
+  <g transform="translate(8 8)">
+    <rect width="104" height="104" rx="18" fill="#0a0e16"/>
+
+    <!-- pediment -->
+    <path d="M52 16 L18 38 L86 38 Z" stroke="#c8a85a" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+    <!-- architrave -->
+    <line x1="18" y1="38" x2="86" y2="38" stroke="#c8a85a" stroke-width="3" stroke-linecap="round"/>
+    <line x1="18" y1="42" x2="86" y2="42" stroke="#c8a85a" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+
+    <!-- columns -->
+    <line x1="22" y1="42" x2="22" y2="80" stroke="#c8a85a" stroke-width="2.25" stroke-linecap="round"/>
+    <line x1="82" y1="42" x2="82" y2="80" stroke="#c8a85a" stroke-width="2.25" stroke-linecap="round"/>
+
+    <!-- scale of justice -->
+    <line x1="52" y1="44" x2="52" y2="68" stroke="#c8a85a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="35" y1="55" x2="69" y2="55" stroke="#c8a85a" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30 55 L35 67 L40 67 L35 55" fill="none" stroke="#c8a85a" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M64 55 L69 67 L74 67 L69 55" fill="none" stroke="#c8a85a" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="52" cy="44" r="2" fill="#c8a85a"/>
+
+    <!-- stylobate -->
+    <line x1="16" y1="80" x2="88" y2="80" stroke="#c8a85a" stroke-width="3" stroke-linecap="round"/>
+    <line x1="13" y1="86" x2="91" y2="86" stroke="#c8a85a" stroke-width="2.25" stroke-linecap="round"/>
+  </g>
+
+  <!-- ─── wordmark ───────────────────────────────────────────── -->
+  <g transform="translate(132 0)" font-family="'Cinzel', 'Trajan Pro', 'Times New Roman', serif" fill="#f7f3e9">
+    <text x="0" y="58" font-size="34" letter-spacing="6" font-weight="600">PANTHEON</text>
+    <text x="0" y="92" font-size="20" letter-spacing="10" font-weight="500" fill="#c8a85a">TRADES</text>
+  </g>
+
+  <!-- thin gold underline echo of stylobate -->
+  <line x1="132" y1="100" x2="340" y2="100" stroke="#c8a85a" stroke-width="1" opacity="0.5"/>
+</svg>

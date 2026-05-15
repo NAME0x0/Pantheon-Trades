@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" rx="32" fill="#0a0e16"/>
+
+  <!-- pediment -->
+  <path d="M100 28 L34 70 L166 70 Z" stroke="#c8a85a" stroke-width="3.5" stroke-linejoin="round" fill="none"/>
+  <!-- architrave -->
+  <line x1="34" y1="70" x2="166" y2="70" stroke="#c8a85a" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="34" y1="76" x2="166" y2="76" stroke="#c8a85a" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+
+  <!-- columns -->
+  <line x1="42" y1="76" x2="42" y2="150" stroke="#c8a85a" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="158" y1="76" x2="158" y2="150" stroke="#c8a85a" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- column flutes (subtle inner lines) -->
+  <line x1="46" y1="80" x2="46" y2="146" stroke="#c8a85a" stroke-width="0.6" opacity="0.4"/>
+  <line x1="154" y1="80" x2="154" y2="146" stroke="#c8a85a" stroke-width="0.6" opacity="0.4"/>
+
+  <!-- scale of justice -->
+  <line x1="100" y1="80" x2="100" y2="128" stroke="#c8a85a" stroke-width="3" stroke-linecap="round"/>
+  <line x1="64" y1="104" x2="136" y2="104" stroke="#c8a85a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M54 104 L64 128 L74 128 L64 104" fill="none" stroke="#c8a85a" stroke-width="2.25" stroke-linejoin="round"/>
+  <path d="M126 104 L136 128 L146 128 L136 104" fill="none" stroke="#c8a85a" stroke-width="2.25" stroke-linejoin="round"/>
+  <circle cx="100" cy="80" r="3.5" fill="#c8a85a"/>
+
+  <!-- stylobate -->
+  <line x1="30" y1="150" x2="170" y2="150" stroke="#c8a85a" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="26" y1="158" x2="174" y2="158" stroke="#c8a85a" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Greek key (meander) accent at bottom -->
+  <g transform="translate(60 172)" stroke="#c8a85a" stroke-width="1.4" fill="none" stroke-linecap="square">
+    <!-- five-unit meander, mirrored -->
+    <path d="M0 8 L0 0 L8 0 L8 6 L4 6 L4 2"/>
+    <path d="M16 8 L16 0 L24 0 L24 6 L20 6 L20 2"/>
+    <path d="M32 8 L32 0 L40 0 L40 6 L36 6 L36 2"/>
+    <path d="M48 8 L48 0 L56 0 L56 6 L52 6 L52 2"/>
+    <path d="M64 8 L64 0 L72 0 L72 6 L68 6 L68 2"/>
+    <line x1="0" y1="8" x2="80" y2="8" stroke="#c8a85a" stroke-width="1.4"/>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- ink background -->
+  <rect width="64" height="64" rx="12" fill="#0a0e16"/>
+
+  <!-- pediment (triangular roof of the temple) -->
+  <path d="M32 10 L11 23 L53 23 Z" stroke="#c8a85a" stroke-width="2" stroke-linejoin="round" fill="none"/>
+
+  <!-- architrave / entablature -->
+  <line x1="11" y1="23" x2="53" y2="23" stroke="#c8a85a" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="11" y1="26" x2="53" y2="26" stroke="#c8a85a" stroke-width="1.25" stroke-linecap="round" opacity="0.55"/>
+
+  <!-- two outer columns -->
+  <line x1="14" y1="26" x2="14" y2="50" stroke="#c8a85a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="50" y1="26" x2="50" y2="50" stroke="#c8a85a" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- scale of justice inside the temple -->
+  <line x1="32" y1="27" x2="32" y2="42" stroke="#c8a85a" stroke-width="1.75" stroke-linecap="round"/>
+  <line x1="22" y1="34" x2="42" y2="34" stroke="#c8a85a" stroke-width="1.75" stroke-linecap="round"/>
+  <!-- left pan -->
+  <path d="M19 34 L22 41 L25 41 L22 34" fill="none" stroke="#c8a85a" stroke-width="1.25" stroke-linejoin="round"/>
+  <!-- right pan -->
+  <path d="M39 34 L42 41 L45 41 L42 34" fill="none" stroke="#c8a85a" stroke-width="1.25" stroke-linejoin="round"/>
+  <circle cx="32" cy="27" r="1.4" fill="#c8a85a"/>
+
+  <!-- stylobate -->
+  <line x1="10" y1="50" x2="54" y2="50" stroke="#c8a85a" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="8" y1="54" x2="56" y2="54" stroke="#c8a85a" stroke-width="2" stroke-linecap="round"/>
+</svg>
