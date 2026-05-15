@@ -36,4 +36,14 @@ export const PHOTO = {
   ruin: U("photo-1502602898657-3e91760cbb34", 1800),
   // Cracked marble — for restraint / oxblood moments.
   cracked: U("photo-1582571504057-7e5a5d1e0e0a", 1400),
+  // Greek temple columns rising into sky — premise section.
+  columns: U("photo-1603565816030-6b389eeb23cb", 1800),
+  // Aged statue head, side-profile — agent roster column.
+  profile: U("photo-1569335468445-c061686ad931", 1600),
+  // Olympia ruins at dusk — vote simulator backdrop.
+  olympia: U("photo-1556715037-7b81f3a51e58", 1800),
+  // Carved stone relief detail — pipeline section accent.
+  relief: U("photo-1542401886-65d6c61db217", 1400),
+  // Athenian acropolis aerial — closing CTA.
+  acropolis: U("photo-1603565816030-6b389eeb23cb", 2200, 75),
 } as const;

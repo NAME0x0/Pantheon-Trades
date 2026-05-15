@@ -5,6 +5,8 @@ import { Cinzel, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 
 import { ChainTicker } from "@/components/chain-ticker";
+import { ThemeToggle, themeInitScript } from "@/components/theme-toggle";
+import { ScrollProgress } from "@/components/widgets";
 import { BRAND_MARK } from "@/lib/cdn";
 
 const cinzel = Cinzel({
@@ -62,9 +64,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`dark ${cinzel.variable} ${cormorant.variable} ${mono.variable}`}
+      className={`${cinzel.variable} ${cormorant.variable} ${mono.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* No-flash theme init: runs before React hydrates, sets the
+            class on <html> from localStorage / system preference. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
+        <ScrollProgress />
         <ChainTicker />
 
         <header className="sticky top-0 z-40 border-b border-primary/12 bg-background/70 backdrop-blur-xl">
@@ -80,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 alt="Pantheon Trades emblem"
                 width={34}
                 height={34}
-                className="drop-shadow-[0_0_12px_rgba(212,168,94,0.25)]"
+                className="drop-shadow-[0_0_12px_hsl(var(--primary)/0.25)]"
               />
               <div className="flex flex-col leading-none">
                 <span className="display text-base font-semibold tracking-[0.32em] text-foreground">
@@ -91,18 +100,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </span>
               </div>
             </Link>
-            <ul className="display flex gap-8 text-[11px] uppercase tracking-[0.3em]">
-              {NAV.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="flex items-center gap-8">
+              <ul className="display hidden gap-8 text-[11px] uppercase tracking-[0.3em] md:flex">
+                {NAV.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="relative text-muted-foreground transition-colors hover:text-primary"
+                    >
+                      {item.label}
+                      <span className="absolute -bottom-1 left-0 h-px w-0 bg-primary transition-all duration-300 group-hover:w-full" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <ThemeToggle />
+            </div>
           </nav>
         </header>
 

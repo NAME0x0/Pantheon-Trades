@@ -1,13 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useState } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Reveal, Counter, Typewriter, Marquee } from "@/components/anim";
-import { BRAND_MARK, ICON, PHOTO } from "@/lib/cdn";
+import {
+  Magnetic,
+  ScaleTiltSlider,
+  VoteSimulator,
+} from "@/components/widgets";
+import { BRAND_MARK, PHOTO } from "@/lib/cdn";
 
 // R3F is heavy — keep it client-only and lazy so first paint stays cheap.
 const HeroScene = dynamic(() => import("@/components/hero-scene"), {
@@ -19,18 +25,12 @@ const FIRST_PROOF_TX =
   "0xf9ae0e7ba73ecaece1af840b20e2ef5a20868df960e62ba238e53a828dfa4edb";
 const ARCSCAN_BASE = "https://testnet.arcscan.app";
 
-export const metadata = {
-  title: "Pantheon Trades — A council of ten gods debates every trade",
-  description:
-    "A ten-agent AI council deliberates every Polymarket trade. Every approval — and every restraint — is anchored on Circle's Arc Testnet.",
-};
-
 const AGENTS = [
   { name: "Apollo",     greek: "ΑΠΟΛΛΩΝ",        role: "Sees the future. Scores Polymarket signals." },
   { name: "Boule",      greek: "ΒΟΥΛΗ",          role: "Convenes the council. Four rounds of debate." },
   { name: "Ares",       greek: "ΑΡΗΣ",           role: "Bull researcher — argues the long case." },
   { name: "Hades",      greek: "ΑΙΔΗΣ",          role: "Bull researcher — surfaces hidden depth." },
-  { name: "Athena",     greek: "ΑΘΗΝΑ",          role: "Bear researcher + synthesizer." },
+  { name: "Athena",     greek: "ΑΘΗΝΑ",          role: "Bear researcher and synthesiser." },
   { name: "Cassandra",  greek: "ΚΑΣΣΑΝΔΡΑ",      role: "Bear researcher — flags tail risk." },
   { name: "Solon",      greek: "ΣΟΛΩΝ",          role: "Constitutional check. Veto authority.", veto: true },
   { name: "Zeus",       greek: "ΖΕΥΣ",           role: "Supreme veto. Hard constitutional gate.", veto: true },
@@ -50,11 +50,12 @@ const PIPELINE = [
 ];
 
 export default function Home() {
+  const [tilt, setTilt] = useState(0);
+
   return (
     <div className="pb-12">
       {/* ── HERO ────────────────────────────────────────────────────── */}
-      <section className="relative -mx-6 min-h-[88vh] overflow-hidden px-6 pb-8 pt-12">
-        {/* Parthenon at golden hour, deeply dimmed */}
+      <section className="relative -mx-6 min-h-[88vh] overflow-hidden px-6 pb-12 pt-12">
         <div className="absolute inset-0 -z-10">
           <Image
             src={PHOTO.parthenon}
@@ -69,6 +70,7 @@ export default function Home() {
         </div>
 
         <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+          {/* Left column — copy */}
           <div className="space-y-10 pt-10">
             <Reveal y={12}>
               <div className="display flex items-center gap-3 text-[10px] uppercase tracking-[0.45em] text-primary">
@@ -78,7 +80,7 @@ export default function Home() {
             </Reveal>
 
             <Reveal delay={0.05}>
-              <h1 className="display text-[clamp(3.5rem,8vw,7.5rem)] font-medium leading-[0.92] tracking-[-0.018em] text-foreground">
+              <h1 className="display text-[clamp(3.25rem,7.6vw,7rem)] font-medium leading-[0.94] tracking-[-0.018em] text-foreground">
                 A council of
                 <br />
                 <span className="serif font-medium italic text-primary">
@@ -120,18 +122,23 @@ export default function Home() {
             </Reveal>
 
             <div className="grid max-w-2xl grid-cols-2 gap-x-10 gap-y-6 pt-2 md:grid-cols-4">
-              <HeroStat value={10} suffix="" label="Council agents" />
-              <HeroStat value={4} suffix="" label="Rounds of debate" />
-              <HeroStat value={51} suffix="" label="Foundry tests" />
-              <HeroStat value={1} suffix="" label="On-chain witness" />
+              <HeroStat value={10} label="Council agents" />
+              <HeroStat value={4} label="Rounds of debate" />
+              <HeroStat value={51} label="Foundry tests" />
+              <HeroStat value={1} label="On-chain witness" />
             </div>
           </div>
 
-          {/* 3D scene right column */}
-          <div className="relative h-[440px] lg:h-[560px]">
-            <HeroScene />
-            <div className="display absolute bottom-6 right-6 text-[9px] uppercase tracking-[0.4em] text-primary/60">
-              Pondera Iustitiae
+          {/* Right column — 3D scene with caption + interactive tilt */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative h-[420px] w-full overflow-visible lg:h-[540px]">
+              <HeroScene tilt={tilt} />
+            </div>
+            <div className="display text-center text-[10px] uppercase tracking-[0.45em] text-primary/60">
+              ✦ Pondera Iustitiae ✦
+            </div>
+            <div className="w-full max-w-sm">
+              <ScaleTiltSlider tilt={tilt} onTilt={setTilt} />
             </div>
           </div>
         </div>
@@ -165,13 +172,23 @@ export default function Home() {
         </div>
       </Reveal>
 
-      {/* ── PREMISE — drop-cap editorial paragraph ─────────────────── */}
+      {/* ── PREMISE — editorial drop-cap paragraph ─────────────────── */}
       <section className="relative mx-auto max-w-3xl py-24">
+        <div className="absolute inset-y-0 right-0 -z-10 hidden w-1/3 opacity-[0.10] lg:block">
+          <Image
+            src={PHOTO.columns}
+            alt=""
+            fill
+            sizes="33vw"
+            className="object-cover"
+          />
+        </div>
+
         <Reveal>
           <Eyebrow numeral="I" label="The premise" />
         </Reveal>
         <Reveal delay={0.1}>
-          <h2 className="display mb-10 text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground">
+          <h2 className="display mb-10 text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-6xl">
             Most trading bots optimise one number.
             <br />
             <span className="serif italic text-primary">
@@ -200,7 +217,7 @@ export default function Home() {
           <Eyebrow numeral="II" label="The architecture" />
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="display mb-16 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground">
+          <h2 className="display mb-16 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-6xl">
             Six acts. One thesis.
             <br />
             <span className="serif italic text-primary">
@@ -212,19 +229,19 @@ export default function Home() {
         <ol className="space-y-px">
           {PIPELINE.map((step, i) => (
             <Reveal key={step.numeral} delay={i * 0.04}>
-              <div className="group relative grid grid-cols-[6rem_1fr_auto] items-baseline gap-6 border-t border-primary/15 py-8 transition-colors hover:bg-primary/[0.025] md:grid-cols-[7rem_18rem_1fr]">
+              <div className="group relative grid grid-cols-[5rem_1fr] items-baseline gap-6 border-t border-primary/15 py-8 transition-colors hover:bg-primary/[0.03] md:grid-cols-[6rem_15rem_1fr]">
                 <span className="display text-3xl font-semibold text-primary/70 transition-colors group-hover:text-primary md:text-4xl">
                   {step.numeral}
                 </span>
-                <div>
-                  <div className="display text-xl tracking-[0.18em] text-foreground md:text-2xl">
+                <div className="md:col-span-1">
+                  <div className="display text-xl tracking-[0.16em] text-foreground md:text-2xl">
                     {step.name.toUpperCase()}
                   </div>
                   <div className="serif mt-1 text-base italic text-primary/80">
                     {step.role}
                   </div>
                 </div>
-                <p className="serif text-lg leading-[1.7] text-muted-foreground md:text-xl">
+                <p className="serif col-start-2 text-lg leading-[1.7] text-muted-foreground md:col-start-3 md:text-xl">
                   {step.what}
                 </p>
               </div>
@@ -232,6 +249,41 @@ export default function Home() {
           ))}
           <div className="border-t border-primary/15" />
         </ol>
+      </section>
+
+      {/* ── VOTE SIMULATOR (interactive widget) ─────────────────────── */}
+      <section className="relative -mx-6 my-12 overflow-hidden rounded-3xl border border-primary/15 px-6 py-20 md:py-24">
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src={PHOTO.olympia}
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover opacity-[0.08]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-background/95 to-background/80" />
+        </div>
+
+        <div className="mx-auto max-w-5xl">
+          <Reveal>
+            <Eyebrow numeral="III" label="Cast a vote" />
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2 className="display mb-4 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-6xl">
+              Take a seat in the Areopagus.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="serif mb-12 max-w-2xl text-xl leading-[1.7] text-muted-foreground">
+              Twelve agents. Three states. Real weights from the constitution.
+              Click an agent to cycle their vote — watch the verdict update
+              live. Zeus and Solon can veto the whole room.
+            </p>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <VoteSimulator />
+          </Reveal>
+        </div>
       </section>
 
       {/* ── PROOF OF RESTRAINT — cinematic ─────────────────────────── */}
@@ -249,10 +301,10 @@ export default function Home() {
 
         <div className="mx-auto max-w-4xl">
           <Reveal>
-            <Eyebrow numeral="III" label="The flagship feature" />
+            <Eyebrow numeral="IV" label="The flagship feature" />
           </Reveal>
           <Reveal delay={0.05}>
-            <h2 className="display mt-6 text-[clamp(3rem,7vw,6rem)] font-medium leading-[0.96] tracking-[-0.015em] text-foreground">
+            <h2 className="display mt-6 text-[clamp(2.75rem,6.5vw,5.5rem)] font-medium leading-[0.98] tracking-[-0.015em] text-foreground">
               <span className="serif italic text-primary">When the council says no,</span>
               <br />
               the chain remembers.
@@ -263,9 +315,10 @@ export default function Home() {
             <p className="serif mt-10 max-w-2xl text-[1.35rem] leading-[1.75] text-muted-foreground">
               Areopagus writes a <code className="mono text-primary">Restrained</code>{" "}
               event to the <code className="mono text-primary">ProofOfRestraint</code>{" "}
-              contract on Arc — binding signal hash, market, reason, and a note
-              the council attached to the refusal. If the market later moves
-              against the rejected direction, that restraint is provably ours.
+              contract on Arc — binding signal hash, market, reason, and the
+              note the council attached to the refusal. If the market later
+              moves against the rejected direction, that restraint is provably
+              ours.
             </p>
           </Reveal>
 
@@ -305,13 +358,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── COUNCIL — agent roster ─────────────────────────────────── */}
-      <section className="py-24">
+      {/* ── COUNCIL — agent roster (stacked Greek over English) ────── */}
+      <section className="relative py-24">
+        <div className="absolute right-0 top-12 -z-10 hidden h-full w-1/3 opacity-[0.08] lg:block">
+          <Image
+            src={PHOTO.profile}
+            alt=""
+            fill
+            sizes="33vw"
+            className="object-cover object-right"
+          />
+        </div>
+
         <Reveal>
-          <Eyebrow numeral="IV" label="The pantheon" />
+          <Eyebrow numeral="V" label="The pantheon" />
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="display mb-4 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground">
+          <h2 className="display mb-4 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-6xl">
             Twelve in the chamber.
             <br />
             <span className="serif italic text-primary">
@@ -327,29 +390,28 @@ export default function Home() {
           </p>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-primary/15 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-primary/15 sm:grid-cols-2 lg:grid-cols-3">
           {AGENTS.map((a, i) => (
             <Reveal key={a.name} delay={Math.min(i * 0.03, 0.3)}>
-              <div className="group relative flex items-baseline gap-5 bg-card/40 p-7 transition-colors hover:bg-primary/[0.03]">
-                <div className="display w-20 shrink-0 text-[11px] uppercase tracking-[0.32em] text-primary/60">
+              <div className="group relative h-full bg-card/40 p-7 transition-colors hover:bg-primary/[0.04]">
+                <div className="display mb-1 text-[10px] uppercase tracking-[0.45em] text-primary/65">
                   {a.greek}
                 </div>
-                <div className="flex-1">
-                  <div className="display flex items-center gap-2 text-xl tracking-[0.16em] text-foreground">
-                    {a.name.toUpperCase()}
-                    {a.veto && (
-                      <span
-                        className="mono text-[10px] uppercase tracking-[0.25em] text-destructive-foreground/80"
-                        title="veto authority"
-                      >
-                        ⚡ veto
-                      </span>
-                    )}
-                  </div>
-                  <div className="serif mt-1 text-base leading-[1.55] text-muted-foreground">
-                    {a.role}
-                  </div>
+                <div className="display flex items-center gap-2 text-2xl tracking-[0.12em] text-foreground">
+                  {a.name.toUpperCase()}
+                  {a.veto && (
+                    <span
+                      className="mono rounded-sm border border-destructive/40 bg-destructive/15 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.18em] text-destructive-foreground/90"
+                      title="veto authority"
+                    >
+                      ⚡ veto
+                    </span>
+                  )}
                 </div>
+                <div className="serif mt-3 text-base leading-[1.6] text-muted-foreground">
+                  {a.role}
+                </div>
+                <div className="mt-4 h-px w-8 bg-primary/40 transition-all duration-500 group-hover:w-20" />
               </div>
             </Reveal>
           ))}
@@ -370,10 +432,10 @@ export default function Home() {
         </div>
 
         <Reveal>
-          <Eyebrow numeral="V" label="The stack" />
+          <Eyebrow numeral="VI" label="The stack" />
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="display mb-14 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground">
+          <h2 className="display mb-14 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-6xl">
             Built on the things
             <br />
             <span className="serif italic text-primary">
@@ -393,14 +455,16 @@ export default function Home() {
             { k: "Mono",       v: "pnpm · Turborepo" },
           ].map((s, i) => (
             <Reveal key={s.k} delay={i * 0.04}>
-              <div className="bg-card/40 p-6 transition-colors hover:bg-primary/[0.03]">
-                <div className="display text-[10px] uppercase tracking-[0.35em] text-primary/60">
-                  {s.k}
+              <Magnetic strength={6}>
+                <div className="h-full bg-card/40 p-6 transition-colors hover:bg-primary/[0.04]">
+                  <div className="display text-[10px] uppercase tracking-[0.35em] text-primary/60">
+                    {s.k}
+                  </div>
+                  <div className="display mt-2 text-lg tracking-[0.06em] text-foreground">
+                    {s.v}
+                  </div>
                 </div>
-                <div className="display mt-2 text-lg tracking-[0.06em] text-foreground">
-                  {s.v}
-                </div>
-              </div>
+              </Magnetic>
             </Reveal>
           ))}
         </div>
@@ -410,11 +474,11 @@ export default function Home() {
       <section className="relative my-20 overflow-hidden rounded-3xl border border-primary/30 bg-card/40 px-6 py-20 text-center md:py-28">
         <div className="absolute inset-0 -z-10">
           <Image
-            src={PHOTO.ruin}
+            src={PHOTO.acropolis}
             alt=""
             fill
             sizes="(min-width: 1024px) 1024px, 100vw"
-            className="object-cover opacity-[0.08]"
+            className="object-cover opacity-[0.10]"
           />
         </div>
 
@@ -425,7 +489,7 @@ export default function Home() {
             alt=""
             width={56}
             height={56}
-            className="mx-auto mb-6 opacity-90 drop-shadow-[0_0_24px_rgba(212,168,94,0.35)]"
+            className="mx-auto mb-6 opacity-90 drop-shadow-[0_0_24px_hsl(var(--primary)/0.35)]"
           />
         </Reveal>
         <Reveal delay={0.05}>
@@ -472,20 +536,11 @@ function Eyebrow({ numeral, label }: { numeral: string; label: string }) {
   );
 }
 
-function HeroStat({
-  value,
-  suffix,
-  label,
-}: {
-  value: number;
-  suffix?: string;
-  label: string;
-}) {
+function HeroStat({ value, label }: { value: number; label: string }) {
   return (
     <div>
       <div className="display text-4xl font-semibold leading-none text-primary md:text-5xl">
         <Counter to={value} duration={2.4} />
-        {suffix}
       </div>
       <div className="display mt-2 text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
         {label}
