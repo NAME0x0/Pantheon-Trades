@@ -36,9 +36,10 @@ class ProofOfRestraint:
         )
 
     def to_calldata(self) -> dict:
+        """Matches `ProofOfRestraint.declineTrade(bytes32, string, string, string)`."""
         return {
             "signalHash": self.signal_hash,
             "marketId": self.market_id,
             "reasonCode": self.reason_code,
-            "timestamp": int(self.created_at.timestamp()),
+            "note": self.note,
         }
