@@ -10,6 +10,10 @@ dependencies = [
     "web3>=6.20",
     "structlog>=24.1",
     "tenacity>=8.3",
+    # keccak256 used in Merkle hashing must match Solidity's keccak exactly,
+    # so we pin eth-hash's pycryptodome backend rather than fall back to
+    # sha3_256 (different padding, would silently produce wrong roots).
+    "eth-hash[pycryptodome]>=0.5",
 ]
 
 [build-system]

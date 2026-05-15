@@ -10,16 +10,17 @@ left/right sibling direction from proofs.
 
 from __future__ import annotations
 
-import hashlib
+# Keccak-256 (Ethereum) is NOT the same as SHA-3 / sha3_256 — they share a
+# permutation but use different padding. Falling back to hashlib.sha3_256
+# would silently produce wrong Merkle roots that fail on-chain verification.
+# So we require a real keccak backend at import time and force-load it so
+# the eth-hash auto-selector cannot fail lazily on first hash.
+from eth_hash.auto import keccak as _keccak_auto  # type: ignore[import-untyped]
+_keccak_auto(b"")  # force backend resolution at import; raises if missing
 
-try:
-    from eth_utils import keccak as _keccak  # type: ignore[import-untyped]
 
-    def _hash(data: bytes) -> bytes:
-        return _keccak(data)
-except ImportError:  # pragma: no cover
-    def _hash(data: bytes) -> bytes:
-        return hashlib.sha3_256(data).digest()
+def _hash(data: bytes) -> bytes:
+    return _keccak_auto(data)
 
 
 def _to_bytes(item: str | bytes) -> bytes:
@@ -60,7 +61,7 @@ def build_merkle_tree(leaves: list[str]) -> tuple[str, list[list[str]]]:
         empty = "0x" + _hash(b"").hex()
         return empty, [[]]
 
-    layer = [_hash(_to_bytes(l)) for l in leaves]
+    layer = [_hash(_to_bytes(leaf)) for leaf in leaves]
     layers: list[list[bytes]] = [layer]
 
     while len(layer) > 1:
