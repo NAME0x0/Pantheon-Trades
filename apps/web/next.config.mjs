@@ -13,6 +13,13 @@ const config = {
   // `pnpm type-check` script still surfaces them.
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
+  // Classical-theme hero/section imagery served from Unsplash's CDN
+  // (no asset weight in the repo, no API key needed for static URLs).
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+    ],
+  },
 };
 
 export default config;

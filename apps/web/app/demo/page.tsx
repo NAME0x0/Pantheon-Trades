@@ -18,13 +18,13 @@ export default function DemoPage({
   return (
     <div className="space-y-8 py-8">
       <header className="space-y-3">
-        <Badge variant="outline" className="border-primary/40">
+        <Badge variant="outline" className="border-primary/40 font-display tracking-[0.25em]">
           Council replay · {scenario === "approve" ? "Approval scenario" : "Proof of Restraint"}
         </Badge>
-        <h1 className="font-mono text-4xl text-foreground">
+        <h1 className="font-display text-4xl md:text-5xl font-medium tracking-[0.02em] text-foreground">
           Pantheon Council — BTC $120k by 2026-12-31
         </h1>
-        <p className="max-w-3xl text-muted-foreground">
+        <p className="max-w-3xl font-serif text-lg leading-relaxed text-muted-foreground">
           {scenario === "approve"
             ? "Ten agents deliberate a +17pp edge signal. Watch the four rounds, the synthesis, the votes, and the Areopagus verdict that sizes the position at exactly the constitutional cap."
             : "A constitutional cluster-correlation violation. Zeus identifies it in Round 1 and casts the supreme veto. The debate short-circuits. Areopagus writes a Proof of Restraint witness to Arc Testnet."}

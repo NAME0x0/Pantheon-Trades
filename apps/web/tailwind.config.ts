@@ -12,8 +12,22 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        sans: ["ui-sans-serif", "system-ui", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        sans: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
+        display: [
+          "var(--font-display)",
+          "Cinzel",
+          "Trajan Pro",
+          "Times New Roman",
+          "serif",
+        ],
+        serif: [
+          "var(--font-serif)",
+          "Cormorant Garamond",
+          "EB Garamond",
+          "Georgia",
+          "serif",
+        ],
+        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       colors: {
         // shadcn semantic tokens (mapped via globals.css CSS vars)

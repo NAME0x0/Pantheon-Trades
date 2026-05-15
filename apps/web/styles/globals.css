@@ -46,7 +46,23 @@
   body {
     background-color: #0a0e16;
     color: #f7f3e9;
-    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    /* Cormorant Garamond as the body voice gives the whole site a
+       classical, Athenian-manuscript register. Display headings use
+       Cinzel (carved-stone capitals). Code stays JetBrains Mono. */
+    font-family: var(--font-serif), ui-serif, Georgia, serif;
+    font-feature-settings: "liga" 1, "calt" 1, "kern" 1;
+  }
+
+  /* Subtle marble-vein background — pure CSS, no asset cost. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 12% 0%, rgba(200, 168, 90, 0.07), transparent 55%),
+      radial-gradient(ellipse at 88% 100%, rgba(205, 210, 218, 0.05), transparent 60%);
   }
 
   a {

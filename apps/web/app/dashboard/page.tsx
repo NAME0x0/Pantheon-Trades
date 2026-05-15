@@ -23,10 +23,10 @@ export default async function Dashboard() {
   return (
     <section className="space-y-8">
       <div>
-        <h1 className="font-mono text-4xl tracking-tight text-pantheon-gold">
+        <h1 className="font-display text-5xl font-semibold tracking-[0.02em] text-primary">
           Dashboard
         </h1>
-        <p className="mt-2 text-pantheon-marble">
+        <p className="mt-2 font-serif text-lg leading-relaxed text-muted-foreground">
           Live read-out from the Pantheon FastAPI gateway. Requires the backend to be running.
         </p>
         {allDown && (
