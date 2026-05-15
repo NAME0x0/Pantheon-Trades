@@ -6,66 +6,153 @@
   :root {
     color-scheme: dark;
 
-    /* shadcn tokens mapped to the Pantheon palette
-       (#0a0e16 ink, #f7f3e9 parchment, #c8a85a gold, #cdd2da marble) */
-    --background: 220 24% 6%;       /* ink */
-    --foreground: 45 60% 95%;       /* parchment */
+    /* ── Palette ───────────────────────────────────────────────────────
+       Deeper than the previous draft. The intent is editorial gravitas
+       (think A24, Saint Laurent, Hermès web) rather than crypto neon. */
 
-    --card: 220 24% 8%;
-    --card-foreground: 45 60% 95%;
+    --background: 220 22% 4%;          /* ink #08090d */
+    --foreground: 38 50% 94%;          /* warm cream #f4ead3 */
 
-    --popover: 220 24% 6%;
-    --popover-foreground: 45 60% 95%;
+    --card: 220 18% 7%;
+    --card-foreground: 38 50% 94%;
 
-    --primary: 41 50% 57%;          /* gold */
-    --primary-foreground: 220 24% 6%;
+    --popover: 220 22% 4%;
+    --popover-foreground: 38 50% 94%;
 
-    --secondary: 220 14% 65%;       /* marble */
-    --secondary-foreground: 220 24% 6%;
+    --primary: 38 60% 60%;             /* warm gold #d4a85e */
+    --primary-foreground: 220 22% 4%;
 
-    --muted: 220 18% 14%;
-    --muted-foreground: 220 12% 70%;
+    --secondary: 220 12% 70%;          /* marble #b8bcc4 */
+    --secondary-foreground: 220 22% 4%;
 
-    --accent: 41 50% 57%;
-    --accent-foreground: 220 24% 6%;
+    --muted: 220 14% 12%;
+    --muted-foreground: 38 22% 76%;    /* aged parchment text */
 
-    --destructive: 0 65% 55%;
-    --destructive-foreground: 0 0% 98%;
+    --accent: 38 60% 60%;
+    --accent-foreground: 220 22% 4%;
 
-    --border: 41 50% 57%;
-    --input: 41 50% 57%;
-    --ring: 41 50% 57%;
+    --destructive: 0 55% 35%;          /* deep oxblood for restraint */
+    --destructive-foreground: 38 50% 94%;
 
-    --radius: 0.5rem;
+    --border: 38 50% 55%;
+    --input: 38 50% 55%;
+    --ring: 38 60% 60%;
+
+    --radius: 0.625rem;
   }
 
   * {
-    @apply border-[hsl(var(--border)/0.25)];
+    @apply border-[hsl(var(--border)/0.18)];
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
-    background-color: #0a0e16;
-    color: #f7f3e9;
-    /* Cormorant Garamond as the body voice gives the whole site a
-       classical, Athenian-manuscript register. Display headings use
-       Cinzel (carved-stone capitals). Code stays JetBrains Mono. */
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    /* Cormorant Garamond as the body voice. Larger default — 18 / 30. */
     font-family: var(--font-serif), ui-serif, Georgia, serif;
-    font-feature-settings: "liga" 1, "calt" 1, "kern" 1;
+    font-size: 18px;
+    line-height: 1.7;
+    font-feature-settings: "liga" 1, "calt" 1, "kern" 1, "onum" 1;
   }
 
-  /* Subtle marble-vein background — pure CSS, no asset cost. */
+  ::selection {
+    background: hsl(var(--primary) / 0.35);
+    color: hsl(var(--foreground));
+  }
+
+  /* Layered background: deep ink → veined ambient lighting → marble dust */
   body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 12% 0%, hsl(38 60% 50% / 0.10), transparent 60%),
+      radial-gradient(ellipse 80% 60% at 88% 100%, hsl(220 30% 30% / 0.20), transparent 60%),
+      radial-gradient(circle at 50% 40%, hsl(220 14% 9%), hsl(220 22% 4%) 70%);
+  }
+
+  /* Marble noise overlay — subtle grain across the whole site. */
+  body::after {
     content: "";
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background:
-      radial-gradient(ellipse at 12% 0%, rgba(200, 168, 90, 0.07), transparent 55%),
-      radial-gradient(ellipse at 88% 100%, rgba(205, 210, 218, 0.05), transparent 60%);
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
 
   a {
-    transition: color 120ms ease;
+    transition: color 160ms ease;
+  }
+
+  /* ── Editorial helpers ──────────────────────────────────────────── */
+
+  .display {
+    font-family: var(--font-display), Cinzel, "Trajan Pro", serif;
+    font-feature-settings: "ss01" 1, "kern" 1;
+  }
+
+  .serif {
+    font-family: var(--font-serif), "Cormorant Garamond", "EB Garamond", Georgia, serif;
+    font-feature-settings: "liga" 1, "kern" 1, "onum" 1;
+  }
+
+  .mono {
+    font-family: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
+    font-feature-settings: "ss01" 1, "ss02" 1, "kern" 1;
+  }
+
+  /* Drop cap for first paragraph in narrative sections */
+  .dropcap::first-letter {
+    font-family: var(--font-display), Cinzel, serif;
+    font-size: 4.5rem;
+    line-height: 0.85;
+    float: left;
+    padding: 0.35rem 0.75rem 0 0;
+    color: hsl(var(--primary));
+    font-weight: 600;
+  }
+
+  /* Gold underline ornament */
+  .ornament {
+    position: relative;
+  }
+  .ornament::after {
+    content: "✦";
+    display: inline-block;
+    margin: 0 0.6em;
+    color: hsl(var(--primary));
+    opacity: 0.55;
+    font-size: 0.7em;
+    vertical-align: middle;
+  }
+
+  /* Marble plinth — for placing imagery on */
+  .plinth {
+    background:
+      linear-gradient(180deg, hsl(38 30% 92% / 0.06) 0%, hsl(38 30% 92% / 0.02) 100%),
+      radial-gradient(ellipse at top, hsl(38 50% 80% / 0.10), transparent 60%);
+    border: 1px solid hsl(var(--primary) / 0.18);
+  }
+
+  /* Hairline rule */
+  .rule {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--primary) / 0.4),
+      transparent
+    );
   }
 }

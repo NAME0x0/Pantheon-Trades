@@ -29,6 +29,12 @@ const config: Config = {
         ],
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
+      fontSize: {
+        // Re-tuned for an editorial layout. 18 / 30 body, 8xl-10xl heroes.
+        "eyebrow": ["0.7rem", { lineHeight: "1", letterSpacing: "0.32em" }],
+        "9xl": ["clamp(4rem, 9vw, 8.5rem)", { lineHeight: "0.95", letterSpacing: "-0.02em" }],
+        "10xl": ["clamp(5rem, 12vw, 11rem)", { lineHeight: "0.92", letterSpacing: "-0.025em" }],
+      },
       colors: {
         // shadcn semantic tokens (mapped via globals.css CSS vars)
         border: "hsl(var(--border))",
