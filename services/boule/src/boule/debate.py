@@ -28,7 +28,6 @@ import asyncio
 import pathlib
 import time
 
-import anthropic
 import structlog
 
 from pantheon_core.direction import directional_edge, infer_direction
@@ -46,6 +45,7 @@ from boule.agents.bear_researcher import Athena, Cassandra
 from boule.agents.bull_researcher import Ares, HadesAgent
 from boule.agents.execution_agent import Daedalus, Hephaestus, HumansAgent
 from boule.agents.risk_manager import Solon, Themis, Zeus
+from boule.llm import LLMClient
 from boule.trace import Tracer
 
 log = structlog.get_logger("boule.debate")
@@ -65,7 +65,7 @@ def _load_prompt(agent_name: str) -> str:
     )
 
 
-def _build_agents(client: anthropic.AsyncAnthropic, tracer: Tracer) -> list[CouncilAgent]:
+def _build_agents(client: LLMClient, tracer: Tracer) -> list[CouncilAgent]:
     return [
         Ares(client, tracer, _load_prompt("ares")),
         HadesAgent(client, tracer, _load_prompt("hades")),
@@ -108,7 +108,7 @@ def _filter_blocks(blocks: list) -> list[ThesisBlock]:
 
 async def run_debate(
     signal: Signal,
-    client: anthropic.AsyncAnthropic,
+    client: LLMClient,
     tracer: Tracer,
     thesis_id: str,
 ) -> Thesis:

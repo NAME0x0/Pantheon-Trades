@@ -24,7 +24,6 @@ import json
 import os
 from typing import Any
 
-import anthropic
 import redis.asyncio as aioredis
 import structlog
 
@@ -32,6 +31,7 @@ from pantheon_core.schema import Signal, Thesis
 
 from boule.healing.circuit_breaker import CircuitBreaker
 from boule.healing.schema_repair import repair_and_validate
+from boule.llm import LLMClient, build_default_client
 from boule.swarm import deliberate
 
 log = structlog.get_logger("boule.consumer")
@@ -130,7 +130,7 @@ async def _maybe_archive(thesis: Thesis, signal: Signal) -> None:
 
 async def _process_one(
     redis: aioredis.Redis,
-    anthropic_client: anthropic.AsyncAnthropic,
+    llm_client: LLMClient,
     raw_signal: dict[str, Any],
     breaker: CircuitBreaker,
 ) -> Thesis | None:
@@ -161,7 +161,7 @@ async def _process_one(
     try:
         thesis = await deliberate(
             signal,
-            anthropic_client=anthropic_client,
+            llm_client=llm_client,
             redis_client=redis,
         )
     except Exception:
@@ -181,7 +181,7 @@ async def consume_forever(
         redis_url or os.environ.get("REDIS_URL", "redis://localhost:6379/0"),
         decode_responses=True,
     )
-    anthropic_client = anthropic.AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    llm_client = build_default_client()
     breaker = CircuitBreaker(name="boule.deliberate", failure_threshold=5, reset_timeout_seconds=60.0)
 
     await _ensure_group(redis)
@@ -211,7 +211,7 @@ async def consume_forever(
                         await redis.xack(APOLLO_STREAM, CONSUMER_GROUP, entry_id)
                         continue
                     try:
-                        await _process_one(redis, anthropic_client, raw_signal, breaker)
+                        await _process_one(redis, llm_client, raw_signal, breaker)
                     except Exception as e:  # noqa: BLE001
                         log.exception(
                             "boule.consumer.process_failed",
@@ -223,4 +223,4 @@ async def consume_forever(
                     await redis.xack(APOLLO_STREAM, CONSUMER_GROUP, entry_id)
     finally:
         await redis.aclose()
-        await anthropic_client.close()
+        await llm_client.close()

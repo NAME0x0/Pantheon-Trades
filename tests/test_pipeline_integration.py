@@ -67,24 +67,6 @@ def _build_signal():
     return score_market(snap)
 
 
-class _FakeUsage:
-    def __init__(self, prompt: int = 200, completion: int = 80):
-        self.input_tokens = prompt
-        self.output_tokens = completion
-
-
-class _FakeTextBlock:
-    def __init__(self, text: str):
-        self.type = "text"
-        self.text = text
-
-
-class _FakeMessage:
-    def __init__(self, text: str):
-        self.content = [_FakeTextBlock(text)]
-        self.usage = _FakeUsage()
-
-
 VOTE_TEXT = (
     "VOTE: APPROVE\n"
     "CONFIDENCE: 0.78\n"
@@ -96,20 +78,15 @@ NON_VOTE_TEXT = "Opening assessment: market mispriced, conviction medium-high."
 
 
 class _FakeAnthropic:
-    """Returns a vote-format response when the user prompt asks for one;
-    otherwise returns a generic opening/challenge block."""
+    """LLMClient stub. Returns the structured vote block when the prompt
+    asks for one, otherwise a generic opening/challenge text."""
 
-    class _Messages:
-        def __init__(self, parent):
-            self._parent = parent
+    async def complete(self, *, system, messages, max_tokens):
+        from boule.llm.base import CompletionResult
 
-        async def create(self, *, model, max_tokens, system, messages):
-            user_text = messages[-1]["content"] if messages else ""
-            text = VOTE_TEXT if "VOTE: APPROVE|REJECT|ABSTAIN" in user_text else NON_VOTE_TEXT
-            return _FakeMessage(text)
-
-    def __init__(self):
-        self.messages = _FakeAnthropic._Messages(self)
+        user_text = messages[-1]["content"] if messages else ""
+        text = VOTE_TEXT if "VOTE: APPROVE|REJECT|ABSTAIN" in user_text else NON_VOTE_TEXT
+        return CompletionResult(text=text, tokens=280)
 
     async def close(self):
         return None

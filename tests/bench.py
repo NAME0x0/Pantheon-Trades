@@ -471,35 +471,20 @@ def bench_boule_fakellm() -> Section:
             utc_now,
         )
 
-        # Fake Anthropic exactly like the integration test.
-        class _Usage:
-            input_tokens = 200
-            output_tokens = 80
-
-        class _Block:
-            type = "text"
-
-            def __init__(self, text: str):
-                self.text = text
-
-        class _Msg:
-            def __init__(self, text: str):
-                self.content = [_Block(text)]
-                self.usage = _Usage()
+        from boule.llm.base import CompletionResult
 
         vote_text = (
             "VOTE: APPROVE\nCONFIDENCE: 0.78\nPROBABILITY: 0.62\nFLAGS: NONE\nREASON: bench"
         )
         opening_text = "Opening assessment: bench."
 
-        class _Messages:
-            async def create(self, *, model, max_tokens, system, messages):
-                user = messages[-1]["content"] if messages else ""
-                return _Msg(vote_text if "VOTE: APPROVE|REJECT|ABSTAIN" in user else opening_text)
-
         class _Anthropic:
-            def __init__(self):
-                self.messages = _Messages()
+            async def complete(self, *, system, messages, max_tokens):
+                user = messages[-1]["content"] if messages else ""
+                return CompletionResult(
+                    text=vote_text if "VOTE: APPROVE|REJECT|ABSTAIN" in user else opening_text,
+                    tokens=280,
+                )
 
             async def close(self):
                 return None

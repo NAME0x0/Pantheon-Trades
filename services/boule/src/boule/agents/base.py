@@ -1,43 +1,27 @@
 """Base class for every Boule council agent.
 
-Each agent is a Claude API client with three mandatory phases — opening
-(Round 1), challenge (Round 2), vote (Round 4) — plus an optional synthesis
-hook used only by Athena. The base handles tracing, retry/backoff, and the
-shared signal-context formatter so each subclass stays small.
+Each agent runs three mandatory phases — opening (Round 1), challenge
+(Round 2), vote (Round 4) — plus an optional synthesis hook used only by
+Athena. The base handles tracing and the shared signal-context
+formatter. Provider-specific retry / timeout / circuit-breaker logic
+lives inside :mod:`boule.llm` so this class stays provider-agnostic.
 """
 
 from __future__ import annotations
 
-import asyncio
 import time
 from abc import ABC, abstractmethod
 
-import anthropic
 import structlog
-from tenacity import (
-    AsyncRetrying,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_exponential,
-)
 
 from pantheon_core.schema import Signal, ThesisBlock
 
+from boule.llm import LLMClient
 from boule.trace import Tracer
 
-MODEL = "claude-sonnet-4-6"
 MAX_TOKENS = 1024
-CALL_TIMEOUT_SECONDS = 45.0
-MAX_RETRIES = 3
 
 log = structlog.get_logger("boule.agent")
-
-_RETRYABLE = (
-    anthropic.APIConnectionError,
-    anthropic.APITimeoutError,
-    anthropic.RateLimitError,
-    anthropic.InternalServerError,
-)
 
 
 class CouncilAgent(ABC):
@@ -47,7 +31,7 @@ class CouncilAgent(ABC):
     weight: float = 1.0
     has_veto: bool = False
 
-    def __init__(self, client: anthropic.AsyncAnthropic, tracer: Tracer, prompt: str) -> None:
+    def __init__(self, client: LLMClient, tracer: Tracer, prompt: str) -> None:
         self._client = client
         self._tracer = tracer
         self._system_prompt = prompt
@@ -66,49 +50,28 @@ class CouncilAgent(ABC):
 
     async def _call(self, messages: list[dict], round_num: int) -> ThesisBlock:
         t0 = time.monotonic()
-        response = await self._anthropic_call(messages)
+        result = await self._client.complete(
+            system=self._system_prompt,
+            messages=messages,
+            max_tokens=MAX_TOKENS,
+        )
         latency_ms = int((time.monotonic() - t0) * 1000)
-
-        content = _extract_text(response)
-        usage = getattr(response, "usage", None)
-        tokens = 0
-        if usage is not None:
-            tokens = (getattr(usage, "input_tokens", 0) or 0) + (getattr(usage, "output_tokens", 0) or 0)
-
         block = ThesisBlock(
             agent=self.name,
             round=round_num,
-            content=content,
-            tokens=tokens,
+            content=result.text,
+            tokens=result.tokens,
             latency_ms=latency_ms,
         )
         await self._tracer.emit(
             "agent_output",
-            content,
+            result.text,
             agent=self.name,
             round=round_num,
-            tokens=tokens,
+            tokens=result.tokens,
             latency_ms=latency_ms,
         )
         return block
-
-    async def _anthropic_call(self, messages: list[dict]):
-        async for attempt in AsyncRetrying(
-            stop=stop_after_attempt(MAX_RETRIES),
-            wait=wait_exponential(multiplier=1, min=1, max=8),
-            retry=retry_if_exception_type(_RETRYABLE),
-            reraise=True,
-        ):
-            with attempt:
-                return await asyncio.wait_for(
-                    self._client.messages.create(
-                        model=MODEL,
-                        max_tokens=MAX_TOKENS,
-                        system=self._system_prompt,
-                        messages=messages,
-                    ),
-                    timeout=CALL_TIMEOUT_SECONDS,
-                )
 
     def _signal_context(self, signal: Signal) -> str:
         days = signal.days_to_resolution
@@ -132,19 +95,3 @@ class CouncilAgent(ABC):
             f"Data staleness: {signal.staleness_seconds}s | Source trust: {signal.source_trust_score:.3f}\n"
             f"Sources: {', '.join(signal.data_sources)}"
         )
-
-
-def _extract_text(response) -> str:
-    """Pull the assistant text block out of an Anthropic response.
-
-    Handles tool_use and other block types by concatenating any text blocks
-    in order. Returns empty string if the response had no text.
-    """
-    chunks: list[str] = []
-    for block in getattr(response, "content", []) or []:
-        block_type = getattr(block, "type", None)
-        if block_type == "text":
-            chunks.append(getattr(block, "text", "") or "")
-        elif block_type is None and hasattr(block, "text"):
-            chunks.append(block.text or "")
-    return "\n".join(chunks).strip()

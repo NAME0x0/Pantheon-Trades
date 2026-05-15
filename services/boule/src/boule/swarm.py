@@ -5,12 +5,12 @@ from __future__ import annotations
 import os
 import uuid
 
-import anthropic
 import redis.asyncio as aioredis
 
 from pantheon_core.schema import Signal, Thesis
 
 from boule.debate import run_debate
+from boule.llm import LLMClient, build_default_client
 from boule.trace import Tracer
 
 
@@ -18,21 +18,25 @@ async def deliberate(
     signal: Signal,
     *,
     redis_url: str | None = None,
-    anthropic_client: anthropic.AsyncAnthropic | None = None,
+    llm_client: LLMClient | None = None,
     redis_client: aioredis.Redis | None = None,
+    # Legacy alias kept so existing integration tests keep working.
+    anthropic_client: LLMClient | None = None,
 ) -> Thesis:
     """Run a single deliberation for the given signal.
 
-    Both `anthropic_client` and `redis_client` are accepted so tests can inject
-    fakes; production code paths pass nothing and we build clients from env.
+    ``llm_client`` and ``redis_client`` are accepted so tests can inject
+    fakes; production code paths pass nothing and we build clients from
+    env. ``anthropic_client`` is a backwards-compatible alias for
+    ``llm_client``.
     """
-    close_anthropic = False
+    close_llm = False
     close_redis = False
+    client = llm_client or anthropic_client
 
-    if anthropic_client is None:
-        api_key = os.environ["ANTHROPIC_API_KEY"]
-        anthropic_client = anthropic.AsyncAnthropic(api_key=api_key)
-        close_anthropic = True
+    if client is None:
+        client = build_default_client()
+        close_llm = True
 
     if redis_client is None:
         url = redis_url or os.environ.get("REDIS_URL", "redis://localhost:6379/0")
@@ -52,10 +56,10 @@ async def deliberate(
 
     try:
         return await run_debate(
-            signal=signal, client=anthropic_client, tracer=tracer, thesis_id=thesis_id
+            signal=signal, client=client, tracer=tracer, thesis_id=thesis_id
         )
     finally:
         if close_redis:
             await redis_client.aclose()
-        if close_anthropic:
-            await anthropic_client.close()
+        if close_llm:
+            await client.close()
