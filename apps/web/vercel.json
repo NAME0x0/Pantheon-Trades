@@ -3,6 +3,5 @@
   "framework": "nextjs",
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "buildCommand": "cd ../.. && pnpm turbo run build --filter=@pantheon/web...",
-  "outputDirectory": ".next",
-  "ignoreCommand": "cd ../.. && git diff HEAD^ HEAD --quiet -- apps/web packages/ pnpm-lock.yaml"
+  "outputDirectory": ".next"
 }
