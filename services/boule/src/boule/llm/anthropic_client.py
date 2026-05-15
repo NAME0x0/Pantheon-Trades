@@ -14,6 +14,7 @@ from tenacity import (
 )
 
 from boule.llm.base import CompletionResult, LLMClient
+from boule.llm.cache import cache_key, get as cache_get, put as cache_put
 
 
 DEFAULT_MODEL = os.environ.get("BOULE_ANTHROPIC_MODEL", "claude-sonnet-4-6")
@@ -44,6 +45,19 @@ class AnthropicClient(LLMClient):
         messages: list[dict],
         max_tokens: int,
     ) -> CompletionResult:
+        # Cache lookup before any network. Identical inputs return the
+        # prior result and never bill the provider.
+        key = cache_key(
+            provider="anthropic",
+            model=self._model,
+            system=system,
+            messages=messages,
+            max_tokens=max_tokens,
+        )
+        cached = cache_get(key)
+        if cached is not None:
+            return cached
+
         async for attempt in AsyncRetrying(
             stop=stop_after_attempt(MAX_RETRIES),
             wait=wait_exponential(multiplier=1, min=1, max=8),
@@ -68,7 +82,9 @@ class AnthropicClient(LLMClient):
             tokens = (getattr(usage, "input_tokens", 0) or 0) + (
                 getattr(usage, "output_tokens", 0) or 0
             )
-        return CompletionResult(text=text, tokens=tokens)
+        result = CompletionResult(text=text, tokens=tokens)
+        cache_put(key, result)
+        return result
 
     async def close(self) -> None:
         await self._client.close()

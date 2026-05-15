@@ -43,6 +43,9 @@ Thumbs.db
 # Claude Code local state
 .claude/
 
+# Boule LLM response cache — re-runs same prompt without burning quota.
+.cache/
+
 # Foundry
 contracts/cache/
 contracts/out/
