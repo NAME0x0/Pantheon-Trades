@@ -1,10 +1,10 @@
-import { listRestraint } from "../../lib/api";
+import { listRestraint, type RestraintSummary } from "../../lib/api";
 import { RestraintCard } from "../../components/restraint-card";
 
 export const dynamic = "force-dynamic";
 
 export default async function RestraintPage() {
-  let items;
+  let items: RestraintSummary[];
   try {
     items = (await listRestraint()).items;
   } catch {

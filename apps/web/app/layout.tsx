@@ -9,20 +9,20 @@ export const metadata: Metadata = {
 
 const NAV = [
   { href: "/", label: "Overview" },
-  { href: "/signals", label: "Signals" },
-  { href: "/theses", label: "Theses" },
-  { href: "/trades", label: "Trades" },
-  { href: "/restraint", label: "Proof of Restraint" },
-  { href: "/traces", label: "Traces" },
+  { href: "/demo", label: "Demo" },
+  { href: "/dashboard", label: "Dashboard" },
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="bg-pantheon-ink text-pantheon-parchment">
-      <body className="min-h-screen font-sans antialiased">
-        <header className="border-b border-pantheon-gold/30 bg-pantheon-ink/95 backdrop-blur">
+    <html lang="en" className="dark">
+      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
+        <header className="border-b border-primary/30 bg-background/95 backdrop-blur">
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-            <Link href="/" className="font-mono text-lg tracking-wide text-pantheon-gold">
+            <Link
+              href="/"
+              className="font-mono text-lg tracking-wide text-primary hover:text-primary/80"
+            >
               PANTHEON&nbsp;TRADES
             </Link>
             <ul className="flex gap-6 text-sm">
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-pantheon-marble hover:text-pantheon-gold"
+                    className="text-muted-foreground transition-colors hover:text-primary"
                   >
                     {item.label}
                   </Link>
@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
         </header>
         <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
-        <footer className="mx-auto max-w-6xl border-t border-pantheon-gold/20 px-6 py-6 text-xs text-pantheon-marble/70">
+        <footer className="mx-auto max-w-6xl border-t border-primary/20 px-6 py-6 text-xs text-muted-foreground">
           AI council deliberates. Areopagus gates. Parthenon anchors on Arc Testnet.
         </footer>
       </body>
