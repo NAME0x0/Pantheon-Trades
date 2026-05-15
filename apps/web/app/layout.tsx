@@ -1,6 +1,7 @@
 import "../styles/globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Pantheon Trades",
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="mx-auto max-w-6xl border-t border-primary/20 px-6 py-6 text-xs text-muted-foreground">
           AI council deliberates. Areopagus gates. Parthenon anchors on Arc Testnet.
         </footer>
+        <Analytics />
       </body>
     </html>
   );
