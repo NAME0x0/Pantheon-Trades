@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./apps/web/public/mark.svg" alt="Pantheon Trades emblem" width="120" />
+
 # Pantheon Trades
 
 **A ten-agent AI council debates every prediction-market trade — and anchors every restraint on-chain.**
@@ -45,52 +47,44 @@ Pantheon Trades inverts that. Every signal flows through a structured four-round
 
 ## How it works
 
-```
-                                  ┌──────────────┐
-                                  │   Pythia     │   Polymarket CLOB · price feeds · news · sentiment
-                                  └──────┬───────┘
-                                         │ raw signal envelope
-                                         ▼
-                                  ┌──────────────┐
-                                  │    Apollo    │   7-dimension scoring → A/B/C edge bands
-                                  └──────┬───────┘
-                                         │ Signal
-                                         ▼
-                                  ┌──────────────┐
-                                  │    Boule     │   10-agent council, 4 rounds, parallel openings
-                                  │   (council)  │   → Athena synthesis → blind votes
-                                  └──────┬───────┘
-                                         │ Thesis (+ trace events)
-                                         ▼
-                                  ┌──────────────┐
-                                  │  Areopagus   │   constitutional gates · half-Kelly
-                                  │   (court)    │   exposure check · drawdown veto
-                                  └──┬───────────┘
-                                     │
-                  ApprovalToken ◄────┤  ────►  RejectionRecord
-                         │            │             │
-                         ▼            │             ▼
-                 ┌─────────────┐      │     ┌───────────────────┐
-                 │  Strategos  │      │     │ ProofOfRestraint  │ ──► Arc Testnet
-                 │ (CLOB exec) │      │     │     witness       │     contract event
-                 └──────┬──────┘      │     └─────────┬─────────┘
-                        │             │               │
-                        ▼             │               ▼
-                 ┌─────────────┐      │     ┌──────────────────┐
-                 │    Argos    │      │     │     Parthenon    │   IPFS + Irys + Merkle
-                 │  (monitor)  │      │     │    (archive)     │   → on-chain anchor
-                 └──────┬──────┘      │     └──────────────────┘
-                        │             ▼
-                        ▼      ┌─────────────┐
-                 ┌─────────────┤   Ostrakon  │   Brier · calibration · Sharpe per agent
-                 │  Underworld │  (scoring)  │   → leaderboard + passport updates
-                 │ (postmortem)└──────┬──────┘
-                 └─────────────┘      │
-                                      ▼
-                              ┌──────────────┐
-                              │   Olympus    │   goals · adversarial mode · exile/promotion
-                              │ (coordinator)│
-                              └──────────────┘
+```mermaid
+%%{init: {'theme':'base','themeVariables':{
+  'primaryColor':'#0a0e16','primaryTextColor':'#f7f3e9','primaryBorderColor':'#c8a85a',
+  'lineColor':'#c8a85a','secondaryColor':'#1a1f2e','tertiaryColor':'#0a0e16',
+  'fontFamily':'Georgia, serif'}}}%%
+flowchart TD
+    Pythia([<b>Pythia</b><br/><i>oracle</i><br/>Polymarket · news · prices])
+    Apollo([<b>Apollo</b><br/><i>signals</i><br/>7-dim scoring · A/B/C bands])
+    Boule([<b>Boule</b><br/><i>council</i><br/>10 agents · 4 rounds])
+    Areopagus{{<b>Areopagus</b><br/><i>court</i><br/>gates · half-Kelly}}
+    Strategos([<b>Strategos</b><br/><i>execution</i><br/>CLOB router])
+    Parthenon[(<b>Parthenon</b><br/><i>archive</i><br/>IPFS · Irys · Merkle)]
+    ProofRestraint[/<b>ProofOfRestraint</b><br/>on-chain witness/]
+    Argos([<b>Argos</b><br/><i>monitor</i><br/>exits])
+    Ostrakon([<b>Ostrakon</b><br/><i>scoring</i><br/>Brier · Sharpe])
+    Underworld([<b>Underworld</b><br/><i>post-mortem</i>])
+    Olympus([<b>Olympus</b><br/><i>coordinator</i><br/>goals · adversarial])
+
+    Pythia -- raw signal --> Apollo
+    Apollo -- Signal --> Boule
+    Boule -- Thesis + traces --> Areopagus
+    Areopagus -- ApprovalToken --> Strategos
+    Areopagus -- RejectionRecord --> ProofRestraint
+    ProofRestraint -. anchored on .-> ArcChain[(<b>Arc Testnet</b><br/>chain 5042002)]
+    Strategos -- Trade --> Argos
+    Argos -- Outcome --> Ostrakon
+    Strategos --> Parthenon
+    Boule --> Parthenon
+    Ostrakon --> Underworld
+    Ostrakon --> Olympus
+    Underworld --> Olympus
+
+    classDef gold fill:#0a0e16,stroke:#c8a85a,stroke-width:1.5px,color:#f7f3e9
+    classDef court fill:#1a1f2e,stroke:#c8a85a,stroke-width:2px,color:#c8a85a
+    classDef chain fill:#0a0e16,stroke:#c8a85a,stroke-width:1.5px,color:#c8a85a,stroke-dasharray:4 3
+    class Pythia,Apollo,Boule,Strategos,Argos,Ostrakon,Underworld,Olympus,Parthenon gold
+    class Areopagus court
+    class ProofRestraint,ArcChain chain
 ```
 
 Every box emits structured `TraceEvent`s to Redis. The `/demo` route in the web app replays a captured deliberation event-by-event so you can watch a council form an opinion in real time.
@@ -99,16 +93,40 @@ Every box emits structured `TraceEvent`s to Redis. The `/demo` route in the web 
 
 ## The council
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{
+  'primaryColor':'#0a0e16','primaryTextColor':'#f7f3e9','primaryBorderColor':'#c8a85a',
+  'lineColor':'#c8a85a','clusterBkg':'#0a0e16','clusterBorder':'#c8a85a',
+  'fontFamily':'Georgia, serif'}}}%%
+flowchart LR
+    subgraph BULL [<b>Bull</b>]
+        Ares([Ares])
+        Hades([Hades])
+    end
+    subgraph BEAR [<b>Bear</b>]
+        Athena([Athena ✦])
+        Cassandra([Cassandra])
+    end
+    subgraph RISK [<b>Risk</b>]
+        Zeus([Zeus ⚡])
+        Solon([Solon ⚡])
+        Themis([Themis])
+    end
+    subgraph EXEC [<b>Execution</b>]
+        Hephaestus([Hephaestus])
+        Daedalus([Daedalus])
+        Humans([Humans])
+    end
+
+    BULL --- BEAR --- RISK --- EXEC
+
+    classDef agent fill:#0a0e16,stroke:#c8a85a,stroke-width:1px,color:#f7f3e9
+    classDef veto fill:#1a1f2e,stroke:#c8a85a,stroke-width:2px,color:#c8a85a
+    class Ares,Hades,Cassandra,Hephaestus,Daedalus,Humans,Themis agent
+    class Athena,Zeus,Solon veto
 ```
-            BULL                    BEAR                  RISK             EXECUTION
-   ┌───────────────────┐   ┌───────────────────┐   ┌──────────────┐   ┌────────────────┐
-   │  Ares             │   │  Athena      ⚙   │   │  Zeus    ⚡  │   │  Hephaestus    │
-   │  Hades            │   │  Cassandra        │   │  Solon   ⚡  │   │  Daedalus      │
-   │                   │   │                   │   │  Themis      │   │  Humans        │
-   └───────────────────┘   └───────────────────┘   └──────────────┘   └────────────────┘
-       argues long           argues short             vetoes hard       sizes / routes
-                              ⚙ also synthesises      ⚡ veto power
-```
+
+> ⚡ veto power · ✦ also writes the round-3 synthesis
 
 Twelve additional agents orchestrate (Apollo, Boule, Areopagus, Strategos, Argos, Ostrakon, Parthenon, Pythia, Elysium, Underworld, Moirai, Olympus) — full roster in [docs/AGENTS.md](./docs/AGENTS.md).
 
