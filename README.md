@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./apps/web/public/mark.svg" alt="Pantheon Trades emblem" width="120" />
+<img src="https://api.iconify.design/game-icons/greek-temple.svg?color=%23d4a85e" alt="Pantheon Trades emblem" width="120" />
 
 # Pantheon Trades
 

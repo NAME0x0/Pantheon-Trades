@@ -10,9 +10,12 @@ from pantheon_core.schema import utc_now
 
 @dataclass
 class ProofOfRestraint:
-    """
-    On-chain proof that a signal was observed but trade was declined.
-    Submitted to NoTradeAlpha.sol on Arc Testnet.
+    """On-chain witness that a signal was observed but the trade was
+    declined.
+
+    Submitted to ``ProofOfRestraint.sol`` on Arc Testnet via
+    :class:`areopagus.chain.RestraintChainWriter` — see ``declineTrade``
+    for the calldata shape this object renders into.
     """
     proof_id: str
     signal_id: str

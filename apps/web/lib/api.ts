@@ -95,6 +95,13 @@ export type RestraintSummary = {
   note: string;
   signal_hash: string;
   created_at: string;
+  // Populated by the API when the on-chain anchor has landed.
+  // The Areopagus consumer fires declineTrade(...) in the background
+  // and persists the receipt to areopagus:restraint:tx:<proof_id>;
+  // the gateway merges those fields into the list response.
+  tx_hash?: string | null;
+  onchain_proof_id?: number | null;
+  explorer_url?: string | null;
 };
 
 export async function listRestraint(token?: string | null) {

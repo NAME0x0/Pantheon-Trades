@@ -91,7 +91,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: forge build
         run: forge build --root contracts
-      - name: forge test
-        run: |
-          forge test --root contracts \
-            --match-path 'test/{PantheonConstitution,ThesisRegistry}.t.sol' -vv
+      - name: forge test (full suite)
+        # Run every Foundry test, including ProofOfRestraint.t.sol — the
+        # flagship contract must be exercised in CI, not skipped.
+        run: forge test --root contracts -vv

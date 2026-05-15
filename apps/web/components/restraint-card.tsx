@@ -75,14 +75,32 @@ export function RestraintCard({ entry }: { entry: RestraintSummary }) {
 
         <dt className="text-pantheon-marble/70">Arc proof</dt>
         <dd>
-          <Link
-            href={`${ARCSCAN_BASE}/address/${PROOF_OF_RESTRAINT_ADDRESS}`}
-            target="_blank"
-            className="font-mono text-xs text-pantheon-gold underline-offset-4 hover:underline"
-          >
-            view on arcscan
-          </Link>
+          {entry.explorer_url || entry.tx_hash ? (
+            <Link
+              href={entry.explorer_url ?? `${ARCSCAN_BASE}/tx/${entry.tx_hash}`}
+              target="_blank"
+              className="font-mono text-xs text-pantheon-gold underline-offset-4 hover:underline"
+            >
+              tx {entry.tx_hash ? `${entry.tx_hash.slice(0, 10)}…${entry.tx_hash.slice(-6)}` : "on arcscan"}
+            </Link>
+          ) : (
+            <Link
+              href={`${ARCSCAN_BASE}/address/${PROOF_OF_RESTRAINT_ADDRESS}`}
+              target="_blank"
+              className="font-mono text-xs text-pantheon-marble underline-offset-4 hover:underline"
+              title="No on-chain anchor for this proof yet — link points at the contract instead."
+            >
+              contract on arcscan
+            </Link>
+          )}
         </dd>
+
+        {entry.onchain_proof_id != null && (
+          <>
+            <dt className="text-pantheon-marble/70">On-chain id</dt>
+            <dd className="font-mono text-pantheon-gold">#{entry.onchain_proof_id}</dd>
+          </>
+        )}
 
         <dt className="text-pantheon-marble/70">When</dt>
         <dd className="font-mono text-xs text-pantheon-marble">
