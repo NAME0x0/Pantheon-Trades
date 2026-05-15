@@ -9,10 +9,8 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
 import logging
 import os
-from datetime import datetime, timezone
 
 import httpx
 import redis.asyncio as aioredis

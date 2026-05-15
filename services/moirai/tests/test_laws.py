@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from moirai.laws import (
-    PROMOTION_MAX_BRIER,
-    PROMOTION_MIN_PAPER_TRADES,
     StrategyState,
     is_valid_transition,
     transition_error,

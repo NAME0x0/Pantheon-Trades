@@ -5,7 +5,7 @@ from datetime import datetime
 
 from pantheon_core.schema import utc_now
 
-from ostrakon.brier import brier_score, brier_score_batch, is_calibrated
+from ostrakon.brier import brier_score_batch, is_calibrated
 from ostrakon.sharpe import sharpe_ratio
 
 

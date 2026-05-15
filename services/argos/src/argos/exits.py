@@ -8,7 +8,7 @@ take precedence over time-based expiry.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from pantheon_core.schema import ExitSignal, utc_now
 

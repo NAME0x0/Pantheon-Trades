@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-from datetime import datetime
 
 import redis.asyncio as aioredis
 import structlog

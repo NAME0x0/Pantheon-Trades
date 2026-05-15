@@ -7,7 +7,7 @@ consensus are penalised slightly to discourage echo chambers.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 DEFAULT_TRUST = 1.0

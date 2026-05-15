@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 
 
 def volatility_score(price_std_24h: float, price_mean: float, baseline_vol: float = 0.05) -> float:

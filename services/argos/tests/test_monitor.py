@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 from argos.anomaly import detect_jump, detect_stale_data
 from argos.exits import check_exit, check_invalidation, check_stop, check_target

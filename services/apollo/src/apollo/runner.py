@@ -9,7 +9,7 @@ source. Production deployments inject a Pythia client; tests pass a fake.
 from __future__ import annotations
 
 import asyncio
-from collections.abc import AsyncIterable, Awaitable, Callable
+from collections.abc import Awaitable, Callable
 
 import structlog
 from redis.asyncio import Redis

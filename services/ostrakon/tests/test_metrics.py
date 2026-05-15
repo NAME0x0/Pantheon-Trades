@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ostrakon.brier import brier_score, brier_score_batch, is_calibrated
+from ostrakon.brier import brier_score, is_calibrated
 from ostrakon.sharpe import sharpe_ratio
 from ostrakon.metrics import AgentMetrics
 

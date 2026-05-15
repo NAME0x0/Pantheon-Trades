@@ -47,6 +47,6 @@ def parse_book(payload: dict) -> Book:
         Level(price=float(a["price"]), size=float(a["size"]))
         for a in payload.get("asks", [])
     ]
-    bids.sort(key=lambda l: l.price, reverse=True)
-    asks.sort(key=lambda l: l.price)
+    bids.sort(key=lambda lvl: lvl.price, reverse=True)
+    asks.sort(key=lambda lvl: lvl.price)
     return Book(bids=bids, asks=asks)

@@ -7,10 +7,8 @@ no network is required.
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timezone
 from types import SimpleNamespace
 
-import pytest
 
 from areopagus.chain import PROOF_OF_RESTRAINT_ABI, RestraintChainWriter
 from areopagus.proof_of_restraint import ProofOfRestraint

@@ -53,7 +53,7 @@ async def verify(req: VerifyRequest, redis: RedisDep) -> VerifyResponse:
     address = verification.address
     # Extract nonce from the SIWE message; verify_siwe already validated it
     # against the signature, we just need to consume it from Redis.
-    nonce_line = next((l for l in req.message.splitlines() if l.lower().startswith("nonce:")), None)
+    nonce_line = next((line for line in req.message.splitlines() if line.lower().startswith("nonce:")), None)
     siwe_nonce = nonce_line.split(":", 1)[1].strip() if nonce_line else ""
     if not await consume_nonce(redis, address, siwe_nonce):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="nonce not found or already used")

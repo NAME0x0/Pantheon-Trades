@@ -6,7 +6,6 @@ import json
 
 from fastapi import APIRouter, Query
 
-from pantheon_core.schema import Signal
 
 from pantheon_api.deps import RedisDep, UserDep
 

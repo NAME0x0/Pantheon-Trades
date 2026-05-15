@@ -10,7 +10,6 @@ up and start monitoring exits.
 
 from __future__ import annotations
 
-import asyncio
 import json
 import os
 from typing import Any
