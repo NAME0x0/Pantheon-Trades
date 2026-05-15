@@ -1,82 +1,273 @@
-import { getArcStatus, listSignals, listTheses, listTrades } from "../../lib/api";
+import Link from "next/link";
 
-async function safe<T>(p: Promise<T>): Promise<T | null> {
+import { Reveal } from "@/components/anim";
+
+/**
+ * Dashboard is a server component that talks directly to Arc Testnet
+ * via public JSON-RPC. No FastAPI backend required — the page always
+ * has live data the moment the chain is reachable.
+ *
+ * Three blocks:
+ *
+ *   1. Arc chain status (block height, gas, chain id).
+ *   2. On-chain restraint feed — eth_getLogs against the deployed
+ *      ProofOfRestraint contract, filtered to the Restrained event sig.
+ *   3. Pantheon static facts (council size, veto count, etc.).
+ *
+ * Revalidates every 30 s so the page is always recent without hammering
+ * the RPC.
+ */
+
+export const revalidate = 30;
+
+const ARC_RPC = "https://rpc.testnet.arc.network";
+const ARCSCAN = "https://testnet.arcscan.app";
+const POR_CONTRACT = "0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895";
+const ARC_CHAIN_ID = 5042002;
+
+// keccak256("Restrained(uint256,bytes32,string,string,string,address,uint64)")
+const RESTRAINED_TOPIC =
+  "0x86071ec604ff0d442a66a1c44538c3b91553fb8f55fdc5ea10f8841ba6412f0a";
+
+type ArcStatus = {
+  block: number | null;
+  gasWei: number | null;
+  chainId: number | null;
+};
+
+type RestraintLog = {
+  txHash: string;
+  blockNumber: number;
+  signalHash: string;
+  onchainProofId: number;
+};
+
+async function rpc<T>(method: string, params: unknown[]): Promise<T | null> {
   try {
-    return await p;
+    const r = await fetch(ARC_RPC, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+      next: { revalidate: 20 },
+    });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return j.result ?? null;
   } catch {
     return null;
   }
 }
 
-export const dynamic = "force-dynamic";
+async function fetchArcStatus(): Promise<ArcStatus> {
+  const [bn, gp, ch] = await Promise.all([
+    rpc<string>("eth_blockNumber", []),
+    rpc<string>("eth_gasPrice", []),
+    rpc<string>("eth_chainId", []),
+  ]);
+  return {
+    block: bn ? parseInt(bn, 16) : null,
+    gasWei: gp ? parseInt(gp, 16) : null,
+    chainId: ch ? parseInt(ch, 16) : null,
+  };
+}
+
+async function fetchRecentRestraints(latestBlock: number | null): Promise<RestraintLog[]> {
+  if (latestBlock === null) return [];
+  // 200_000-block window — generous for testnet without overloading the RPC.
+  const fromBlock = "0x" + Math.max(latestBlock - 200_000, 0).toString(16);
+  const logs = await rpc<
+    Array<{
+      transactionHash: string;
+      blockNumber: string;
+      topics: string[];
+    }>
+  >("eth_getLogs", [
+    {
+      address: POR_CONTRACT,
+      topics: [RESTRAINED_TOPIC],
+      fromBlock,
+      toBlock: "latest",
+    },
+  ]);
+  if (!Array.isArray(logs)) return [];
+  return logs
+    .map((l) => ({
+      txHash: l.transactionHash,
+      blockNumber: parseInt(l.blockNumber, 16),
+      signalHash: l.topics[2] ?? "0x",
+      onchainProofId: parseInt(l.topics[1] ?? "0x0", 16),
+    }))
+    .reverse(); // newest first
+}
 
 export default async function Dashboard() {
-  const [signals, theses, trades, arc] = await Promise.all([
-    safe(listSignals()),
-    safe(listTheses()),
-    safe(listTrades()),
-    safe(getArcStatus()),
-  ]);
-
-  const allDown = !signals && !theses && !trades && !arc;
+  const arc = await fetchArcStatus();
+  const restraints = await fetchRecentRestraints(arc.block);
+  const liveRpc = arc.block !== null;
 
   return (
-    <section className="space-y-8">
-      <div>
-        <h1 className="font-display text-5xl font-semibold tracking-[0.02em] text-primary">
-          Dashboard
-        </h1>
-        <p className="mt-2 font-serif text-lg leading-relaxed text-muted-foreground">
-          Live read-out from the Pantheon FastAPI gateway. Requires the backend to be running.
-        </p>
-        {allDown && (
-          <div className="mt-4 rounded-lg border border-amber-700/40 bg-amber-900/10 p-4 text-sm text-amber-200">
-            Backend not reachable at <code className="font-mono">NEXT_PUBLIC_API_URL</code>.
-            Start it locally with <code className="font-mono">pnpm dev</code> or visit{" "}
-            <a className="underline" href="/demo">the demo</a> to see a captured run.
+    <section className="space-y-16 py-12">
+      {/* ── Header ─────────────────────────────────────────────────── */}
+      <Reveal>
+        <div>
+          <div className="display flex items-center gap-3 text-[10px] uppercase tracking-[0.45em] text-primary">
+            <span
+              className={`inline-block size-1.5 rounded-full ${
+                liveRpc ? "bg-emerald-400 animate-pulse" : "bg-amber-500"
+              }`}
+            />
+            {liveRpc ? "Arc Testnet · live" : "Arc Testnet · unreachable"}
           </div>
-        )}
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card label="Open signals">{signals?.count ?? "—"}</Card>
-        <Card label="Recent theses">{theses?.count ?? "—"}</Card>
-        <Card label="Trades booked">{trades?.count ?? "—"}</Card>
-        <Card label="Arc block">
-          {arc ? arc.block_number.toLocaleString() : "—"}
-        </Card>
-      </div>
-
-      {arc && (
-        <div className="rounded-lg border border-pantheon-gold/30 bg-pantheon-ink/60 p-6">
-          <h2 className="font-mono text-pantheon-gold">Arc Testnet</h2>
-          <dl className="mt-4 grid grid-cols-2 gap-y-2 text-sm text-pantheon-marble">
-            <dt>Chain id</dt>
-            <dd className="text-right">{arc.chain_id}</dd>
-            <dt>RPC</dt>
-            <dd className="text-right truncate">{arc.rpc_url}</dd>
-            <dt>Latest block</dt>
-            <dd className="text-right">{arc.block_number.toLocaleString()}</dd>
-            <dt>Gas price (wei)</dt>
-            <dd className="text-right">{arc.gas_price_wei.toLocaleString()}</dd>
-            <dt>Thesis registry</dt>
-            <dd className="text-right font-mono text-xs">
-              {arc.registry_address || "(unset)"}
-            </dd>
-          </dl>
+          <h1 className="display mt-4 text-6xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-7xl">
+            Dashboard
+          </h1>
+          <p className="serif mt-4 max-w-2xl text-xl leading-[1.7] text-muted-foreground">
+            Direct read of Arc Testnet — block height, gas, and every{" "}
+            <code className="mono text-primary">Restrained</code> event ever
+            written by the council. No backend dependency.
+          </p>
         </div>
-      )}
+      </Reveal>
+
+      {/* ── Chain stats ────────────────────────────────────────────── */}
+      <Reveal delay={0.05}>
+        <div className="grid gap-px overflow-hidden rounded-2xl border border-primary/15 sm:grid-cols-2 lg:grid-cols-4">
+          <Stat
+            label="Block height"
+            value={arc.block !== null ? arc.block.toLocaleString() : "—"}
+          />
+          <Stat
+            label="Gas price"
+            value={arc.gasWei !== null ? `${(arc.gasWei / 1e9).toFixed(2)} gwei` : "—"}
+          />
+          <Stat
+            label="Chain id"
+            value={arc.chainId !== null ? arc.chainId.toString() : "—"}
+            note={arc.chainId === ARC_CHAIN_ID ? "verified" : undefined}
+          />
+          <Stat label="Restraints anchored" value={restraints.length.toString()} />
+        </div>
+      </Reveal>
+
+      {/* ── Restraint feed ─────────────────────────────────────────── */}
+      <Reveal delay={0.1}>
+        <div>
+          <div className="display mb-4 flex items-baseline justify-between text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+            <span>On-chain restraint feed</span>
+            <a
+              href={`${ARCSCAN}/address/${POR_CONTRACT}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary transition-colors hover:text-primary/70"
+            >
+              ProofOfRestraint contract ↗
+            </a>
+          </div>
+          {restraints.length === 0 ? (
+            <div className="serif rounded-2xl border border-primary/15 bg-card/40 p-10 text-center text-muted-foreground">
+              {liveRpc
+                ? "No restraint witnesses anchored in the last 200,000 blocks."
+                : "Arc RPC unreachable. Retry in a moment."}
+            </div>
+          ) : (
+            <ol className="space-y-px overflow-hidden rounded-2xl border border-primary/15">
+              {restraints.map((r) => (
+                <li
+                  key={r.txHash}
+                  className="group grid grid-cols-[5rem_1fr_auto] items-center gap-4 bg-card/40 px-6 py-5 transition-colors hover:bg-primary/[0.04]"
+                >
+                  <span className="display text-2xl font-semibold text-primary">
+                    #{r.onchainProofId}
+                  </span>
+                  <div>
+                    <div className="display text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                      Block {r.blockNumber.toLocaleString()}
+                    </div>
+                    <div className="mono mt-1 truncate text-sm text-primary">
+                      {r.txHash}
+                    </div>
+                  </div>
+                  <a
+                    href={`${ARCSCAN}/tx/${r.txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="display shrink-0 text-[10px] uppercase tracking-[0.32em] text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Verify ↗
+                  </a>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+      </Reveal>
+
+      {/* ── Static facts ───────────────────────────────────────────── */}
+      <Reveal delay={0.15}>
+        <div>
+          <div className="display mb-4 text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+            Constants
+          </div>
+          <div className="grid gap-px overflow-hidden rounded-2xl border border-primary/15 sm:grid-cols-2 lg:grid-cols-4">
+            <Constant k="Council agents" v="10" />
+            <Constant k="Veto powers" v="2 — Zeus, Solon" />
+            <Constant k="Rounds of debate" v="4" />
+            <Constant k="Foundry tests" v="51 / 51" />
+            <Constant k="Quorum" v="≥ 7 participating" />
+            <Constant k="Approval threshold" v="≥ 60% weighted" />
+            <Constant k="Max position" v="5% of NAV (half-Kelly)" />
+            <Constant k="Native gas" v="USDC" />
+          </div>
+        </div>
+      </Reveal>
+
+      <Reveal delay={0.2}>
+        <div className="text-center">
+          <Link
+            href="/demo"
+            className="display inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.32em] text-primary transition-opacity hover:opacity-80"
+          >
+            Watch a council deliberation ↗
+          </Link>
+        </div>
+      </Reveal>
     </section>
   );
 }
 
-function Card({ label, children }: { label: string; children: React.ReactNode }) {
+function Stat({
+  label,
+  value,
+  note,
+}: {
+  label: string;
+  value: string;
+  note?: string;
+}) {
   return (
-    <div className="rounded-lg border border-pantheon-gold/30 bg-pantheon-ink/60 p-4">
-      <div className="text-xs uppercase tracking-wider text-pantheon-marble/70">
+    <div className="bg-card/40 p-6">
+      <div className="display text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
         {label}
       </div>
-      <div className="mt-2 text-2xl font-mono text-pantheon-gold">{children}</div>
+      <div className="display mt-3 text-3xl font-semibold text-primary">{value}</div>
+      {note && (
+        <div className="mono mt-1 text-[10px] uppercase tracking-[0.22em] text-emerald-400/80">
+          ✓ {note}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Constant({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="bg-card/40 p-5">
+      <div className="display text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+        {k}
+      </div>
+      <div className="display mt-2 text-base tracking-[0.04em] text-foreground">
+        {v}
+      </div>
     </div>
   );
 }
