@@ -5,6 +5,42 @@
 @layer base {
   :root {
     color-scheme: dark;
+
+    /* shadcn tokens mapped to the Pantheon palette
+       (#0a0e16 ink, #f7f3e9 parchment, #c8a85a gold, #cdd2da marble) */
+    --background: 220 24% 6%;       /* ink */
+    --foreground: 45 60% 95%;       /* parchment */
+
+    --card: 220 24% 8%;
+    --card-foreground: 45 60% 95%;
+
+    --popover: 220 24% 6%;
+    --popover-foreground: 45 60% 95%;
+
+    --primary: 41 50% 57%;          /* gold */
+    --primary-foreground: 220 24% 6%;
+
+    --secondary: 220 14% 65%;       /* marble */
+    --secondary-foreground: 220 24% 6%;
+
+    --muted: 220 18% 14%;
+    --muted-foreground: 220 12% 70%;
+
+    --accent: 41 50% 57%;
+    --accent-foreground: 220 24% 6%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 41 50% 57%;
+    --input: 41 50% 57%;
+    --ring: 41 50% 57%;
+
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-[hsl(var(--border)/0.25)];
   }
 
   body {
