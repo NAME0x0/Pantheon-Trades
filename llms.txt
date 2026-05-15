@@ -1,0 +1,94 @@
+# Pantheon Trades
+
+> AI-powered prediction-market trading system. A ten-agent council
+> deliberates every trade in four rounds; the verdict — whether to
+> trade or to refuse — is anchored as a cryptographic witness on
+> Circle's Arc Testnet. Discipline becomes auditable. Restraint
+> becomes provable alpha.
+
+Pantheon Trades is a Python + Solidity + Next.js monorepo built around
+one conviction: an automated trader's most valuable artefact is the
+record of trades it refused. Every Polymarket signal passes through a
+structured four-round deliberation between Greek-god-named AI agents
+(bulls, bears, risk, execution). The Areopagus court gates the verdict
+against constitutional caps and half-Kelly sizing. Approvals route to
+the Polymarket CLOB; rejections are anchored on-chain as a
+`Restrained` event so any third party can verify the discipline was
+paid.
+
+The flagship feature, **Proof of Restraint**, is provably live on
+Arc Testnet — first witness recorded at
+[block 42,337,549, proof_id=1](https://testnet.arcscan.app/tx/0xf9ae0e7ba73ecaece1af840b20e2ef5a20868df960e62ba238e53a828dfa4edb).
+
+## Quick architecture
+
+- **Pythia** — data oracle (Polymarket CLOB, news, sentiment)
+- **Apollo** — 7-dimension signal scoring → A/B/C edge bands
+- **Boule** — convenes the 10-agent council; runs 4 deliberation rounds
+- **Areopagus** — constitutional gates, half-Kelly sizing, drawdown veto
+- **Strategos** — order router (paper + live CLOB)
+- **Parthenon** — IPFS + Irys + Merkle archival, on-chain anchor
+- **ProofOfRestraint contract** — appends a witness for every refused trade
+- **Argos / Ostrakon / Underworld / Olympus** — monitoring, scoring, post-mortems, governance
+
+## The council (10 deliberating agents)
+
+- **Bulls**: Ares, Hades
+- **Bears**: Athena (also synthesises round 3), Cassandra
+- **Risk**: Zeus ⚡, Solon ⚡ (both have constitutional veto), Themis
+- **Execution**: Hephaestus, Daedalus, Humans
+
+Plus 12 orchestrators (Apollo, Boule, Areopagus, Strategos, Argos,
+Ostrakon, Parthenon, Pythia, Elysium, Underworld, Moirai, Olympus).
+
+## Live deployment
+
+- **Chain**: Circle Arc Testnet, chain id `5042002`, native USDC gas
+- **ProofOfRestraint contract**: [`0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895`](https://testnet.arcscan.app/address/0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895)
+- **Marketing site**: <https://pantheon-trades-web.vercel.app>
+- **Source**: <https://github.com/NAME0x0/Pantheon-Trades>
+
+## Stack
+
+- Python 3.12 services, one `uv` env per service
+- LLM council pluggable: Anthropic Claude *or* Google Gemini
+- Solidity 0.8.24 + Foundry (51 tests, 18 suites, full CI)
+- FastAPI gateway, Redis Streams pub/sub, Postgres 16, IPFS Kubo, Irys
+- Next.js 14 App Router + shadcn/ui + Cinzel/Cormorant editorial typography
+- React-three-fiber 3D scale-of-justice on the landing
+- pnpm workspaces + Turborepo
+- Vercel for the marketing site, Docker Compose for the rest
+
+## Repository entry points
+
+- [README.md](README.md) — full pitch, badges, mermaid diagrams, live tx hash
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — end-to-end system design
+- [docs/AGENTS.md](docs/AGENTS.md) — all 22 agents, weights, veto authority
+- [docs/CONSTITUTION.md](docs/CONSTITUTION.md) — immutable system rules
+- [docs/RISK_POLICY.md](docs/RISK_POLICY.md) — position caps and drawdown gates
+- [docs/THESIS_SCHEMA.md](docs/THESIS_SCHEMA.md) — Boule output structure
+- [docs/SIGNAL_SPEC.md](docs/SIGNAL_SPEC.md) — Apollo signal envelope
+- [docs/TRACE_FORMAT.md](docs/TRACE_FORMAT.md) — TraceEvent per agent step
+- [docs/SETTLEMENT_FLOW.md](docs/SETTLEMENT_FLOW.md) — on-chain settlement path
+- [docs/MOIRAI_LAWS.md](docs/MOIRAI_LAWS.md) — strategy lifecycle rules
+
+## What this project is
+
+- A research prototype for **multi-agent deliberation as alpha**
+- A **demonstration** of cryptographic restraint as a public good
+- A hackathon-grade reference for **Arc Testnet** + **Polymarket** + **agent councils**
+- A working **paper-trading** system end-to-end
+- A working **on-chain restraint anchor** — first witness already recorded
+
+## What this project is not
+
+- Not financial advice
+- Not a production trading bot with validated edge
+- Not licensed for execution against retail capital
+- Not battle-tested against adverse market makers
+- Not regulated; Polymarket is geo-restricted in many jurisdictions
+- Not running live execution by default — `EXECUTION_MODE=paper` is the default
+
+## License
+
+MIT
