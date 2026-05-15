@@ -25,6 +25,7 @@ import structlog
 
 from pantheon_core.schema import ApprovalToken, RejectionRecord, Signal, Thesis
 
+from areopagus.chain import RestraintChainWriter
 from areopagus.court import AreopagusCourt
 from areopagus.gates import PortfolioState
 
@@ -120,7 +121,41 @@ def _empty_signal_for_thesis(thesis: Thesis) -> Signal:
     )
 
 
-async def _process(redis: aioredis.Redis, raw_thesis: dict[str, Any]) -> None:
+async def _anchor_and_update(
+    redis: aioredis.Redis,
+    chain_writer: RestraintChainWriter,
+    proof_id: str,
+    proof: Any,
+) -> None:
+    """Submit the on-chain witness and persist the tx hash under
+    ``areopagus:restraint:tx:<proof_id>``.
+
+    Runs as a background task so a slow RPC never blocks the consumer.
+    """
+    result = await chain_writer.write(proof)
+    if result is None:
+        return
+    try:
+        await redis.setex(
+            f"areopagus:restraint:tx:{proof_id}",
+            7 * 24 * 3600,
+            json.dumps(
+                {
+                    "tx_hash": result.tx_hash,
+                    "onchain_proof_id": result.proof_id,
+                    "explorer_url": result.explorer_url,
+                }
+            ),
+        )
+    except Exception as e:  # noqa: BLE001
+        log.warning("areopagus.chain.persist_failed", proof_id=proof_id, error=str(e))
+
+
+async def _process(
+    redis: aioredis.Redis,
+    raw_thesis: dict[str, Any],
+    chain_writer: RestraintChainWriter | None = None,
+) -> None:
     try:
         thesis = Thesis.model_validate(raw_thesis)
     except Exception as e:  # noqa: BLE001
@@ -172,6 +207,15 @@ async def _process(redis: aioredis.Redis, raw_thesis: dict[str, Any]) -> None:
                 }
             ),
         )
+        # Best-effort on-chain witness. Fire-and-forget so a slow / unreachable
+        # RPC never blocks the consumer loop. Redis stream above remains
+        # canonical; the chain write is a public audit trail, not the truth.
+        # When the tx lands we update the Redis entry with the tx_hash so the
+        # /restraint API surface can show an Arcscan link.
+        if chain_writer is not None:
+            asyncio.create_task(
+                _anchor_and_update(redis, chain_writer, proof.proof_id, proof)
+            )
     except Exception as e:  # noqa: BLE001
         log.warning("areopagus.restraint_failed", error=str(e))
 
@@ -191,7 +235,12 @@ async def consume_forever(
         decode_responses=True,
     )
     await _ensure_group(redis)
-    log.info("areopagus.consumer.start", consumer=consumer_name)
+    chain_writer = RestraintChainWriter.from_env()
+    log.info(
+        "areopagus.consumer.start",
+        consumer=consumer_name,
+        chain_writer_enabled=chain_writer is not None,
+    )
 
     try:
         while True:
@@ -216,7 +265,7 @@ async def consume_forever(
                         await redis.xack(THESES_STREAM, CONSUMER_GROUP, entry_id)
                         continue
                     try:
-                        await _process(redis, raw_thesis)
+                        await _process(redis, raw_thesis, chain_writer=chain_writer)
                     except Exception as e:  # noqa: BLE001
                         log.exception(
                             "areopagus.consumer.process_failed",
@@ -226,4 +275,6 @@ async def consume_forever(
                         continue
                     await redis.xack(THESES_STREAM, CONSUMER_GROUP, entry_id)
     finally:
+        if chain_writer is not None:
+            await chain_writer.close()
         await redis.aclose()
