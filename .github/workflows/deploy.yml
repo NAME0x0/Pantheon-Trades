@@ -17,9 +17,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      # foundryup hits api.github.com to resolve release tags. Without an
+      # auth token the runner IP shares the 60-req/hr unauth pool and
+      # returns 403 under load. GITHUB_TOKEN bumps us to 5000/hr.
       - uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: stable
+          version: nightly
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: forge script DeployPantheon
         env:
           PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
