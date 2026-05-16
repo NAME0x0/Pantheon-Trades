@@ -130,18 +130,39 @@ async def serve(consumer_name: str) -> None:
         await redis.aclose()
 
 
-def _cmd_calibrate(in_csv, out_json: str) -> None:
-    """Fit per-agent Platt + isotonic calibrators from a backtest CSV."""
+def _cmd_calibrate(
+    in_csv,
+    out_json: str,
+    window_days: float | None = None,
+    half_life_days: float | None = None,
+) -> None:
+    """Fit per-agent Platt + isotonic calibrators from a backtest CSV.
+
+    Mode selection:
+      * neither flag           -> use every row (legacy behaviour)
+      * ``--window-days N``    -> only rows resolved within last N days
+      * ``--half-life-days H`` -> exp-decay weight rows by age (half-life H)
+    """
     from pathlib import Path
 
     from ostrakon import agent_calibration as ac
 
     in_path = Path(in_csv)
     out_path = Path(out_json)
-    cals = ac.calibrate_from_csv(in_path)
+    if window_days is not None and half_life_days is not None:
+        raise SystemExit("choose --window-days OR --half-life-days, not both")
+    if window_days is not None:
+        cals = ac.calibrate_from_csv_windowed(in_path, window_days=window_days)
+        mode = f"windowed({window_days}d)"
+    elif half_life_days is not None:
+        cals = ac.calibrate_from_csv_decayed(in_path, half_life_days=half_life_days)
+        mode = f"decayed(hl={half_life_days}d)"
+    else:
+        cals = ac.calibrate_from_csv(in_path)
+        mode = "all-history"
     ac.dump_json(cals, out_path)
     print(ac.format_report(cals))
-    print(f"\nWrote {len(cals)} agent calibration(s) -> {out_path}")
+    print(f"\nMode: {mode} | wrote {len(cals)} agent calibration(s) -> {out_path}")
 
 
 def main() -> None:
@@ -163,6 +184,20 @@ def main() -> None:
         default="agent_calibrations.json",
         help="Output JSON consumed by boule.calibrator at runtime.",
     )
+    cp.add_argument(
+        "--window-days",
+        dest="window_days",
+        type=float,
+        default=None,
+        help="Walk-forward: only fit on rows resolved in the last N days.",
+    )
+    cp.add_argument(
+        "--half-life-days",
+        dest="half_life_days",
+        type=float,
+        default=None,
+        help="Walk-forward (decayed): weight rows by exp(-ln2 * age / H).",
+    )
 
     rp = sub.add_parser(
         "recalibrate-loop",
@@ -180,7 +215,12 @@ def main() -> None:
     if args.cmd == "serve":
         asyncio.run(serve(consumer_name=args.consumer_name))
     elif args.cmd == "calibrate":
-        _cmd_calibrate(args.in_csv, args.out_json)
+        _cmd_calibrate(
+            args.in_csv,
+            args.out_json,
+            window_days=args.window_days,
+            half_life_days=args.half_life_days,
+        )
     elif args.cmd == "recalibrate-loop":
         from pathlib import Path
 
