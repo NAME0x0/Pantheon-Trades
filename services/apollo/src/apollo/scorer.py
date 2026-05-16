@@ -19,8 +19,17 @@ from apollo.bands import classify
 from apollo.features.catalyst import CatalystEvent, catalyst_score
 from apollo.features.correlation import correlation_score
 from apollo.features.edge import compute_edge, oracle_probability
+from apollo.features.lead_lag import LeadLagSnapshot, lead_lag_probability_delta
 from apollo.features.liquidity import liquidity_score
+from apollo.features.orderbook_imbalance import (
+    OrderBookLevel,
+    imbalance_probability_delta,
+)
 from apollo.features.sentiment import SentimentSample, sentiment_score
+from apollo.features.sentiment_velocity import (
+    SentimentTick,
+    sentiment_velocity_probability_delta,
+)
 from apollo.features.trend import trend_score
 from apollo.features.volatility import volatility_score
 
@@ -48,6 +57,16 @@ class MarketSnapshot:
     sentiment_samples: list[SentimentSample] = field(default_factory=list)
     open_position_correlations: list[float] = field(default_factory=list)
 
+    # ── Predictive features (Tier 2 alpha primitives) ──────────────
+    # Order-book depth ladders, lead/lag price-series pairs, and
+    # time-ordered sentiment ticks for the velocity feature. All
+    # default to empty so legacy callers remain valid; populated
+    # by Pythia adapters when the source actually carries the data.
+    orderbook_bids: list[OrderBookLevel] = field(default_factory=list)
+    orderbook_asks: list[OrderBookLevel] = field(default_factory=list)
+    lead_lag_snapshots: list[LeadLagSnapshot] = field(default_factory=list)
+    sentiment_ticks: list[SentimentTick] = field(default_factory=list)
+
     # Pythia adapter context.
     data_sources: list[str] = field(default_factory=list)
     snapshot_at: datetime = field(default_factory=utc_now)
@@ -73,10 +92,32 @@ def score_market(snap: MarketSnapshot) -> Signal:
     trnd = trend_score(snap.price_history)
     corr = correlation_score(snap.open_position_correlations)
 
+    # Predictive deltas — each capped at its own MAX_DELTA so no single
+    # primitive can dominate the oracle probability.
+    imbalance_delta = (
+        imbalance_probability_delta(snap.orderbook_bids, snap.orderbook_asks)
+        if snap.orderbook_bids and snap.orderbook_asks
+        else 0.0
+    )
+    leadlag_delta = 0.0
+    for ll in snap.lead_lag_snapshots:
+        leadlag_delta += lead_lag_probability_delta(ll)
+    leadlag_delta = max(-0.05, min(0.05, leadlag_delta))
+    velocity_delta = (
+        sentiment_velocity_probability_delta(snap.sentiment_ticks)
+        if len(snap.sentiment_ticks) >= 2
+        else 0.0
+    )
+
+    # Fold the predictive adjustments into the existing sentiment /
+    # trend envelope. oracle_probability still clips to (0, 1).
+    sentiment_total = snap.sentiment_adjustment + velocity_delta
+    trend_total = snap.trend_adjustment + leadlag_delta + imbalance_delta
+
     oracle_p = oracle_probability(
         base_prob=snap.market_probability,
-        sentiment_adj=snap.sentiment_adjustment,
-        trend_adj=snap.trend_adjustment,
+        sentiment_adj=sentiment_total,
+        trend_adj=trend_total,
         catalyst_adj=snap.catalyst_adjustment,
         calibration_factor=snap.calibration_factor,
     )
