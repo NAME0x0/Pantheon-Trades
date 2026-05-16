@@ -89,6 +89,17 @@ async def _record_resolution(redis: aioredis.Redis, payload: dict) -> None:
             predictions=metrics.prediction_count,
         )
 
+    # Recursive calibration loop: bump the counter so the recalibrate
+    # daemon knows another resolution has landed. The daemon itself
+    # decides when to refit, swap the JSON file, and let Boule pick it
+    # up on its next deliberation.
+    try:
+        from ostrakon.recalibrate_loop import increment_counter
+
+        await increment_counter(redis, by=1)
+    except Exception as e:  # noqa: BLE001
+        log.warning("ostrakon.recal_counter_failed", error=str(e))
+
 
 async def serve(consumer_name: str) -> None:
     redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
@@ -153,11 +164,29 @@ def main() -> None:
         help="Output JSON consumed by boule.calibrator at runtime.",
     )
 
+    rp = sub.add_parser(
+        "recalibrate-loop",
+        help="Background daemon: refit calibration every N resolutions, "
+             "swap agent_calibrations.json atomically so live Boule picks it "
+             "up without restart.",
+    )
+    rp.add_argument(
+        "--out",
+        dest="out_json",
+        default="agent_calibrations.json",
+    )
+
     args = parser.parse_args()
     if args.cmd == "serve":
         asyncio.run(serve(consumer_name=args.consumer_name))
     elif args.cmd == "calibrate":
         _cmd_calibrate(args.in_csv, args.out_json)
+    elif args.cmd == "recalibrate-loop":
+        from pathlib import Path
+
+        from ostrakon.recalibrate_loop import loop_forever
+
+        asyncio.run(loop_forever(Path(args.out_json)))
 
 
 if __name__ == "__main__":
