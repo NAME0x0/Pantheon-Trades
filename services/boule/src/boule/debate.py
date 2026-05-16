@@ -45,6 +45,7 @@ from boule.agents.bear_researcher import Athena, Cassandra
 from boule.agents.bull_researcher import Ares, HadesAgent
 from boule.agents.execution_agent import Daedalus, Hephaestus, HumansAgent
 from boule.agents.risk_manager import Solon, Themis, Zeus
+from boule.calibrator import Calibrator
 from boule.llm import LLMClient
 from boule.trace import Tracer
 
@@ -173,6 +174,8 @@ async def run_debate(
     humans_flags: list[str] = []
     hephaestus_flags: list[str] = []
 
+    calibrator = Calibrator.from_env()
+
     if early_veto is None:
         await tracer.emit("agent_round_start", "Round 4 — votes", round=4)
         vote_results = await asyncio.gather(
@@ -184,6 +187,14 @@ async def run_debate(
                 vs, conf, prob, flags = "ABSTAIN", 0.0, signal.oracle_probability, []
             else:
                 vs, conf, prob, flags = result
+            # Apply per-agent calibration to the raw probability estimate
+            # before it enters the tally. ABSTAIN votes are exempt — they
+            # are not used in the council probability blend.
+            raw_prob = prob
+            if vs != "ABSTAIN" and calibrator.has(ag.name):
+                prob = calibrator.apply(ag.name, raw_prob)
+                if abs(prob - raw_prob) > 1e-6:
+                    flags = list(flags) + [f"calibrated:{raw_prob:.3f}->{prob:.3f}"]
             av = AgentVote(
                 agent=ag.name,
                 vote=vs,  # type: ignore[arg-type]
