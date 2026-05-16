@@ -9,7 +9,6 @@ from __future__ import annotations
 import asyncio
 from typing import Any
 
-import pytest
 
 from pantheon_core.schema import ApprovalToken, Thesis
 from strategos.safety import (
@@ -17,8 +16,6 @@ from strategos.safety import (
     SafetyWrapper,
     APPROVED_FLAG_ENV,
     CONSEC_LOSSES_KEY,
-    COST_KEY_FMT,
-    LIVE_TRADE_COUNT_KEY,
 )
 
 

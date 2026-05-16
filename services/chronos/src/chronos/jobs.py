@@ -8,11 +8,9 @@ deployable independently.
 
 from __future__ import annotations
 
-import asyncio
 import json
 import os
 
-import httpx
 import redis.asyncio as aioredis
 import structlog
 

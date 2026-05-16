@@ -12,7 +12,6 @@ import json
 from datetime import datetime, timezone
 
 import httpx
-import pytest
 
 from pythia import news_search
 

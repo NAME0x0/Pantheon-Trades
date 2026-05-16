@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 
 from apollo.features.lead_lag import LeadLagSnapshot, lead_lag_probability_delta, best_lag
 from apollo.features.orderbook_imbalance import (

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 
 from boule.diversity import MIN_DIVERSITY, measure
 

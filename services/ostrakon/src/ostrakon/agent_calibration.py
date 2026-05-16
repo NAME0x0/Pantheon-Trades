@@ -89,12 +89,10 @@ def _load_rows(path: Path) -> list[dict]:
 def _outcome_from_brier(p: float, brier: float) -> int:
     """Recover the binary outcome from (probability, brier).
 
-    Brier = (p - actual)^2, actual ∈ {0, 1}. Closer of {0,1} to (p ± √brier).
+    Brier = (p - actual)^2, actual ∈ {0, 1}. Pick whichever outcome
+    yields a Brier closer to the observed value.
     """
-    err = brier ** 0.5
-    actual_if_1 = 1.0
-    actual_if_0 = 0.0
-    if abs((p - actual_if_1) ** 2 - brier) < abs((p - actual_if_0) ** 2 - brier):
+    if abs((p - 1.0) ** 2 - brier) < abs((p - 0.0) ** 2 - brier):
         return 1
     return 0
 

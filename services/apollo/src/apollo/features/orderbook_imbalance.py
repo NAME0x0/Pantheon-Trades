@@ -40,7 +40,7 @@ def _depth_within(levels: list[OrderBookLevel], inside: float, window_pp: float)
         return 0.0
     lo = inside - window_pp
     hi = inside + window_pp
-    return float(sum(l.size_usdc for l in levels if lo <= l.price <= hi and l.size_usdc > 0))
+    return float(sum(lvl.size_usdc for lvl in levels if lo <= lvl.price <= hi and lvl.size_usdc > 0))
 
 
 def orderbook_imbalance(
@@ -52,8 +52,8 @@ def orderbook_imbalance(
     """Raw imbalance in [-1, +1]. 0 = perfectly balanced book."""
     if not bids or not asks:
         return 0.0
-    best_bid = max(l.price for l in bids)
-    best_ask = min(l.price for l in asks)
+    best_bid = max(lvl.price for lvl in bids)
+    best_ask = min(lvl.price for lvl in asks)
     bid_depth = _depth_within(bids, best_bid, window_pp)
     ask_depth = _depth_within(asks, best_ask, window_pp)
     total = bid_depth + ask_depth

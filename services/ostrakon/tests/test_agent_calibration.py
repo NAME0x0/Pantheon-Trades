@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import csv
-import json
 from pathlib import Path
 
-import pytest
 
 from ostrakon import agent_calibration as ac
 

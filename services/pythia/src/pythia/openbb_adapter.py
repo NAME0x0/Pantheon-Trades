@@ -28,7 +28,6 @@ import io
 import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Optional
 
 import httpx
 import structlog
