@@ -22,10 +22,12 @@ from pantheon_core.schema import ExitSignal
 
 from argos.exits import check_exit
 from argos.pnl import Position
+from argos.resolution_lag import ResolutionLagTracker, Transition
 
 log = structlog.get_logger("argos.monitor")
 
 EXIT_STREAM = "argos:exits"
+RESOLUTION_LAG_STREAM = "argos:resolution_lag"
 DEFAULT_INTERVAL = 15.0
 
 PositionFetcher = Callable[[], Awaitable[list[Position]]]
@@ -40,12 +42,16 @@ class ArgosMonitor:
         redis: Redis,
         stream: str = EXIT_STREAM,
         interval_seconds: float = DEFAULT_INTERVAL,
+        resolution_lag: ResolutionLagTracker | None = None,
+        resolution_lag_stream: str = RESOLUTION_LAG_STREAM,
     ) -> None:
         self._get_positions = get_positions
         self._get_yes_price = get_yes_price
         self._redis = redis
         self._stream = stream
         self._interval = interval_seconds
+        self._lag_tracker = resolution_lag
+        self._lag_stream = resolution_lag_stream
 
     async def tick(self) -> list[ExitSignal]:
         positions = await self._get_positions()
@@ -67,6 +73,10 @@ class ArgosMonitor:
             if exit_signal is not None:
                 exits.append(exit_signal)
                 await self._publish(exit_signal)
+            if self._lag_tracker is not None:
+                transition = self._lag_tracker.on_tick(pos)
+                if transition is not None:
+                    await self._publish_resolution(transition)
         log.info(
             "argos.tick",
             positions=len(positions),
@@ -84,6 +94,36 @@ class ArgosMonitor:
             )
         except Exception as e:
             log.warning("argos.publish_failed", trade_id=sig.trade_id, error=str(e))
+
+    async def _publish_resolution(self, transition: Transition) -> None:
+        payload = {
+            "trade_id": transition.trade_id,
+            "market_id": transition.market_id,
+            "from": transition.from_state.value,
+            "to": transition.to_state.value,
+            "at": transition.at.isoformat(),
+            "note": transition.note,
+        }
+        try:
+            import json
+
+            await self._redis.xadd(
+                self._lag_stream,
+                {"data": json.dumps(payload)},
+                maxlen=50_000,
+                approximate=True,
+            )
+            log.info(
+                "argos.resolution_transition",
+                trade_id=transition.trade_id,
+                **{"from": transition.from_state.value, "to": transition.to_state.value},
+            )
+        except Exception as e:
+            log.warning(
+                "argos.resolution_publish_failed",
+                trade_id=transition.trade_id,
+                error=str(e),
+            )
 
     async def run_forever(self) -> None:
         while True:
