@@ -17,8 +17,9 @@ import structlog
 from pantheon_core.direction import entry_price as direction_entry_price
 from pantheon_core.schema import ApprovalToken, Thesis, Trade, utc_now
 
+from strategos.execution_mode import choose_execution
 from strategos.polymarket_clob import OrderRequest, OrderResponse, PolymarketClobClient
-from strategos.slippage import estimate_slippage, slippage_eats_edge
+from strategos.slippage import slippage_eats_edge
 
 log = structlog.get_logger("strategos.live")
 
@@ -73,8 +74,21 @@ class LiveExecutor:
             )
 
         token_id = yes_token_id if thesis.direction == "YES" else no_token_id
-        slip = estimate_slippage(size_usdc, depth_usdc)
-        limit_price = max(0.01, min(0.99, side_price + slip))
+        decision = choose_execution(
+            side_price,
+            edge_abs=abs(thesis.signed_edge),
+            depth_usdc=depth_usdc,
+            size_usdc=size_usdc,
+            days_to_resolution=getattr(thesis, "days_to_resolution", None),
+        )
+        limit_price = decision.limit_price
+        log.info(
+            "strategos.execution_mode",
+            thesis_id=thesis.thesis_id,
+            mode=decision.mode,
+            limit_price=limit_price,
+            reason=decision.reason,
+        )
         # Polymarket orders are denominated in contracts. One contract pays $1 on resolution.
         contracts = size_usdc / limit_price if limit_price > 0 else 0.0
 
