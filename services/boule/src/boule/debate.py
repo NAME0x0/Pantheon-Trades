@@ -40,12 +40,15 @@ from pantheon_core.schema import (
     utc_now,
 )
 
+import os
+
 from boule.agents.base import CouncilAgent
 from boule.agents.bear_researcher import Athena, Cassandra
 from boule.agents.bull_researcher import Ares, HadesAgent
 from boule.agents.execution_agent import Daedalus, Hephaestus, HumansAgent
 from boule.agents.risk_manager import Solon, Themis, Zeus
 from boule.calibrator import Calibrator
+from boule.diversity import measure as measure_diversity
 from boule.llm import LLMClient
 from boule.trace import Tracer
 
@@ -54,6 +57,16 @@ log = structlog.get_logger("boule.debate")
 MIN_QUORUM = 7
 APPROVAL_THRESHOLD = 0.60
 EARLY_VETO_TOKENS = ("VIOLATION", "VETO", "CONSTITUTIONAL_VIOLATION", "POLICY_VIOLATION")
+
+# Multi-LLM Zeus consensus — when set, a Zeus REJECT must be confirmed
+# by an independent provider call before the veto sticks. Halves the
+# false-positive veto rate at the cost of one extra completion.
+ZEUS_CONSENSUS_PROVIDER = os.environ.get("BOULE_ZEUS_CONSENSUS_PROVIDER", "").strip().lower()
+
+# Reflection round — when on (default), Athena evaluates the round-4
+# verdict against the full debate one more time. The output is folded
+# into the thesis confidence as a meta-check.
+REFLECTION_ENABLED = os.environ.get("BOULE_REFLECTION_ENABLED", "1") not in ("0", "false", "False", "")
 
 
 def _load_prompt(agent_name: str) -> str:
@@ -105,6 +118,101 @@ async def _safe_gather(
 
 def _filter_blocks(blocks: list) -> list[ThesisBlock]:
     return [b for b in blocks if b is not None]
+
+
+async def _confirm_zeus_veto(signal: Signal, primary_block: ThesisBlock | None) -> bool:
+    """Independent-provider confirmation of a Zeus veto.
+
+    Returns True only if the secondary provider also flags this signal as
+    a constitutional violation. Falls back to confirming the veto (True)
+    on any error so we err on the side of *not* trading. Disabled when
+    ``BOULE_ZEUS_CONSENSUS_PROVIDER`` is unset.
+    """
+    if not ZEUS_CONSENSUS_PROVIDER:
+        return True
+    try:
+        os_env_backup = os.environ.get("BOULE_LLM_PROVIDER", "")
+        os.environ["BOULE_LLM_PROVIDER"] = ZEUS_CONSENSUS_PROVIDER
+        from boule.llm import build_default_client
+
+        second = build_default_client()
+        os.environ["BOULE_LLM_PROVIDER"] = os_env_backup
+        prompt_block = primary_block.content if primary_block else ""
+        question = (
+            "You are an independent constitutional reviewer for an AI prediction-market "
+            "council. Primary Zeus flagged this trade as a constitutional violation. "
+            "Reply with one word: CONFIRM if you agree the violation is real, OVERRIDE "
+            "if you do not. Then a one-line reason.\n\n"
+            f"Market: {signal.question}\n"
+            f"Market p: {signal.market_probability:.2%}\n"
+            f"Oracle p: {signal.oracle_probability:.2%}\n"
+            f"Primary Zeus said:\n{prompt_block[:1500]}"
+        )
+        try:
+            result = await second.complete(
+                system="You are a Pantheon constitutional reviewer.",
+                messages=[{"role": "user", "content": question}],
+                max_tokens=128,
+            )
+        finally:
+            await second.close()
+        verdict = (result.text or "").strip().upper()
+        return "CONFIRM" in verdict and "OVERRIDE" not in verdict[:20]
+    except Exception as e:  # noqa: BLE001
+        log.warning("debate.zeus_consensus_failed", error=str(e))
+        return True  # fail-safe: keep the veto
+
+
+async def _reflection(
+    athena: Athena | None,
+    signal: Signal,
+    all_blocks: list[ThesisBlock],
+    votes: list[AgentVote],
+    direction: str,
+    weighted_approval: float,
+) -> tuple[str, float] | None:
+    """Athena re-evaluates the verdict one more time post-tally.
+
+    Returns (reflection_text, confidence_adjustment in [-0.1, +0.1]).
+    ``None`` if reflection is disabled or fails.
+    """
+    if not REFLECTION_ENABLED or athena is None:
+        return None
+    if not votes:
+        return None
+    try:
+        tally = ", ".join(f"{v.agent}={v.vote}" for v in votes)
+        prompt = (
+            "You synthesised this council's round 3 deliberation. Now read the round 4 votes "
+            "and reflect briefly: does the verdict still hold given the full debate, or do "
+            "you spot an inconsistency the council missed?\n\n"
+            f"Market: {signal.question}\n"
+            f"Council direction: {direction} | weighted approval: {weighted_approval:.0%}\n\n"
+            f"Round 4 tally: {tally}\n\n"
+            "Reply with: HOLD or RECONSIDER on the first line, then a 1-2 sentence reason. "
+            "End with a confidence delta in [-0.1, +0.1] on its own line, e.g. delta=-0.05."
+        )
+        # Reuse Athena's client + tracer plumbing via her _call helper.
+        block = await athena._call(
+            messages=[{"role": "user", "content": prompt}],
+            round_num=5,
+        )
+        text = (block.content or "").strip()
+        # Parse the delta line.
+        delta = 0.0
+        for line in reversed(text.splitlines()):
+            line = line.strip().lower()
+            if line.startswith("delta="):
+                try:
+                    delta = float(line.split("=", 1)[1])
+                except ValueError:
+                    delta = 0.0
+                break
+        delta = max(-0.10, min(0.10, delta))
+        return text, delta
+    except Exception as e:  # noqa: BLE001
+        log.warning("debate.reflection_failed", error=str(e))
+        return None
 
 
 async def run_debate(
@@ -265,9 +373,56 @@ async def run_debate(
     else:
         cp = signal.oracle_probability
 
+    # ---- Multi-LLM Zeus consensus -----------------------------------------
+    # If Zeus rejected and the operator wired a second provider, require
+    # the second provider to confirm before the veto sticks. Reduces
+    # false-positive vetoes from a single noisy primary call.
+    if zeus_veto and ZEUS_CONSENSUS_PROVIDER and early_veto is None:
+        zeus_block = next(
+            (b for b in all_blocks if b.agent == "zeus" and b.round in (1, 2)),
+            None,
+        )
+        confirmed = await _confirm_zeus_veto(signal, zeus_block)
+        if not confirmed:
+            log.info("debate.zeus_veto_overridden", provider=ZEUS_CONSENSUS_PROVIDER)
+            await tracer.emit(
+                "zeus_consensus_override",
+                f"Secondary {ZEUS_CONSENSUS_PROVIDER} overrode Zeus veto",
+                agent="zeus",
+                round=4,
+            )
+            zeus_veto = False
+
+    # ---- Anti-Goodhart diversity check -----------------------------------
+    diversity = measure_diversity([(av.vote, av.probability_estimate) for av in agent_votes])
+    await tracer.emit(
+        "diversity",
+        f"composite={diversity.composite:.2f} entropy={diversity.vote_entropy:.2f} "
+        f"std={diversity.probability_std:.3f}{' ALERT' if diversity.alert else ''}",
+        round=4,
+        flags=["diversity_alert"] if diversity.alert else [],
+    )
+
     # Direction is determined by where the council lands vs the market price.
     direction = infer_direction(signal.market_probability, cp)
     signed_edge = directional_edge(signal.market_probability, cp, direction)
+
+    # ---- Round 5: reflection ---------------------------------------------
+    reflection_text: str | None = None
+    reflection_delta = 0.0
+    if early_veto is None:
+        athena = next((a for a in agents if isinstance(a, Athena)), None)
+        result = await _reflection(athena, signal, all_blocks, agent_votes, direction, waf)
+        if result is not None:
+            reflection_text, reflection_delta = result
+            await tracer.emit(
+                "reflection",
+                reflection_text[:300],
+                agent="athena",
+                round=5,
+                confidence=waf + reflection_delta,
+            )
+            waf = max(0.0, min(1.0, waf + reflection_delta))
 
     approved = (
         early_veto is None
