@@ -85,7 +85,15 @@ _drift = DriftTracker()
 
 def record_fingerprint(fingerprint: Optional[str]) -> Optional[dict]:
     """Public API: returns a drift event dict when one fires."""
-    return _drift.observe(fingerprint)
+    event = _drift.observe(fingerprint)
+    if event is not None:
+        try:
+            from boule.metrics import m as _pm
+
+            _pm["drift_events_total"].inc()
+        except Exception:  # noqa: BLE001
+            pass
+    return event
 
 
 # ─── Cost ledger ─────────────────────────────────────────────────────
@@ -144,6 +152,17 @@ class CostLedger:
             # in the persistence layer.
             if len(self._rows) > 5000:
                 self._rows = self._rows[-5000:]
+        # Best-effort Prometheus emission. No-op without prometheus_client.
+        try:
+            from boule.metrics import m as _pm
+
+            provider = row.provider or "unknown"
+            _pm["llm_cost_usd_total"].labels(provider=provider).inc(row.usd)
+            _pm["llm_calls_total"].labels(
+                provider=provider, model=row.model or "unknown"
+            ).inc()
+        except Exception:  # noqa: BLE001
+            pass
 
     def thesis_cost_usd(self, thesis_id: str) -> float:
         return sum(r.usd for r in self._rows if r.thesis_id == thesis_id)

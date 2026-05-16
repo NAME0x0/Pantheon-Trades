@@ -48,7 +48,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-asyncio pydantic pydantic-settings tenacity \
             structlog redis httpx anthropic eth-utils "eth-hash[pycryptodome]" \
-            web3 numpy scikit-learn apscheduler
+            web3 numpy scikit-learn apscheduler hypothesis prometheus-client
       - name: Run tests for ${{ matrix.service }}
         shell: bash
         run: |
@@ -72,7 +72,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-asyncio pydantic pydantic-settings tenacity \
             structlog redis httpx anthropic eth-utils "eth-hash[pycryptodome]" \
-            web3 numpy scikit-learn apscheduler
+            web3 numpy scikit-learn apscheduler hypothesis prometheus-client
       - run: python -m pytest tests/test_pipeline_integration.py -q
 
   foundry:

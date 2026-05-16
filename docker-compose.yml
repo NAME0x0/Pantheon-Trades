@@ -171,7 +171,40 @@ services:
       api: { condition: service_started }
     restart: unless-stopped
 
+  # ── Observability stack ─────────────────────────────────────────
+  # Prometheus scrapes the /metrics endpoint each council service
+  # exposes on port 9464. Grafana ships with a pre-baked dashboard
+  # at http://localhost:3001 (admin / pantheon).
+  prometheus:
+    image: prom/prometheus:v3.2.0
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - pantheon-prom:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=14d"
+    ports: ["9090:9090"]
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: pantheon
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - pantheon-grafana:/var/lib/grafana
+    ports: ["3001:3000"]
+    depends_on:
+      prometheus: { condition: service_started }
+    restart: unless-stopped
+
 volumes:
   pantheon-pg:
   pantheon-redis:
   pantheon-ipfs:
+  pantheon-prom:
+  pantheon-grafana:

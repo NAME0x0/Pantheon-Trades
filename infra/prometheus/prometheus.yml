@@ -1,0 +1,33 @@
+# Prometheus scrape config for the Pantheon services.
+#
+# Every council service (boule, areopagus, strategos, parthenon,
+# pythia, etc.) exposes a /metrics endpoint on port 9464 backed by
+# services/boule/src/boule/metrics.py.  Service-discovery via the
+# docker-compose network — services resolve by name.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    pantheon: testnet
+
+scrape_configs:
+  - job_name: pantheon
+    static_configs:
+      - targets:
+          - boule:9464
+          - areopagus:9464
+          - strategos:9464
+          - parthenon:9464
+          - pythia:9464
+          - apollo:9464
+          - argos:9464
+          - ostrakon:9464
+        labels:
+          deployment: dev
+
+  - job_name: api
+    static_configs:
+      - targets: ["api:8000"]
+        labels:
+          deployment: dev
