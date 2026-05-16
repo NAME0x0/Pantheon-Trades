@@ -8,6 +8,8 @@ dependencies = [
     "numpy>=1.26",
     "redis[hiredis]>=5.0",
     "structlog>=24.1",
+    # Platt + isotonic per-agent calibration from backtest results.
+    "scikit-learn>=1.4",
 ]
 
 [build-system]

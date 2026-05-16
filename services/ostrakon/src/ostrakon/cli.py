@@ -119,15 +119,45 @@ async def serve(consumer_name: str) -> None:
         await redis.aclose()
 
 
+def _cmd_calibrate(in_csv, out_json: str) -> None:
+    """Fit per-agent Platt + isotonic calibrators from a backtest CSV."""
+    from pathlib import Path
+
+    from ostrakon import agent_calibration as ac
+
+    in_path = Path(in_csv)
+    out_path = Path(out_json)
+    cals = ac.calibrate_from_csv(in_path)
+    ac.dump_json(cals, out_path)
+    print(ac.format_report(cals))
+    print(f"\nWrote {len(cals)} agent calibration(s) -> {out_path}")
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser(prog="ostrakon")
     sub = parser.add_subparsers(dest="cmd", required=True)
+
     sp = sub.add_parser("serve", help="Score agents from strategos:resolutions")
     sp.add_argument("--consumer-name", default=DEFAULT_CONSUMER_NAME)
+
+    cp = sub.add_parser(
+        "calibrate",
+        help="Fit per-agent Platt + isotonic calibrators from a backtest CSV.",
+    )
+    cp.add_argument("--in", dest="in_csv", required=True, help="backtest_per_agent.csv")
+    cp.add_argument(
+        "--out",
+        dest="out_json",
+        default="agent_calibrations.json",
+        help="Output JSON consumed by boule.calibrator at runtime.",
+    )
+
     args = parser.parse_args()
     if args.cmd == "serve":
         asyncio.run(serve(consumer_name=args.consumer_name))
+    elif args.cmd == "calibrate":
+        _cmd_calibrate(args.in_csv, args.out_json)
 
 
 if __name__ == "__main__":
