@@ -51,14 +51,14 @@ The current 7-dimension scoring is heuristic (liquidity, catalyst, sentiment, et
 
 This is where alpha actually lives. Plan: 2-3 weeks of feature engineering work; A/B test each new feature against a hold-out.
 
-### 2.2 Reflection round (5th round of debate) ❌
-Add a meta-round where Athena evaluates whether the prior round's reasoning held against new information. Cheap: 1 extra LLM call. Increases reliability when signals shift mid-deliberation.
+### 2.2 Reflection round (5th round of debate) ✅
+Athena re-evaluates the round-4 verdict against the full debate. Returns HOLD or RECONSIDER plus a confidence delta in [-0.10, +0.10] which is applied to weighted_approval *before* the approval threshold check. Gated by ``BOULE_REFLECTION_ENABLED`` (default on). One extra LLM call per deliberation; cheap and catches reasoning inconsistencies.
 
-### 2.3 Anti-Goodhart agent diversity metric ❌
-Brier-score-driven calibration creates pressure for agents to mimic each other (the agent that copies the median always scores better than the loner). Measure KL-divergence between agent vote distributions over a rolling window; alert when the council collapses to a single voice. Possible mitigation: agent-specific temperature, agent-specific prompts forced to remain distinct.
+### 2.3 Anti-Goodhart agent diversity metric ✅
+``boule.diversity.measure`` computes Shannon entropy + probability-estimate std into a composite ∈ [0, 1]. Emitted as a ``diversity`` trace event after every round-4 tally; alerts below ``MIN_DIVERSITY`` (0.35). Olympus can subscribe and rotate prompts / temperatures when the council collapses.
 
-### 2.4 Multi-LLM consensus for Zeus veto ❌
-For the supreme veto specifically, require agreement across two different model providers (e.g. Claude + Gemini). Halves false-positive vetoes; doubles the cost of veto calls. Worth it because veto is the highest-leverage action.
+### 2.4 Multi-LLM consensus for Zeus veto ✅
+``BOULE_ZEUS_CONSENSUS_PROVIDER=<gemini|openai|...>`` triggers an independent confirmation call after a Zeus REJECT. The veto only sticks when the secondary provider also flags it. Fails closed (keep the veto) on error so we always err on the side of not trading. Halves false-positive vetoes at the cost of one extra LLM call per veto.
 
 ### 2.5 Adversarial selection detection ❌
 Flag markets where YOUR order shape exactly matches recent suspicious volume on the same side. Often means a counterparty has information you don't. Build via Polymarket trade-feed analysis.
@@ -67,11 +67,11 @@ Flag markets where YOUR order shape exactly matches recent suspicious volume on 
 
 ## Tier 3 — Long-term reliability
 
-### 3.1 Reproducibility seed ❌
-LLM temperature breaks reproducibility. For audit purposes, optionally pin temperature=0 and pass a stable seed (where the provider supports it). Same signal + same calibration + same prompts → same verdict. Allows deterministic CI regression tests.
+### 3.1 Reproducibility seed ✅
+``BOULE_LLM_DETERMINISTIC=1`` pins temperature=0 across all three adapter families (OpenAI-compat, Gemini, Anthropic), plus a ``BOULE_LLM_SEED`` (default 42) where the provider supports it. Same signal + same calibration + same prompts → same verdict, ready for CI regression tests.
 
-### 3.2 Model drift detection ❌
-If Anthropic releases Sonnet 4.7 and we silently upgrade, every previous calibrator is now stale. Track the provider's model fingerprint in each completion result; invalidate calibration when fingerprint changes for a significant fraction of training samples.
+### 3.2 Model drift detection ✅
+``boule.telemetry.DriftTracker`` records the provider model fingerprint on every completion (e.g. ``anthropic/claude-sonnet-4-6``, ``google/gemini-2.5-flash-lite``). Sliding window of ``BOULE_DRIFT_WINDOW`` (default 200); when mismatch exceeds ``BOULE_DRIFT_FRACTION`` (default 20%) a ``model_drift`` trace event fires. Calibration should be refit after every drift event.
 
 ### 3.3 Live Kalshi connector ❌
 Polymarket is geo-restricted in many jurisdictions and charges 2% taker. Kalshi is US-regulated and charges <0.5%. Same binary outcome model. Paper trade Pantheon on both venues in parallel; pick the venue per market based on liquidity + fees.
@@ -79,11 +79,48 @@ Polymarket is geo-restricted in many jurisdictions and charges 2% taker. Kalshi 
 ### 3.4 Event-driven news webhooks ❌
 Replace the current RSS polling in Pythia + Brave/GDELT polling in Pythia.news_search with webhook subscriptions to a news vendor (e.g. Newscatcher, Aylien). Real-time matters when markets move on headlines.
 
-### 3.5 Per-trade cost attribution ❌
-Today's cost cap is daily-cumulative. Better: attribute each LLM call to a (signal_id, agent, round) tuple so we can answer "this trade cost $0.42 of LLM and $0.0001 of gas; was the expected edge worth it before placing?"
+### 3.5 Per-trade cost attribution ✅
+``boule.telemetry.CostLedger`` records (thesis_id, signal_id, agent, round, provider, model, tokens_in, tokens_out, usd, timestamp) on every LLM call. Pricing table covers Anthropic, Gemini, OpenAI, DeepSeek, xAI, Groq Llama; unknown models fall back to a conservative $1/1M-tokens default. ``ledger.per_thesis_breakdown(thesis_id)`` answers "how much LLM did this trade cost, broken down by agent?"
 
 ### 3.6 Reflection-driven prompt evolution ❌
-After each settled trade, run an Ostrakon pass that asks: "what would have changed the council's verdict?" Use the response to suggest prompt edits per agent. Human reviews and applies. Genuine learning loop.
+After each settled trade, run an Underworld pass that asks: "what prompt edit would have changed the council's verdict?" Save the suggestion to disk; human reviews and applies. Real learning loop.
+
+---
+
+## Tier 4 — Data + robustness primitives (newly added)
+
+### 4.1 CoinGecko live-price client ✅
+``services/pythia/src/pythia/coingecko.py`` — async client with min-spacing rate limiter (free 30 RPM), disk cache (60s spot, 300s historical TTLs), demo + pro-key auto-detection. Exposes ``spot(symbols)`` returning ``SpotPrice`` (usd, 24h vol, 24h change, updated_at) and ``history(symbol, days)`` returning ``PriceSeries`` whose ``closes()`` plugs into Apollo's lead/lag feature.
+
+### 4.2 Bloomberg Terminal OSS alternatives ✅
+``services/pythia/src/pythia/openbb_adapter.py`` — direct REST calls to the same upstream sources OpenBB Terminal pulls from, without the 200 MB SDK dep. Covers:
+  - Equity OHLC via Stooq (free, no key)
+  - FRED macro series via the no-key CSV endpoint
+  - Optional ``yfinance`` bridge wrapped in ``asyncio.to_thread``
+
+### 4.3 Correlation-aware portfolio sizing ❌
+Today's half-Kelly ignores correlation between open positions. Two correlated long bets = 2× effective exposure. Pull pairwise correlation across open trades and downsize each new bet by ``(1 - max_corr_with_open)``.
+
+### 4.4 Drawdown-adjusted Kelly fraction ❌
+When down ``X%`` on the week, scale Kelly by ``(1 - X)``. Smooths the risk envelope, prevents pyramiding losses.
+
+### 4.5 Resolution-lag state in Argos ❌
+Polymarket markets resolve hours-to-days after the underlying event. Add a ``pending_resolution`` state with a configurable TTL; trades parked there don't count toward exposure caps but stay visible.
+
+### 4.6 Agent ablation testing ❌
+Run the council with one agent removed across a backtest; measure delta-Brier. Quantifies each agent's actual contribution. Agents whose removal *improves* Brier should be retired by Moirai.
+
+### 4.7 Walk-forward windowed calibration ❌
+``ostrakon calibrate`` today uses all history equally. Better: fit Platt + isotonic on 30 / 90 / 180-day rolling windows, weight recent more, alert when the windows disagree.
+
+### 4.8 News-NER market matching ❌
+When a breaking-news entity matches an open market keyword, fast-track that signal — bypass the normal cron cadence.
+
+### 4.9 Two-stage approval ❌
+After Areopagus says PROCEED, sleep 60s and re-check market state. The Tier 1 quote-drift gate is a subset of this — two-stage is the general form.
+
+### 4.10 Pseudo-order liquidity probing ❌
+Submit + immediately cancel a small order to estimate true depth before sizing. Paper-only safety initially.
 
 ---
 
