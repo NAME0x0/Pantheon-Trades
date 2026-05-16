@@ -97,6 +97,18 @@ class GeminiClient(LLMClient):
         if cached is not None:
             return cached
 
+        deterministic = os.environ.get("BOULE_LLM_DETERMINISTIC", "0") in ("1", "true", "True", "yes", "on")
+        generation_config: dict = {
+            # Gemini counts "thinking" tokens against the output budget,
+            # so give the council enough room to actually produce a
+            # vote block in addition to the model's silent reasoning.
+            "maxOutputTokens": max(max_tokens, 1024) + 1024,
+            "temperature": 0.0 if deterministic else 0.4,
+            "topP": 1.0 if deterministic else 0.9,
+        }
+        if deterministic:
+            generation_config["seed"] = int(os.environ.get("BOULE_LLM_SEED", "42"))
+
         body = {
             "contents": [
                 {
@@ -106,14 +118,7 @@ class GeminiClient(LLMClient):
                 for m in messages
             ],
             "systemInstruction": {"parts": [{"text": system}]},
-            "generationConfig": {
-                # Gemini counts "thinking" tokens against the output budget,
-                # so give the council enough room to actually produce a
-                # vote block in addition to the model's silent reasoning.
-                "maxOutputTokens": max(max_tokens, 1024) + 1024,
-                "temperature": 0.4,
-                "topP": 0.9,
-            },
+            "generationConfig": generation_config,
         }
 
         async for attempt in AsyncRetrying(
@@ -144,8 +149,17 @@ class GeminiClient(LLMClient):
 
         text = _extract_text(payload)
         usage = payload.get("usageMetadata", {})
-        tokens = int(usage.get("totalTokenCount", 0) or 0)
-        result = CompletionResult(text=text, tokens=tokens)
+        tokens_in = int(usage.get("promptTokenCount", 0) or 0)
+        tokens_out = int(usage.get("candidatesTokenCount", 0) or 0)
+        tokens = int(usage.get("totalTokenCount", 0) or (tokens_in + tokens_out))
+        fingerprint = f"google/{payload.get('modelVersion') or self._model}"
+        result = CompletionResult(
+            text=text,
+            tokens=tokens,
+            tokens_in=tokens_in,
+            tokens_out=tokens_out,
+            model_fingerprint=fingerprint,
+        )
         cache_put(key, result)
         return result
 

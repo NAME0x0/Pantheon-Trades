@@ -128,7 +128,11 @@ class OpenAICompatClient(LLMClient):
         if cached is not None:
             return cached
 
-        body = {
+        deterministic = os.environ.get("BOULE_LLM_DETERMINISTIC", "0") in ("1", "true", "True", "yes", "on")
+        temperature = 0.0 if deterministic else float(os.environ.get("OPENAI_TEMPERATURE", "0.4"))
+        top_p = 1.0 if deterministic else float(os.environ.get("OPENAI_TOP_P", "0.9"))
+
+        body: dict = {
             "model": self._model,
             "messages": [
                 {"role": "system", "content": system},
@@ -138,9 +142,14 @@ class OpenAICompatClient(LLMClient):
                 ],
             ],
             "max_tokens": max_tokens,
-            "temperature": float(os.environ.get("OPENAI_TEMPERATURE", "0.4")),
-            "top_p": float(os.environ.get("OPENAI_TOP_P", "0.9")),
+            "temperature": temperature,
+            "top_p": top_p,
         }
+        if deterministic:
+            # OpenAI / OpenRouter / Groq / Together / DeepSeek all
+            # accept `seed`. Providers that ignore it return identical
+            # behaviour; providers that respect it pin sampling.
+            body["seed"] = int(os.environ.get("BOULE_LLM_SEED", "42"))
 
         async for attempt in AsyncRetrying(
             stop=stop_after_attempt(MAX_RETRIES),
@@ -171,11 +180,19 @@ class OpenAICompatClient(LLMClient):
 
         text = _extract_text(payload)
         usage = payload.get("usage", {}) or {}
-        tokens = int(
-            (usage.get("total_tokens") or 0)
-            or (usage.get("prompt_tokens", 0) + usage.get("completion_tokens", 0))
+        tokens_in = int(usage.get("prompt_tokens", 0) or 0)
+        tokens_out = int(usage.get("completion_tokens", 0) or 0)
+        tokens = int(usage.get("total_tokens") or (tokens_in + tokens_out))
+        # Use the provider's echoed model field as the fingerprint when
+        # available so drift detection sees server-side rolls.
+        fingerprint = f"{self._provider_label}/{payload.get('model') or self._model}"
+        result = CompletionResult(
+            text=text,
+            tokens=tokens,
+            tokens_in=tokens_in,
+            tokens_out=tokens_out,
+            model_fingerprint=fingerprint,
         )
-        result = CompletionResult(text=text, tokens=tokens)
         cache_put(key, result)
         return result
 

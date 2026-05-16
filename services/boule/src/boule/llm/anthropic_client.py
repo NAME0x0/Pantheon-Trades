@@ -58,6 +58,19 @@ class AnthropicClient(LLMClient):
         if cached is not None:
             return cached
 
+        deterministic = os.environ.get("BOULE_LLM_DETERMINISTIC", "0") in ("1", "true", "True", "yes", "on")
+        kwargs: dict = {
+            "model": self._model,
+            "max_tokens": max_tokens,
+            "system": system,
+            "messages": messages,
+        }
+        if deterministic:
+            # Anthropic accepts `temperature=0` for greedy decoding.
+            # No `seed` field on the public messages API (yet), so we
+            # rely on temperature 0 + identical prompt for reproducibility.
+            kwargs["temperature"] = 0.0
+
         async for attempt in AsyncRetrying(
             stop=stop_after_attempt(MAX_RETRIES),
             wait=wait_exponential(multiplier=1, min=1, max=8),
@@ -66,23 +79,25 @@ class AnthropicClient(LLMClient):
         ):
             with attempt:
                 response = await asyncio.wait_for(
-                    self._client.messages.create(
-                        model=self._model,
-                        max_tokens=max_tokens,
-                        system=system,
-                        messages=messages,
-                    ),
+                    self._client.messages.create(**kwargs),
                     timeout=CALL_TIMEOUT_SECONDS,
                 )
                 break
         text = _extract_text(response)
         usage = getattr(response, "usage", None)
-        tokens = 0
+        tokens_in = tokens_out = 0
         if usage is not None:
-            tokens = (getattr(usage, "input_tokens", 0) or 0) + (
-                getattr(usage, "output_tokens", 0) or 0
-            )
-        result = CompletionResult(text=text, tokens=tokens)
+            tokens_in = int(getattr(usage, "input_tokens", 0) or 0)
+            tokens_out = int(getattr(usage, "output_tokens", 0) or 0)
+        tokens = tokens_in + tokens_out
+        fingerprint = f"anthropic/{getattr(response, 'model', None) or self._model}"
+        result = CompletionResult(
+            text=text,
+            tokens=tokens,
+            tokens_in=tokens_in,
+            tokens_out=tokens_out,
+            model_fingerprint=fingerprint,
+        )
         cache_put(key, result)
         return result
 

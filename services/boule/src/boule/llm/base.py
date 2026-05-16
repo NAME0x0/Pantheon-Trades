@@ -15,6 +15,13 @@ from typing import Protocol
 class CompletionResult:
     text: str
     tokens: int
+    # Optional token split + provider model fingerprint, recorded by
+    # the cost / drift telemetry path. Older adapters that don't yet
+    # set these leave them at defaults — the telemetry layer falls
+    # back to a 50/50 token split estimate.
+    tokens_in: int = 0
+    tokens_out: int = 0
+    model_fingerprint: str = ""
 
 
 class LLMClient(Protocol):
