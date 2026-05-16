@@ -17,6 +17,7 @@ import structlog
 from pantheon_core.schema import Signal, ThesisBlock
 
 from boule.llm import LLMClient
+from boule.telemetry import CostRow, ledger, record_fingerprint
 from boule.trace import Tracer
 
 MAX_TOKENS = 1024
@@ -63,6 +64,40 @@ class CouncilAgent(ABC):
             tokens=result.tokens,
             latency_ms=latency_ms,
         )
+        # ── Telemetry: model drift + per-thesis cost attribution ─────
+        # Best-effort. Telemetry errors must never crash the agent.
+        try:
+            drift_event = record_fingerprint(result.model_fingerprint)
+            if drift_event:
+                await self._tracer.emit(
+                    "model_drift",
+                    f"calibration may be stale: {drift_event}",
+                    agent=self.name,
+                    round=round_num,
+                    flags=["model_drift"],
+                )
+            # Token split fallback if the adapter only returned a total.
+            tokens_in = result.tokens_in or int(result.tokens * 0.6)
+            tokens_out = result.tokens_out or (result.tokens - tokens_in)
+            model_label = result.model_fingerprint or getattr(self._client, "model", "")
+            usd = ledger.estimate_usd(model_label, tokens_in, tokens_out)
+            await ledger.record(
+                CostRow(
+                    thesis_id=self._tracer.thesis_id,
+                    signal_id=self._tracer.signal_id,
+                    agent=self.name,
+                    round=round_num,
+                    provider=model_label.split("/", 1)[0] if "/" in model_label else "",
+                    model=model_label,
+                    tokens_in=tokens_in,
+                    tokens_out=tokens_out,
+                    usd=usd,
+                    timestamp=time.time(),
+                )
+            )
+        except Exception as e:  # noqa: BLE001
+            log.warning("boule.telemetry_failed", error=str(e))
+
         await self._tracer.emit(
             "agent_output",
             result.text,
