@@ -221,6 +221,11 @@ class TraceEvent(BaseModel):
         "execution_start",
         "execution_end",
         "archive",
+        # ── Tier 2 / 3 telemetry event types ──
+        "diversity",
+        "reflection",
+        "zeus_consensus_override",
+        "model_drift",
     ]
 
     agent: str | None = None
