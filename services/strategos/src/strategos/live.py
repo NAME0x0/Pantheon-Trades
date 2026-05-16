@@ -20,14 +20,25 @@ from pantheon_core.schema import ApprovalToken, Thesis, Trade, utc_now
 from strategos.execution_mode import choose_execution
 from strategos.polymarket_clob import OrderRequest, OrderResponse, PolymarketClobClient
 from strategos.slippage import slippage_eats_edge
+from strategos.slippage_learner import SlippageLearner
 
 log = structlog.get_logger("strategos.live")
 
 
 class LiveExecutor:
-    def __init__(self, clob: PolymarketClobClient, portfolio_usdc: float) -> None:
+    def __init__(
+        self,
+        clob: PolymarketClobClient,
+        portfolio_usdc: float,
+        slippage_learner: SlippageLearner | None = None,
+    ) -> None:
         self._clob = clob
         self._portfolio_usdc = portfolio_usdc
+        self._learner = slippage_learner
+
+    @property
+    def slippage_learner(self) -> SlippageLearner | None:
+        return self._learner
 
     @property
     def portfolio_usdc(self) -> float:
@@ -116,6 +127,32 @@ class LiveExecutor:
         status = "filled" if resp.filled_size and resp.filled_size >= contracts * 0.99 else (
             "partial" if resp.filled_size > 0 else "pending"
         )
+
+        # Fold the realised slippage back into the learner so the next
+        # order on this market sees a refined estimate. We define
+        # realised slippage as ``max(0, avg_fill - side_price)`` for a
+        # BUY — i.e. how much worse than the quoted side we filled.
+        if (
+            self._learner is not None
+            and resp.avg_price is not None
+            and resp.filled_size
+            and resp.filled_size > 0
+        ):
+            actual = max(0.0, float(resp.avg_price) - side_price)
+            try:
+                self._learner.observe(
+                    market_id=thesis.market_id,
+                    actual_slippage=actual,
+                    size_usdc=size_usdc,
+                    depth_usdc=depth_usdc,
+                )
+            except Exception as e:  # noqa: BLE001
+                log.warning(
+                    "strategos.learner_observe_failed",
+                    thesis_id=thesis.thesis_id,
+                    error=str(e),
+                )
+
         return Trade(
             thesis_id=token.thesis_id,
             market_id=thesis.market_id,
