@@ -22,12 +22,14 @@ import structlog
 from pantheon_core.direction import entry_price as direction_entry_price
 from pantheon_core.schema import ApprovalToken, RejectionRecord, Signal, Thesis
 
+from areopagus.drawdown import apply_drawdown
 from areopagus.gates import (
     GateResult,
     PortfolioState,
     check_signal_gates,
     check_thesis_gates,
 )
+from areopagus.kelly import DEFAULT_MIN_THRESHOLD as KELLY_MIN_FLOOR
 from areopagus.kelly import size_position
 from areopagus.proof_of_restraint import ProofOfRestraint
 
@@ -64,6 +66,29 @@ class AreopagusCourt:
             entry_price=price,
         )
 
+        # Drawdown-aware down-scaling. If the book has been marked-to-market
+        # against a peak and is currently below it, multiply the half-Kelly
+        # result by a floor-clamped ramp (see areopagus.drawdown). Skipped if
+        # peak_equity is unset (zero) — callers that don't track equity get
+        # the existing behaviour.
+        dd_multiplier = 1.0
+        if self.portfolio.peak_equity > 0 and final_size > 0:
+            final_size, dd_multiplier = apply_drawdown(
+                final_size,
+                current_equity=self.portfolio.current_equity,
+                peak_equity=self.portfolio.peak_equity,
+            )
+            # Re-check minimum floor after DD haircut.
+            if final_size > 0 and final_size < KELLY_MIN_FLOOR:
+                return RejectionRecord(
+                    thesis_id=thesis.thesis_id,
+                    reason_code="DRAWDOWN_FLOOR",
+                    note=(
+                        f"drawdown haircut ({dd_multiplier:.2f}x) pushed sizing "
+                        f"below floor {KELLY_MIN_FLOOR}"
+                    ),
+                )
+
         if size_reason in ("sub_threshold", "no_edge"):
             log.info(
                 "areopagus.thesis_below_floor",
@@ -85,10 +110,12 @@ class AreopagusCourt:
                 note=f"post-Kelly: {post_gate.note}",
             )
 
-        decision = "RESIZED" if size_reason == "capped" else "APPROVED"
+        decision = "RESIZED" if size_reason == "capped" or dd_multiplier < 1.0 else "APPROVED"
         note = f"half-Kelly sizing: {final_size:.2%}"
         if size_reason == "capped":
             note += " (capped at MAX_POSITION_PCT)"
+        if dd_multiplier < 1.0:
+            note += f" | drawdown haircut: {dd_multiplier:.2f}x"
         if thesis.cassandra_flags:
             note += f" | cassandra: {', '.join(thesis.cassandra_flags)}"
         if thesis.humans_flags:

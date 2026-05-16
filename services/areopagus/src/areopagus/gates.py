@@ -46,6 +46,11 @@ class PortfolioState:
     drawdown_pause: bool = False
     daily_drawdown: float = 0.0
     weekly_drawdown: float = 0.0
+    # Equity-based drawdown (for Kelly multiplier — see drawdown.py).
+    # ``peak_equity`` is the running high-water mark; ``current_equity`` is
+    # the live mark-to-market. Both default to 0 (no penalty applied).
+    current_equity: float = 0.0
+    peak_equity: float = 0.0
 
 
 @dataclass
