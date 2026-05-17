@@ -48,8 +48,9 @@ async function rpc<T>(method: string, params: unknown[]): Promise<T | null> {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+      // Next.js cache hint; lib.dom RequestInit doesn't model `next`.
       next: { revalidate: 20 },
-    });
+    } as RequestInit & { next?: { revalidate?: number } });
     if (!r.ok) return null;
     const j = await r.json();
     return j.result ?? null;

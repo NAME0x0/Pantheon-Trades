@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 
+import { CoinGeckoPanel } from "./coingecko-panel";
 import { ReplayPlayer } from "./replay-player";
 import { WalletConnect } from "./wallet-connect";
 
@@ -83,6 +84,23 @@ export default function DemoPage({
         <code className="font-mono">areopagus.court</code>,{" "}
         <code className="font-mono">strategos.paper</code>) at bundle-build time.
       </p>
+
+      <div className="space-y-3 pt-6">
+        <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
+          Live paper trade — real BTC bars
+        </h2>
+        <p className="max-w-3xl font-serif text-base leading-relaxed text-muted-foreground">
+          Below: the checked-in run of{" "}
+          <code className="font-mono">scripts/live_paper_trade_coingecko.py</code> against
+          the last 7 days of BTC/USD hourly bars from CoinGecko. The plumbing is real
+          (Apollo signal → Areopagus half-Kelly → Strategos paper book). The strategy
+          is intentionally a toy momentum estimator, not the council — so the result
+          is honest. Naïve momentum loses to fees. That is the system telling you the
+          truth.
+        </p>
+      </div>
+
+      <CoinGeckoPanel />
     </div>
   );
 }

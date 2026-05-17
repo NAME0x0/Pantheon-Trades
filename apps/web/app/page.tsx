@@ -13,7 +13,19 @@ import {
   ScaleTiltSlider,
   VoteSimulator,
 } from "@/components/widgets";
-import { BRAND_MARK, PHOTO } from "@/lib/cdn";
+import {
+  BustOrnament,
+  ClassicalDivider,
+  LaurelHalf,
+  MedallionOrnament,
+  SideRail,
+} from "@/components/ornaments";
+import {
+  ChamberClock,
+  ConstitutionSnip,
+  SpeakingNow,
+} from "@/components/chamber-widgets";
+import { PHOTO } from "@/lib/cdn";
 
 // R3F is heavy — keep it client-only and lazy so first paint stays cheap.
 const HeroScene = dynamic(() => import("@/components/hero-scene"), {
@@ -132,7 +144,11 @@ export default function Home() {
   const [tilt, setTilt] = useState(0);
 
   return (
-    <div className="pb-12">
+    <div className="relative pb-12">
+      {/* ── SIDE RAILS — decorative columns on wide screens ─────────── */}
+      <SideRail side="left" glyphs={["Α", "Β", "Γ"]} />
+      <SideRail side="right" glyphs={["I", "II", "III"]} />
+
       {/* ── HERO ────────────────────────────────────────────────────── */}
       <section className="relative -mx-6 min-h-[88vh] overflow-hidden px-6 pb-12 pt-12">
         <div className="absolute inset-0 -z-10">
@@ -488,6 +504,52 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── CHAMBER WIDGETS — decorative whitespace fillers ─────────── */}
+      <section className="relative -mx-6 my-12 overflow-hidden px-6 py-20">
+        <div className="absolute inset-y-0 left-0 -z-10 hidden w-32 opacity-30 lg:block">
+          <BustOrnament className="h-full w-full text-primary/50" />
+        </div>
+        <div className="absolute inset-y-0 right-0 -z-10 hidden w-32 -scale-x-100 opacity-30 lg:block">
+          <BustOrnament className="h-full w-full text-primary/50" />
+        </div>
+        <div className="mx-auto max-w-6xl">
+          <Reveal>
+            <Eyebrow numeral="IV·5" label="The chamber" />
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2 className="display mb-12 max-w-3xl text-4xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-5xl">
+              The council does not sleep.
+              <br />
+              <span className="serif italic text-primary">
+                Someone is always speaking.
+              </span>
+            </h2>
+          </Reveal>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Reveal delay={0.1}>
+              <div className="flex flex-col items-center gap-4 rounded-xl border border-primary/15 bg-card/40 p-6">
+                <div className="display text-[10px] uppercase tracking-[0.4em] text-primary/65">
+                  Chamber clock
+                </div>
+                <ChamberClock className="text-primary" />
+                <p className="serif text-center text-xs italic text-muted-foreground">
+                  Marking time, not telling it.
+                </p>
+              </div>
+            </Reveal>
+            <Reveal delay={0.15}>
+              <SpeakingNow className="h-full" />
+            </Reveal>
+            <Reveal delay={0.2}>
+              <ConstitutionSnip className="h-full" />
+            </Reveal>
+          </div>
+          <Reveal delay={0.25}>
+            <ClassicalDivider className="mt-16 text-primary/40" />
+          </Reveal>
+        </div>
+      </section>
+
       {/* ── COUNCIL — agent roster (stacked Greek over English) ────── */}
       <section className="relative py-24">
         <div className="absolute right-0 top-12 -z-10 hidden h-full w-1/3 opacity-[0.08] lg:block">
@@ -613,14 +675,11 @@ export default function Home() {
         </div>
 
         <Reveal>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={BRAND_MARK}
-            alt=""
-            width={56}
-            height={56}
-            className="mx-auto mb-6 opacity-90 drop-shadow-[0_0_24px_hsl(var(--primary)/0.35)]"
-          />
+          <div className="mx-auto mb-8 flex max-w-md items-center justify-center gap-4">
+            <LaurelHalf side="left" className="h-8 w-28 text-primary/55" />
+            <MedallionOrnament glyph="Π" className="h-16 w-16 text-primary" />
+            <LaurelHalf side="right" className="h-8 w-28 text-primary/55" />
+          </div>
         </Reveal>
         <Reveal delay={0.05}>
           <h2 className="display text-[clamp(2.5rem,6vw,5rem)] font-medium leading-[1.0] tracking-[-0.015em] text-foreground">

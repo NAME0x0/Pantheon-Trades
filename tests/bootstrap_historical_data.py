@@ -158,16 +158,9 @@ def _parse_gamma(m: dict) -> dict | None:
     if not m.get("endDate"):
         return None
     # Gamma marks 'closed' = true after resolution; outcome encoded
-    # in outcomes array or outcomePrices.
-    outcomes = m.get("outcomes")
+    # in outcomePrices (outcomes is just labels — we don't currently
+    # use them, parsing intentionally skipped).
     outcome_yes = False
-    if isinstance(outcomes, str):
-        try:
-            outcomes_list = json.loads(outcomes)
-        except (ValueError, TypeError):
-            outcomes_list = []
-    else:
-        outcomes_list = outcomes or []
     outcome_prices = m.get("outcomePrices")
     if isinstance(outcome_prices, str):
         try:

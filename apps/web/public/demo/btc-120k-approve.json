@@ -1,11 +1,11 @@
 {
   "scenario": "approve",
-  "captured_at": "2026-05-17T09:33:34.737670+00:00",
+  "captured_at": "2026-05-17T10:10:27.528121+00:00",
   "source": "curated_from_live_run",
   "provider": "gemini",
   "model": "gemini-2.5-flash",
   "signal": {
-    "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+    "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
     "market_id": "0xpantheon_demo_btc_120k",
     "question": "Will Bitcoin close above $120,000 by 2026-12-31?",
     "category": "crypto",
@@ -35,15 +35,15 @@
     ],
     "staleness_seconds": 20,
     "source_trust_score": 0.92,
-    "created_at": "2026-05-17T09:33:34.736835Z",
+    "created_at": "2026-05-17T10:10:27.526766Z",
     "pythia_snapshot_at": "2026-05-15T12:00:00Z"
   },
   "events": [
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "3fb4a31e-42db-425f-b803-db2b66e58c10",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "57e4db43-21fa-4092-b3ba-e58f92a4fb66",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "deliberation_start",
       "agent": null,
@@ -59,10 +59,10 @@
       "sequence": 1
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "b5a54026-dd28-49e4-9082-7fab20b8ef7e",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "d00fd174-e264-4311-af4d-028149dd86bf",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_round_start",
       "agent": null,
@@ -78,10 +78,10 @@
       "sequence": 2
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "6e14e476-6fc6-4e8b-ac71-d48d0b8687b8",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "544550df-aac6-4859-ab8b-8cb204032590",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "ares",
@@ -97,10 +97,10 @@
       "sequence": 3
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "47e529c7-b3a9-4319-b16d-598f7a1140bc",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "02ccdf50-46f8-4b5f-8f4c-5c444cdb3a8f",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "hades",
@@ -116,10 +116,10 @@
       "sequence": 4
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "460b53ac-a10d-4211-9081-1d3b383848dc",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "3cf1158f-2c65-45ed-8ae7-76f03107126b",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "athena",
@@ -135,10 +135,10 @@
       "sequence": 5
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "c2ef418e-1f83-4feb-89d7-3b3c85796d19",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "7f38a352-4006-4032-8e49-71d214f7d857",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "cassandra",
@@ -154,10 +154,10 @@
       "sequence": 6
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "86dced63-337f-4611-91cd-2c2c30ed0371",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "5b76d95c-3a9f-43de-86db-475ca6cfe97f",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "solon",
@@ -173,10 +173,10 @@
       "sequence": 7
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "50d2c4d3-3a67-4c9e-a3db-61416ed4f603",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "b265134d-2d17-4916-b57f-46f65d30b9ec",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "zeus",
@@ -192,10 +192,10 @@
       "sequence": 8
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "e11721ec-e082-43ae-b0e3-aaafcc7d2906",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "92df4803-c578-40b2-b45a-fe9b4d97eaa7",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "themis",
@@ -211,10 +211,10 @@
       "sequence": 9
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "421c03f1-7a45-45ab-a88e-2e3d7bf603d0",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "69c8f3b9-cad3-4f68-8992-dd884f710f8c",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "hephaestus",
@@ -230,10 +230,10 @@
       "sequence": 10
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "b54945f4-8f95-47d0-aec2-d68fbdd286e9",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "0bd72f1f-4cbb-46e1-bff0-f6145ed6601f",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "daedalus",
@@ -249,10 +249,10 @@
       "sequence": 11
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "8f73f112-f300-40ed-8477-916bfcab6e02",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "624fc99f-6b50-48f8-b9f9-a9d6041f257d",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "humans",
@@ -268,10 +268,10 @@
       "sequence": 12
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "f8c5b965-8d38-41bf-8e0c-9c9068745cd8",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "d5e822df-55c4-4a9a-9181-c345682ed374",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_round_start",
       "agent": null,
@@ -287,10 +287,10 @@
       "sequence": 13
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "005ecd39-3405-4955-af3f-06871d4a78eb",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "1b7a76cb-c736-40ca-8269-ba90829bb721",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "ares",
@@ -306,10 +306,10 @@
       "sequence": 14
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "687b9ae8-0f95-450e-be69-95bb385b8bfb",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "d2e80c52-d324-4930-9810-273507ca27ec",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "hades",
@@ -325,10 +325,10 @@
       "sequence": 15
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "d5e4fe8e-e267-4fb8-a42b-82fdabaf897d",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "e89f869d-ea11-44f1-b455-8b6fd5672476",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "athena",
@@ -344,10 +344,10 @@
       "sequence": 16
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "bac576a2-f84a-45b2-a7b5-c60dd9b92498",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "f41763b1-2d9e-41f1-8fa0-ef0ce0cf5aa5",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "cassandra",
@@ -363,10 +363,10 @@
       "sequence": 17
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "e7967e5a-a547-4dcd-b76d-7fcd0f088c17",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "f523426c-ec4b-40a4-bac5-899e4b176d59",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "solon",
@@ -382,10 +382,10 @@
       "sequence": 18
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "6ab46932-d0bb-4340-b604-dcce58ea6b14",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "68456e39-0c80-4edd-84e7-667b71a7dd82",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "zeus",
@@ -401,10 +401,10 @@
       "sequence": 19
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "10d48b3b-d31b-480a-a49d-2928d07e3f90",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "97e56df8-27bf-442a-b34c-5d2cf3903568",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "themis",
@@ -420,10 +420,10 @@
       "sequence": 20
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "d0724e70-f242-4077-a09e-5e7c6b761de7",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "2e03fb22-1487-4595-9e69-a45bd95fc7c2",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "hephaestus",
@@ -439,10 +439,10 @@
       "sequence": 21
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "b62e0e32-89aa-4ea9-925b-8092f4c0ab6a",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "c929aa4a-d0ad-41d0-a0fe-c367dbcbfff4",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "daedalus",
@@ -458,10 +458,10 @@
       "sequence": 22
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "8b0d2599-9fb5-438f-b02d-c174734b0de4",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "ffd72e77-62b9-4db2-9b40-4d8f44206ac8",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "humans",
@@ -477,10 +477,10 @@
       "sequence": 23
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "c76d0fb2-aa28-4db9-b777-329e0a37f3f0",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "3724c56e-a18f-43db-a135-72e7e9a29088",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "synthesis",
       "agent": "athena",
@@ -496,10 +496,10 @@
       "sequence": 24
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "80ea4fe2-a89d-48d6-ac7a-da608c3aa27d",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "aa2ed8d9-742c-4395-9c40-4b8354350b4c",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_round_start",
       "agent": null,
@@ -515,10 +515,10 @@
       "sequence": 25
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "66d34f9b-fa89-4f6e-8e29-8b072837475b",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "955f27fb-d432-477d-8d21-2ad4fd3c1582",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "ares",
@@ -534,10 +534,10 @@
       "sequence": 26
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "74434e1a-5d6b-4206-871f-3e6a1d1aa873",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "d88e93dd-6f33-460b-9877-952b26fb296e",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "hades",
@@ -553,10 +553,10 @@
       "sequence": 27
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "2fabac18-f15a-44a6-bd09-8fc5e18aa184",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "cc180b7b-e5e8-453e-aee7-8269f9495505",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "athena",
@@ -572,10 +572,10 @@
       "sequence": 28
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "2e792699-6129-4d60-b811-52d853493e6c",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "fb23de02-295c-4724-bfe0-22a6af393b6c",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "cassandra",
@@ -591,10 +591,10 @@
       "sequence": 29
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "971e1a9c-0e64-4138-91a7-a1130d55049b",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "d5c736c5-32a3-46a8-b67d-7876b1677818",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "solon",
@@ -610,10 +610,10 @@
       "sequence": 30
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "26129736-33ff-47dd-808d-b6888a84143d",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "1825e52d-bb48-449a-b54e-e2f5cd75356c",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "zeus",
@@ -629,10 +629,10 @@
       "sequence": 31
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "15364064-d555-40de-8c4d-01ad52ae10b4",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "a4c60db5-3037-47ac-b7b5-f0e1ea4cb9f3",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "themis",
@@ -648,10 +648,10 @@
       "sequence": 32
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "9831de70-5ef8-4063-aa37-6bd3cb0ef126",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "0796214a-8882-4bfd-bfe9-e4cad31f8dc8",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "hephaestus",
@@ -667,10 +667,10 @@
       "sequence": 33
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "7c033c68-efa3-487a-9beb-b34e8b314bd4",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "5ac18767-b206-472c-bff9-de0d2ac3af1e",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "daedalus",
@@ -686,10 +686,10 @@
       "sequence": 34
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "9c737d20-7710-4c17-b6d9-8158ad0214ac",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "70085a52-cba8-4cd9-93a5-f8f448a9e980",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "vote",
       "agent": "humans",
@@ -705,10 +705,10 @@
       "sequence": 35
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "5d00ca37-a731-4563-b3df-25f0c057c591",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "311a278e-8d5f-485a-8a4f-de54ac4e64d3",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "verdict",
       "agent": null,
@@ -724,10 +724,10 @@
       "sequence": 36
     },
     {
-      "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
-      "event_id": "5329f82e-41d8-437e-b8ca-6c0ba6b3051d",
-      "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-      "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+      "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
+      "event_id": "3c87283d-cfdf-4ea8-98f5-d56338f225e1",
+      "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+      "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "deliberation_end",
       "agent": null,
@@ -744,8 +744,8 @@
     }
   ],
   "thesis": {
-    "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
-    "signal_id": "ed1f8034-153e-4dd7-a3ed-395bfe1067a2",
+    "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
+    "signal_id": "bc080fac-1228-43fa-aa5d-febe15acefb0",
     "market_id": "0xpantheon_demo_btc_120k",
     "question": "Will Bitcoin close above $120,000 by 2026-12-31?",
     "direction": "YES",
@@ -855,7 +855,7 @@
     "cassandra_flags": [],
     "humans_flags": [],
     "hephaestus_flags": [],
-    "trace_id": "7ab4b826-2692-4138-ab86-402975bb37d9",
+    "trace_id": "e0e21186-252a-4a02-94fa-316706ed088f",
     "debate_blocks": [
       {
         "agent": "ares",
@@ -1012,23 +1012,23 @@
     "areopagus_decision": null,
     "areopagus_note": null,
     "final_size_pct": null,
-    "created_at": "2026-05-17T09:33:34.737479Z",
+    "created_at": "2026-05-17T10:10:27.527791Z",
     "archived_cid": null
   },
   "verdict": {
     "kind": "approval",
-    "token_id": "f6025443-8847-48e1-82fc-bc8630b12c46",
-    "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
+    "token_id": "6bc120af-b272-4a2e-abbe-077e41dc4d70",
+    "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
     "decision": "RESIZED",
     "reason_code": "OK",
     "note": "half-Kelly sizing: 5.00% (capped at MAX_POSITION_PCT)",
     "final_size_pct": 0.05,
     "kelly_fraction": 0.2845564397288536,
-    "created_at": "2026-05-17T09:33:34.737525Z"
+    "created_at": "2026-05-17T10:10:27.527886Z"
   },
   "paper_trade": {
-    "trade_id": "120ee46e-4668-4d1a-b893-57d372633983",
-    "thesis_id": "4d3a5cd2-9285-47f3-aae3-f45b0a54e417",
+    "trade_id": "05d64018-4567-4378-be2f-c92c5553798b",
+    "thesis_id": "9f66ae07-98df-4ecc-b87d-c2afe09f3d47",
     "market_id": "0xpantheon_demo_btc_120k",
     "direction": "YES",
     "size_pct": 0.05,
@@ -1037,8 +1037,8 @@
     "status": "filled",
     "order_id": null,
     "fill_price": 0.43017241379310345,
-    "fill_time": "2026-05-17T09:33:34.737539Z",
-    "created_at": "2026-05-17T09:33:34.737552Z"
+    "fill_time": "2026-05-17T10:10:27.527910Z",
+    "created_at": "2026-05-17T10:10:27.527932Z"
   },
   "deliberation_seconds": 90.1
 }

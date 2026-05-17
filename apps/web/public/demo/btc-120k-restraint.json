@@ -1,11 +1,11 @@
 {
   "scenario": "restraint",
-  "captured_at": "2026-05-17T09:33:34.740543+00:00",
+  "captured_at": "2026-05-17T10:10:27.532082+00:00",
   "source": "curated_from_live_run",
   "provider": "gemini",
   "model": "gemini-2.5-flash",
   "signal": {
-    "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+    "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
     "market_id": "0xpantheon_demo_btc_120k",
     "question": "Will Bitcoin close above $120,000 by 2026-12-31?",
     "category": "crypto",
@@ -35,15 +35,15 @@
     ],
     "staleness_seconds": 20,
     "source_trust_score": 0.92,
-    "created_at": "2026-05-17T09:33:34.739693Z",
+    "created_at": "2026-05-17T10:10:27.531450Z",
     "pythia_snapshot_at": "2026-05-15T12:00:00Z"
   },
   "events": [
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "86adce68-caf0-4a38-a990-62ce10a2a1ff",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "926f32f6-a440-4ffd-8a70-e5ed8aa8667c",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "deliberation_start",
       "agent": null,
@@ -59,10 +59,10 @@
       "sequence": 1
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "cb34adbc-a658-476f-8176-28938260caec",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "7e24f58f-6722-4639-b50e-afda81a091a1",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_round_start",
       "agent": null,
@@ -78,10 +78,10 @@
       "sequence": 2
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "93605b4a-41a6-49cf-afef-08c262cd20a6",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "d4f27d98-e6fc-4f8f-8d43-aedde37b3d49",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "ares",
@@ -97,10 +97,10 @@
       "sequence": 3
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "1671f0e3-03d3-4af0-8b99-e8052688132c",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "6f4b13f7-676c-446d-9e6d-83fbf5f42e76",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "hades",
@@ -116,10 +116,10 @@
       "sequence": 4
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "4c4dbfc4-0521-4ffe-8949-0a6240955bb2",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "573a7d27-3ddc-4abf-88e1-e356b362043c",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "athena",
@@ -135,10 +135,10 @@
       "sequence": 5
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "bbd4f9ce-4b55-41a1-84bc-a72960a7eebd",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "cd9a5fa0-fdb6-4c77-80a3-4ff23112117c",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "cassandra",
@@ -154,10 +154,10 @@
       "sequence": 6
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "31376737-c7c7-46da-ad41-a9212a5d1fdc",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "997a91f2-d01e-4a17-8285-eca411c3281e",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "solon",
@@ -173,10 +173,10 @@
       "sequence": 7
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "34e1b4a2-eadf-42da-b317-85734d147ffa",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "7b5bd209-ec16-4810-b7ea-80e998493079",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "zeus",
@@ -192,10 +192,10 @@
       "sequence": 8
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "1db5720c-bd6c-44c7-8fbd-da223c2a965c",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "7eb08a4d-5ad8-4b0a-bda2-3c81262c5825",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "themis",
@@ -211,10 +211,10 @@
       "sequence": 9
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "5ad3be46-cb9d-4310-9cdc-46307925cda8",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "913ea5fd-8ec5-4b64-8bc4-ef0b3cc00d70",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "hephaestus",
@@ -230,10 +230,10 @@
       "sequence": 10
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "ece14877-fac7-40ea-a218-300cce12c69f",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "12cfea13-7a84-4a1e-a0af-80ba734fed9f",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "daedalus",
@@ -249,10 +249,10 @@
       "sequence": 11
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "e6678142-e038-420e-b12c-8ce24cd0ae5b",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "6d998716-f1ab-48e1-9542-0ee20f1f73d7",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "agent_output",
       "agent": "humans",
@@ -268,10 +268,10 @@
       "sequence": 12
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "c6162a82-a3b8-4f16-87a9-ed4735279b8f",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "84591ece-3290-419d-b46f-d7b4cf085d10",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "veto",
       "agent": "zeus",
@@ -287,10 +287,10 @@
       "sequence": 13
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "024a4e38-bea8-4eac-abb1-074686722ec2",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "af4797bf-8871-48f1-a44d-a768c587d0e2",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "verdict",
       "agent": null,
@@ -306,10 +306,10 @@
       "sequence": 14
     },
     {
-      "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
-      "event_id": "7e93eea0-6fab-4821-8dfd-9971dcc01796",
-      "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-      "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+      "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
+      "event_id": "f0174a99-a6a4-4dc3-ac2e-a7e95ab297cf",
+      "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+      "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
       "market_id": "0xpantheon_demo_btc_120k",
       "event_type": "deliberation_end",
       "agent": null,
@@ -326,8 +326,8 @@
     }
   ],
   "thesis": {
-    "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
-    "signal_id": "f6fe1cc5-2333-41ef-ae6b-da163fd89242",
+    "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
+    "signal_id": "5b082b24-dd75-47fa-8e6c-2f59409201e9",
     "market_id": "0xpantheon_demo_btc_120k",
     "question": "Will Bitcoin close above $120,000 by 2026-12-31?",
     "direction": "YES",
@@ -439,7 +439,7 @@
     "cassandra_flags": [],
     "humans_flags": [],
     "hephaestus_flags": [],
-    "trace_id": "edf3bab4-fdd2-45c2-a859-850d28076383",
+    "trace_id": "d273b671-b6d3-4a7f-b563-0b051db5969f",
     "debate_blocks": [
       {
         "agent": "ares",
@@ -519,16 +519,16 @@
     "areopagus_decision": null,
     "areopagus_note": null,
     "final_size_pct": null,
-    "created_at": "2026-05-17T09:33:34.740115Z",
+    "created_at": "2026-05-17T10:10:27.531799Z",
     "archived_cid": null
   },
   "verdict": {
     "kind": "rejection",
-    "record_id": "0deec9d0-7b78-421b-ae9c-7cbf2aaa2462",
-    "thesis_id": "518dcb76-3905-46ab-afcc-e8948c7ed82c",
+    "record_id": "390b964a-18c5-4f35-9050-d1cefb0d6b16",
+    "thesis_id": "ea558cb0-a9c4-475b-98cc-2bee0d64615a",
     "reason_code": "ZEUS_VETO",
     "note": "Zeus cast constitutional veto",
-    "created_at": "2026-05-17T09:33:34.740539Z"
+    "created_at": "2026-05-17T10:10:27.532077Z"
   },
   "paper_trade": null,
   "deliberation_seconds": 25.4

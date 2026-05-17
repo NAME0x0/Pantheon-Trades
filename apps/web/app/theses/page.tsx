@@ -2,10 +2,20 @@ import { listTheses } from "../../lib/api";
 
 export const dynamic = "force-dynamic";
 
+interface ThesisRow {
+  thesis_id: string;
+  direction: string;
+  council_probability: number;
+  weighted_approval: number;
+  recommended_size_pct: number;
+  status: string;
+  archived_cid?: string | null;
+}
+
 export default async function ThesesPage() {
-  let theses;
+  let theses: ThesisRow[];
   try {
-    theses = (await listTheses()).items;
+    theses = (await listTheses()).items as ThesisRow[];
   } catch {
     theses = [];
   }

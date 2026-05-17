@@ -13,10 +13,13 @@ async function api<T>(path: string, options: ApiOptions = {}): Promise<T> {
   if (options.token) {
     headers.authorization = `Bearer ${options.token}`;
   }
+  // The `next` extension is a Next.js-specific RequestInit field that
+  // lib.dom doesn't model. Cast to satisfy strict TypeScript without
+  // adding @types/next as a runtime dep.
   const res = await fetch(`${API_BASE}${path}`, {
     headers,
     next: { revalidate: options.revalidateSeconds ?? 5 },
-  });
+  } as RequestInit & { next?: { revalidate?: number } });
   if (!res.ok) {
     throw new Error(`api ${path} failed: ${res.status}`);
   }

@@ -31,12 +31,12 @@ for p in (
 ):
     sys.path.insert(0, str(p))
 
-from apollo.features.catalyst import CatalystEvent
-from apollo.features.sentiment import SentimentSample
-from apollo.scorer import MarketSnapshot, score_market
-from areopagus.court import AreopagusCourt
-from areopagus.gates import PortfolioState
-from pantheon_core.schema import (
+from apollo.features.catalyst import CatalystEvent  # noqa: E402
+from apollo.features.sentiment import SentimentSample  # noqa: E402
+from apollo.scorer import MarketSnapshot, score_market  # noqa: E402
+from areopagus.court import AreopagusCourt  # noqa: E402
+from areopagus.gates import PortfolioState  # noqa: E402
+from pantheon_core.schema import (  # noqa: E402
     AgentVote,
     ApprovalToken,
     ExitConditions,
@@ -44,7 +44,7 @@ from pantheon_core.schema import (
     ThesisBlock,
     TraceEvent,
 )
-from strategos.paper import PaperBook
+from strategos.paper import PaperBook  # noqa: E402
 
 
 def _build_signal():

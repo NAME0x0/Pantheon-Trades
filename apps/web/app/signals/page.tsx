@@ -2,10 +2,20 @@ import { listSignals } from "../../lib/api";
 
 export const dynamic = "force-dynamic";
 
+interface SignalRow {
+  signal_id: string;
+  band: string;
+  question: string;
+  edge_abs: number;
+  oracle_probability: number;
+  market_probability: number;
+  created_at: string;
+}
+
 export default async function SignalsPage() {
-  let signals;
+  let signals: SignalRow[];
   try {
-    signals = (await listSignals()).items;
+    signals = (await listSignals()).items as SignalRow[];
   } catch {
     signals = [];
   }

@@ -1,11 +1,11 @@
 {
   "scenario": "nfl-superbowl-restraint",
-  "captured_at": "2026-05-17T09:33:34.745088+00:00",
+  "captured_at": "2026-05-17T10:10:27.537117+00:00",
   "source": "curated_from_live_run",
   "provider": "gemini",
   "model": "gemini-2.5-flash",
   "signal": {
-    "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+    "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
     "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
     "question": "Will the Kansas City Chiefs win Super Bowl LXIII?",
     "category": "sports",
@@ -34,15 +34,15 @@
     ],
     "staleness_seconds": 120,
     "source_trust_score": 0.75,
-    "created_at": "2026-05-17T09:33:34.744632Z",
+    "created_at": "2026-05-17T10:10:27.536567Z",
     "pythia_snapshot_at": "2026-05-15T18:00:00Z"
   },
   "events": [
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "b3be929e-dd04-4eca-9abf-cc57d0d210df",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "6433b9e0-e484-4faf-9d8d-7bb7928334a1",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "deliberation_start",
       "agent": null,
@@ -58,10 +58,10 @@
       "sequence": 1
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "1394bc74-b762-4eba-ae09-846ed8989337",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "51ef8849-18b2-43c3-aca1-ee7ce458664d",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_round_start",
       "agent": null,
@@ -77,10 +77,10 @@
       "sequence": 2
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "cb72a339-d6ac-4210-b678-0e3ca8768f6b",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "81df10be-80d7-4858-81b4-24b52e6e4a24",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "ares",
@@ -96,10 +96,10 @@
       "sequence": 3
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "b5af34c9-43cb-4713-b220-f5197ec09383",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "141f7feb-01d4-48e8-9c3b-45cbc990fcdb",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "hades",
@@ -115,10 +115,10 @@
       "sequence": 4
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "a60f4786-ba46-460e-933c-9a39793a50a0",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "b00cfe73-1f18-4745-9f37-cdc51a6eda48",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "athena",
@@ -134,10 +134,10 @@
       "sequence": 5
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "000795a4-2068-437a-b6ac-0df4a4aa2973",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "8c1b4ce5-dcf5-401a-87c9-79e6dbb54929",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "cassandra",
@@ -153,10 +153,10 @@
       "sequence": 6
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "328a39af-c25b-47e6-873a-19a3ca3ebe50",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "93b7f075-44fb-4327-9c29-348e6f11bbbf",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "solon",
@@ -172,10 +172,10 @@
       "sequence": 7
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "a6c31cbc-cfe0-4124-bfa8-bcd72d96ab01",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "bf229063-abdb-42f6-9448-579e7d14b545",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "zeus",
@@ -191,10 +191,10 @@
       "sequence": 8
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "b90282cd-e661-45a1-9396-c32a2fbc4e19",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "dababec4-c255-48a2-870c-b80225ac5132",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "themis",
@@ -210,10 +210,10 @@
       "sequence": 9
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "b158591e-76f0-4de4-801a-ae531524dbc4",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "a392b633-e362-4d3f-9c61-d5cfca3ef55a",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "hephaestus",
@@ -229,10 +229,10 @@
       "sequence": 10
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "9163ef98-9d64-4875-9171-379dd75eef89",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "1fc38509-61ee-48c0-bb32-69fa0f1c4b96",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "daedalus",
@@ -248,10 +248,10 @@
       "sequence": 11
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "3b3b55ec-4db8-482d-aebd-14b5fea9ab1a",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "c0b3ebdc-2ac1-4514-807a-176b7db2ee53",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "agent_output",
       "agent": "humans",
@@ -267,10 +267,10 @@
       "sequence": 12
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "fec2e7a4-ff45-4dfb-8f1e-802a7a5759b4",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "a2a15c28-e244-49a6-bfd3-c2d707e3b518",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "veto",
       "agent": "solon",
@@ -286,10 +286,10 @@
       "sequence": 13
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "c79d6761-d0bc-4553-ba17-279d8554492d",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "7fee9d26-0469-4c5b-9edb-0ab2738d3878",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "verdict",
       "agent": null,
@@ -305,10 +305,10 @@
       "sequence": 14
     },
     {
-      "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
-      "event_id": "2d3c3623-5a37-4565-955b-7857bcf280af",
-      "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-      "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+      "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
+      "event_id": "341cb884-a6ad-4382-80e1-3d66b31b9b39",
+      "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+      "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
       "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
       "event_type": "deliberation_end",
       "agent": null,
@@ -325,8 +325,8 @@
     }
   ],
   "thesis": {
-    "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
-    "signal_id": "30e43c52-0ef0-4391-a92b-776fa9aa31d5",
+    "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
+    "signal_id": "68e1bf67-d0e6-47dd-8e6e-897fdc3510f0",
     "market_id": "0xpantheon_demo_nfl_chiefs_sb_lxiii",
     "question": "Will the Kansas City Chiefs win Super Bowl LXIII?",
     "direction": "YES",
@@ -438,7 +438,7 @@
     "cassandra_flags": [],
     "humans_flags": [],
     "hephaestus_flags": [],
-    "trace_id": "301fccb8-9307-40a9-b69a-081fb60dbb84",
+    "trace_id": "3c6607d0-75cc-4ab6-a375-8230d9cbd665",
     "debate_blocks": [
       {
         "agent": "ares",
@@ -518,16 +518,16 @@
     "areopagus_decision": null,
     "areopagus_note": null,
     "final_size_pct": null,
-    "created_at": "2026-05-17T09:33:34.744896Z",
+    "created_at": "2026-05-17T10:10:27.536875Z",
     "archived_cid": null
   },
   "verdict": {
     "kind": "rejection",
-    "record_id": "1a917bb5-36c0-4051-b0db-779050295272",
-    "thesis_id": "ee5cf4b8-529a-46d3-909d-5dbebaaf9e17",
+    "record_id": "c040a273-4b8a-4bdd-a659-aa3734cead46",
+    "thesis_id": "b4c682b0-e66b-4fd4-afbb-4b8b79e3cee2",
     "reason_code": "SOLON_VETO",
     "note": "Solon cast compliance veto",
-    "created_at": "2026-05-17T09:33:34.745084Z"
+    "created_at": "2026-05-17T10:10:27.537113Z"
   },
   "paper_trade": null,
   "deliberation_seconds": 24.8

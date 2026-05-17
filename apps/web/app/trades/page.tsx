@@ -2,10 +2,20 @@ import { listTrades } from "../../lib/api";
 
 export const dynamic = "force-dynamic";
 
+interface TradeRow {
+  trade_id: string;
+  direction: string;
+  status: string;
+  size_pct: number;
+  size_usdc: number;
+  entry_price: number;
+  fill_price?: number | null;
+}
+
 export default async function TradesPage() {
-  let trades;
+  let trades: TradeRow[];
   try {
-    trades = (await listTrades()).items;
+    trades = (await listTrades()).items as TradeRow[];
   } catch {
     trades = [];
   }

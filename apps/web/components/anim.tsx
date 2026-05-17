@@ -125,16 +125,7 @@ export function Marquee({
           {children}
         </div>
       </div>
-      <style jsx>{`
-        @keyframes pantheon-marquee {
-          0% {
-            transform: translate3d(0, 0, 0);
-          }
-          100% {
-            transform: translate3d(-50%, 0, 0);
-          }
-        }
-      `}</style>
+      {/* keyframes live in styles/globals.css */}
     </div>
   );
 }

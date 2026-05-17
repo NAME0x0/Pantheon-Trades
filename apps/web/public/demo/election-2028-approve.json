@@ -1,11 +1,11 @@
 {
   "scenario": "election-2028-approve",
-  "captured_at": "2026-05-17T09:33:34.743121+00:00",
+  "captured_at": "2026-05-17T10:10:27.534315+00:00",
   "source": "curated_from_live_run",
   "provider": "gemini",
   "model": "gemini-2.5-flash",
   "signal": {
-    "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+    "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
     "market_id": "0xpantheon_demo_election_2028",
     "question": "Will the incumbent party win the 2028 US presidential election?",
     "category": "politics",
@@ -36,15 +36,15 @@
     ],
     "staleness_seconds": 45,
     "source_trust_score": 0.88,
-    "created_at": "2026-05-17T09:33:34.742256Z",
+    "created_at": "2026-05-17T10:10:27.533562Z",
     "pythia_snapshot_at": "2026-05-15T14:00:00Z"
   },
   "events": [
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "68a2c5c9-a796-4abd-8d57-8848112f257f",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "865d2e58-10b8-4a69-9973-9331b242be11",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "deliberation_start",
       "agent": null,
@@ -60,10 +60,10 @@
       "sequence": 1
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "02197bbe-777d-4a02-bc78-89fabce49b90",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "f4620313-ba64-4f65-b852-87eb7f657e5c",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_round_start",
       "agent": null,
@@ -79,10 +79,10 @@
       "sequence": 2
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "82d93e7b-3d67-45ca-9f72-84924d0deb84",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "c6346b09-c0a4-4936-80c0-6d596844d0ba",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "ares",
@@ -98,10 +98,10 @@
       "sequence": 3
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "408408d0-c669-46e8-9a9d-0f5bafe19e2b",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "9d58d80d-e478-4570-9754-4f40940c562f",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "hades",
@@ -117,10 +117,10 @@
       "sequence": 4
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "39009311-2bc4-4128-b9a7-e593f1e8a7c4",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "371a7101-a531-402c-8cdd-a9ed558659ea",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "athena",
@@ -136,10 +136,10 @@
       "sequence": 5
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "3f9f384a-8393-4d1d-87ec-515f708b3c53",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "f6cbf27c-446b-4238-8226-2f59c9e78dff",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "cassandra",
@@ -155,10 +155,10 @@
       "sequence": 6
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "1f0eaa03-3707-4d09-ad0a-3cd9032c22c1",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "f2a9bb94-4a6e-479d-8933-3ed8bf0f3d2f",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "solon",
@@ -174,10 +174,10 @@
       "sequence": 7
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "f6f7295c-9d80-43f8-8873-3471c14d05b0",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "7b78e1b9-12d9-4f69-9f8b-3e0d2baa999d",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "zeus",
@@ -193,10 +193,10 @@
       "sequence": 8
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "848a718a-be54-4079-9696-31cbb8487547",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "b068a7af-4103-48d6-a406-3be30ab7988c",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "themis",
@@ -212,10 +212,10 @@
       "sequence": 9
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "41e62bf8-9d5d-48fd-9cb9-ee55d890e738",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "f64f02b6-38d4-409a-a1ad-611e5e87c292",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "hephaestus",
@@ -231,10 +231,10 @@
       "sequence": 10
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "35191220-74c9-4c37-898a-5f96d2e2df62",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "04c9d286-3e37-485a-929d-6b013f04bb17",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "daedalus",
@@ -250,10 +250,10 @@
       "sequence": 11
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "87d625c4-2e3d-4b7d-bf42-bb1c3ecb120a",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "604b20d2-d4d3-4a88-b6f8-1b879ac0c264",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "humans",
@@ -269,10 +269,10 @@
       "sequence": 12
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "52de544f-df4f-4fe6-a291-85eb3d2d0d28",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "2b67ed68-cf86-41f9-af03-717b8ed50e14",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_round_start",
       "agent": null,
@@ -288,10 +288,10 @@
       "sequence": 13
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "d7234f00-8323-4323-a43e-aed369cbe1e3",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "2589042f-6c5b-41c2-8989-689e863b4bf2",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "ares",
@@ -307,10 +307,10 @@
       "sequence": 14
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "1af730e0-0aeb-4cc9-89b5-fc42e0110d05",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "3fa45863-f229-487d-ae1f-20e20831d9b7",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "hades",
@@ -326,10 +326,10 @@
       "sequence": 15
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "d5fc8c6d-67a6-40e4-8a0b-52de581ac524",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "3ffda6c1-02ea-4562-a08c-5d5a0c0f7231",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "athena",
@@ -345,10 +345,10 @@
       "sequence": 16
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "06b1e2ed-1802-48b2-ab8f-2689d6871d69",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "ee0498a6-e839-4a65-998c-3fc67b84842e",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "cassandra",
@@ -364,10 +364,10 @@
       "sequence": 17
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "b5d81c0e-eb50-43ac-991a-15852065d438",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "3d45e08c-2a02-40a8-b932-733fb1247e06",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "solon",
@@ -383,10 +383,10 @@
       "sequence": 18
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "db0da8bc-dba5-4fea-b914-b80e2755eee2",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "414b68b8-01e3-4981-b915-550210f7326d",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "zeus",
@@ -402,10 +402,10 @@
       "sequence": 19
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "f5860e00-ee66-4960-a6bb-4e72d3e3297b",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "52292c9f-fb56-4ce6-a42d-914a94745ac6",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "themis",
@@ -421,10 +421,10 @@
       "sequence": 20
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "2798f4a2-79d4-4165-a531-601ec78b1651",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "44721079-3d06-442c-86d3-a9414be4761c",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "hephaestus",
@@ -440,10 +440,10 @@
       "sequence": 21
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "bfbac97a-a4ab-41e9-b6b8-c005e4c6a935",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "7b67dc67-5c94-4793-a192-fae46f337c29",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "daedalus",
@@ -459,10 +459,10 @@
       "sequence": 22
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "1c9a00e5-a3b0-4908-a5ee-7081faa17bdf",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "bed5b954-04cf-4330-8284-3176fefd42f2",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_output",
       "agent": "humans",
@@ -478,10 +478,10 @@
       "sequence": 23
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "12e58690-22da-43e5-812a-31e04ab49a47",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "5a1de27d-75df-4050-899d-e7f4715808b3",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "synthesis",
       "agent": "athena",
@@ -497,10 +497,10 @@
       "sequence": 24
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "844db54a-7798-4c5c-8746-f558d86c8d67",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "78d34206-3a26-4ec1-9834-38b2b3b8b7e7",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "agent_round_start",
       "agent": null,
@@ -516,10 +516,10 @@
       "sequence": 25
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "bf1a01a2-5cd5-4837-a881-16dff04dcd3d",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "fdf0fe67-6fe8-46a5-a87b-ae2c5b1793a9",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "ares",
@@ -535,10 +535,10 @@
       "sequence": 26
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "d409828a-cce4-4e7e-9578-6bcc6c6183c6",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "25b7f9b2-1ce3-4c2f-a596-6c176fee7f8c",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "hades",
@@ -554,10 +554,10 @@
       "sequence": 27
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "fc81a640-abfb-4703-946e-d1981e2e9adc",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "6157ea39-bce1-4460-a858-b47836524326",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "athena",
@@ -573,10 +573,10 @@
       "sequence": 28
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "15e5148a-819f-4b66-a286-cdb3ab883e5f",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "24bdd6ff-844e-4d17-94f1-ac83e6ffbaf5",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "cassandra",
@@ -592,10 +592,10 @@
       "sequence": 29
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "076d043f-bd1f-45bc-879f-fd1088cbd999",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "b06553fe-0ad3-4d66-8245-3c335ef885e1",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "solon",
@@ -613,10 +613,10 @@
       "sequence": 30
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "eb8e2c06-78d3-465d-a25b-0efd9e8e6825",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "954c6501-4798-4cb1-b5d9-36d942895bcd",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "zeus",
@@ -632,10 +632,10 @@
       "sequence": 31
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "3b18c97d-662e-4334-b257-7a58a5598680",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "56fdbccc-6b4b-4588-a1cd-a7fce9c4e89b",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "themis",
@@ -653,10 +653,10 @@
       "sequence": 32
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "141aa9a4-c403-4ce2-a88c-e12dab14ac67",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "34becffd-98b1-4f5a-8560-54f811086455",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "hephaestus",
@@ -672,10 +672,10 @@
       "sequence": 33
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "9e733b3b-7460-4e08-83aa-f69d51140a95",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "bd5872a4-bb49-422a-b696-5718254c06ca",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "daedalus",
@@ -691,10 +691,10 @@
       "sequence": 34
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "cfe46691-426c-4968-a13e-8fecaf1e9702",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "d9a835b8-3bc1-4c71-b816-a6adf8158ea7",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "vote",
       "agent": "humans",
@@ -712,10 +712,10 @@
       "sequence": 35
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "9c339edf-ae32-4b10-97a9-ca6a5883d9e2",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "b626fccd-90b2-46a3-b7cf-2a676ab9397b",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "verdict",
       "agent": null,
@@ -731,10 +731,10 @@
       "sequence": 36
     },
     {
-      "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
-      "event_id": "4976880a-ff4f-4105-b12e-93ef409d3a05",
-      "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-      "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+      "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
+      "event_id": "16a660ad-823e-4021-ba5e-af1c6ecd1d0a",
+      "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+      "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
       "market_id": "0xpantheon_demo_election_2028",
       "event_type": "deliberation_end",
       "agent": null,
@@ -751,8 +751,8 @@
     }
   ],
   "thesis": {
-    "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
-    "signal_id": "43f263db-c253-404a-a35a-a9c85979b070",
+    "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
+    "signal_id": "bcff9d31-a6a1-480e-8bef-bab2b7ebab11",
     "market_id": "0xpantheon_demo_election_2028",
     "question": "Will the incumbent party win the 2028 US presidential election?",
     "direction": "NO",
@@ -868,7 +868,7 @@
     "cassandra_flags": [],
     "humans_flags": [],
     "hephaestus_flags": [],
-    "trace_id": "1b2b2124-49c3-4faf-9e35-20c53d515cd2",
+    "trace_id": "b75b5494-e8bd-4454-948d-08058b747502",
     "debate_blocks": [
       {
         "agent": "ares",
@@ -1025,23 +1025,23 @@
     "areopagus_decision": null,
     "areopagus_note": null,
     "final_size_pct": null,
-    "created_at": "2026-05-17T09:33:34.743005Z",
+    "created_at": "2026-05-17T10:10:27.534171Z",
     "archived_cid": null
   },
   "verdict": {
     "kind": "approval",
-    "token_id": "7bf7d351-4474-4063-9c2a-37a3557b2b0a",
-    "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
+    "token_id": "eddbbfef-4d8b-4cc0-aded-0103c5f43d73",
+    "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
     "decision": "RESIZED",
     "reason_code": "OK",
     "note": "half-Kelly sizing: 5.00% (capped at MAX_POSITION_PCT)",
     "final_size_pct": 0.05,
     "kelly_fraction": 0.2459332781913427,
-    "created_at": "2026-05-17T09:33:34.743053Z"
+    "created_at": "2026-05-17T10:10:27.534218Z"
   },
   "paper_trade": {
-    "trade_id": "814468ae-11ab-4739-9265-0a5b4fd6b18b",
-    "thesis_id": "77578cf2-4d47-4178-94b4-50ab3ace3934",
+    "trade_id": "9e49ac5c-0221-4170-95ff-0a7937b352be",
+    "thesis_id": "d787b3f5-7930-4f8d-a4b5-b61466e5a2c1",
     "market_id": "0xpantheon_demo_election_2028",
     "direction": "NO",
     "size_pct": 0.05,
@@ -1050,8 +1050,8 @@
     "status": "filled",
     "order_id": null,
     "fill_price": 0.39008333333333334,
-    "fill_time": "2026-05-17T09:33:34.743067Z",
-    "created_at": "2026-05-17T09:33:34.743078Z"
+    "fill_time": "2026-05-17T10:10:27.534239Z",
+    "created_at": "2026-05-17T10:10:27.534254Z"
   },
   "deliberation_seconds": 90.1
 }

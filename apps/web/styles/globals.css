@@ -203,3 +203,15 @@
     );
   }
 }
+
+/* Marquee keyframes used by components/anim.tsx <Marquee>. Lives here
+   rather than inside a styled-jsx block so the build does not require
+   @types/styled-jsx to be wired up. */
+@keyframes pantheon-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}

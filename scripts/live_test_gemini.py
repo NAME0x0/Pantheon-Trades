@@ -108,10 +108,8 @@ async def gemini_call(system: str, user: str) -> dict:
     retried = 0
     t_overall = time.perf_counter()
     while True:
-        t0 = time.perf_counter()
         async with httpx.AsyncClient(timeout=60.0) as http:
             resp = await http.post(url, json=payload)
-        t1 = time.perf_counter()
         if resp.status_code != 429 or retried >= 1:
             break
         wait_s = _parse_retry_after(resp.text)
