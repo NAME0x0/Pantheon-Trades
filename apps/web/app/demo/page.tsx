@@ -1,6 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 
+import { CircleStackPanel } from "./circle-stack-panel";
 import { CoinGeckoPanel } from "./coingecko-panel";
+import { EdgeSourcesPanel } from "./edge-sources-panel";
 import { ReplayPlayer } from "./replay-player";
 import { WalletConnect } from "./wallet-connect";
 
@@ -101,6 +103,34 @@ export default function DemoPage({
       </div>
 
       <CoinGeckoPanel />
+
+      <div className="space-y-3 pt-8">
+        <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
+          Where the council&apos;s prior comes from
+        </h2>
+        <p className="max-w-3xl font-serif text-base leading-relaxed text-muted-foreground">
+          12 Pythia data sources feed 7 bounded Apollo features into{" "}
+          <code className="font-mono">Signal.oracle_probability</code>. Each delta is
+          capped at ±0.05 — combined cap ±0.35. The council still votes on top of
+          this prior; the constitution still gates the size.
+        </p>
+      </div>
+
+      <EdgeSourcesPanel />
+
+      <div className="space-y-3 pt-8">
+        <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
+          Settles on Arc — powered by Circle
+        </h2>
+        <p className="max-w-3xl font-serif text-base leading-relaxed text-muted-foreground">
+          Pantheon is built end-to-end on Circle&apos;s developer platform. USDC is the
+          native settlement currency; Arc gives sub-second finality at ~$0.01/tx.
+          Builder codes attribute every fill to a payout address. Trace anchors hash
+          every council deliberation onto Arc.
+        </p>
+      </div>
+
+      <CircleStackPanel />
     </div>
   );
 }
