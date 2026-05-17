@@ -42,6 +42,7 @@ from pantheon_core.schema import (
 
 import os
 
+from boule.agents.adversarial import Eris
 from boule.agents.base import CouncilAgent
 from boule.agents.bear_researcher import Athena, Cassandra
 from boule.agents.bull_researcher import Ares, HadesAgent
@@ -80,7 +81,7 @@ def _load_prompt(agent_name: str) -> str:
 
 
 def _build_agents(client: LLMClient, tracer: Tracer) -> list[CouncilAgent]:
-    return [
+    agents: list[CouncilAgent] = [
         Ares(client, tracer, _load_prompt("ares")),
         HadesAgent(client, tracer, _load_prompt("hades")),
         Athena(client, tracer, _load_prompt("athena")),
@@ -92,6 +93,11 @@ def _build_agents(client: LLMClient, tracer: Tracer) -> list[CouncilAgent]:
         Daedalus(client, tracer, _load_prompt("daedalus")),
         HumansAgent(client, tracer, _load_prompt("humans")),
     ]
+    # Eris (adversarial dissenter) is opt-in via env until we have
+    # calibration data showing she improves the council Brier.
+    if os.environ.get("BOULE_ERIS_ENABLED", "0") in ("1", "true", "True"):
+        agents.append(Eris(client, tracer, _load_prompt("eris")))
+    return agents
 
 
 def _is_early_veto(block: ThesisBlock) -> bool:
