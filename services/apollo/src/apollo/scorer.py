@@ -17,9 +17,11 @@ from pantheon_core.schema import Signal, utc_now
 
 from apollo.bands import classify
 from apollo.features.attention import compose as attention_compose
+from apollo.features.basis_arb import compose as basis_arb_compose
 from apollo.features.catalyst import CatalystEvent, catalyst_score
 from apollo.features.consensus_delta import compose as consensus_compose
 from apollo.features.correlation import correlation_score
+from apollo.features.cot_positioning import compose as cot_compose
 from apollo.features.edge import compute_edge, oracle_probability
 from apollo.features.geopolitical_risk import score as geopolitical_score
 from apollo.features.lead_lag import LeadLagSnapshot, lead_lag_probability_delta
@@ -29,6 +31,7 @@ from apollo.features.orderbook_imbalance import (
     OrderBookLevel,
     imbalance_probability_delta,
 )
+from apollo.features.perps_signal import compose as perps_compose
 from apollo.features.sentiment import SentimentSample, sentiment_score
 from apollo.features.sentiment_velocity import (
     SentimentTick,
@@ -46,6 +49,9 @@ MAX_GEOPOLITICAL_DELTA = 0.05
 MAX_ATTENTION_DELTA = 0.05
 MAX_MACRO_DELTA = 0.05
 MAX_CONSENSUS_DELTA = 0.05
+MAX_BASIS_ARB_DELTA = 0.05
+MAX_PERPS_DELTA = 0.05
+MAX_COT_DELTA = 0.05
 
 
 @dataclass
@@ -115,6 +121,24 @@ class MarketSnapshot:
     #
     # Manifold consensus (free human prior for cross-check):
     manifold_implied: float | None = None
+    #
+    # Cross-venue basis arbitrage (Kalshi / Odds API / Manifold all
+    # plug in here — operator sets which venue + the fee + slippage
+    # budget). venue_implied is None when no comparison venue lists
+    # this market:
+    basis_venue_implied: float | None = None
+    basis_venue_label: str = "venue"
+    basis_fees_bps: float = 500.0
+    basis_slippage_bps: float = 50.0
+    #
+    # Binance perps funding / OI (only meaningful for crypto markets):
+    perps_funding_z: float | None = None
+    perps_oi_delta_pct: float | None = None
+    perps_symbol: str | None = None
+    #
+    # CFTC speculator-net z-score (for futures-backed markets):
+    cot_speculator_z: float | None = None
+    cot_market_code: str | None = None
 
 
 def score_market(snap: MarketSnapshot) -> Signal:
@@ -202,10 +226,51 @@ def score_market(snap: MarketSnapshot) -> Signal:
                 cd.delta * 0.3))  # 30% pull toward Manifold, capped
         consensus_sizing_multiplier = cd.sizing_multiplier
 
+    # ── Highest-S/N edge sources from docs/EDGE_SOURCES.md ──────────
+
+    basis_delta = 0.0
+    basis_tradable = False
+    if snap.basis_venue_implied is not None:
+        ba = basis_arb_compose(
+            polymarket_p=snap.market_probability,
+            venue_p=snap.basis_venue_implied,
+            venue_label=snap.basis_venue_label,
+            fees_bps=snap.basis_fees_bps,
+            slippage_bps=snap.basis_slippage_bps,
+        )
+        # ba.bias is already capped at ±MAX_BASIS_BIAS=0.05 inside
+        # the feature module; we keep an outer guard for safety.
+        basis_delta = max(-MAX_BASIS_ARB_DELTA, min(MAX_BASIS_ARB_DELTA, ba.bias))
+        basis_tradable = ba.tradable
+
+    perps_delta = 0.0
+    if snap.perps_funding_z is not None:
+        ps = perps_compose(
+            symbol=snap.perps_symbol or snap.market_id,
+            funding_z=snap.perps_funding_z,
+            oi_delta_pct=snap.perps_oi_delta_pct,
+        )
+        perps_delta = max(-MAX_PERPS_DELTA, min(MAX_PERPS_DELTA, ps.directional_bias))
+
+    cot_delta = 0.0
+    if snap.cot_speculator_z is not None:
+        ct = cot_compose(
+            market_code=snap.cot_market_code or snap.market_id,
+            speculator_z=snap.cot_speculator_z,
+        )
+        cot_delta = max(-MAX_COT_DELTA, min(MAX_COT_DELTA, ct.directional_bias))
+
     # Fold the predictive adjustments into the existing sentiment /
     # trend envelope. oracle_probability still clips to (0, 1).
     sentiment_total = snap.sentiment_adjustment + velocity_delta + attention_delta
-    trend_total = snap.trend_adjustment + leadlag_delta + imbalance_delta + geo_delta + macro_delta + consensus_delta
+    trend_total = (
+        snap.trend_adjustment
+        + leadlag_delta + imbalance_delta + geo_delta + macro_delta + consensus_delta
+        + basis_delta + perps_delta + cot_delta
+    )
+    # Tradable basis up-weights conviction — if the council picks the
+    # same direction the basis-arb indicates, that's a confirmation.
+    _ = basis_tradable  # reserved for the band-score downstream cap
 
     oracle_p = oracle_probability(
         base_prob=snap.market_probability,
