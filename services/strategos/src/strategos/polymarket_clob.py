@@ -35,6 +35,12 @@ class OrderRequest:
     side: Side
     price: float
     size: float  # in contracts (not USDC)
+    # CLOB v2 (April 2026) flags. `post_only=True` makes the exchange
+    # reject our order rather than let it cross — required for maker-
+    # rebate eligibility. Operator-supplied category routes to the
+    # right fee bucket for ex-post rebate booking.
+    post_only: bool = False
+    category: str | None = None
 
 
 @dataclass(frozen=True)
@@ -95,12 +101,24 @@ class PolymarketClobClient:
         from py_clob_client.clob_types import OrderArgs
 
         client = self._ensure_client()
-        args = OrderArgs(
-            price=order.price,
-            size=order.size,
-            side=order.side,
-            token_id=order.token_id,
-        )
+        # OrderArgs in py-clob-client-v2 accepts `post_only`. Older v1
+        # signatures (pre April 2026 EIP-712 v2 bump) ignored it; v2
+        # respects it. We pass it unconditionally — operator on v1
+        # silently gets a normal order, operator on v2 gets the flag.
+        args_kwargs = {
+            "price": order.price,
+            "size": order.size,
+            "side": order.side,
+            "token_id": order.token_id,
+        }
+        if order.post_only:
+            args_kwargs["post_only"] = True
+        try:
+            args = OrderArgs(**args_kwargs)
+        except TypeError:
+            # v1 client doesn't know `post_only`. Drop it and continue.
+            args_kwargs.pop("post_only", None)
+            args = OrderArgs(**args_kwargs)
         signed = client.create_order(args)
         result = client.post_order(signed)
         log.info(

@@ -57,6 +57,7 @@ class LiveExecutor:
         no_token_id: str,
         mid_price: float,
         depth_usdc: float,
+        category: str | None = None,
     ) -> Trade:
         if token.decision not in ("APPROVED", "RESIZED"):
             raise ValueError(f"refused execution: token decision={token.decision}")
@@ -91,13 +92,18 @@ class LiveExecutor:
             depth_usdc=depth_usdc,
             size_usdc=size_usdc,
             days_to_resolution=getattr(thesis, "days_to_resolution", None),
+            category=category,
         )
         limit_price = decision.limit_price
         log.info(
             "strategos.execution_mode",
             thesis_id=thesis.thesis_id,
             mode=decision.mode,
+            post_only=decision.post_only,
+            category=category,
             limit_price=limit_price,
+            expected_taker_fee_bps=decision.expected_taker_fee_bps,
+            expected_maker_rebate_bps=decision.expected_maker_rebate_bps,
             reason=decision.reason,
         )
         # Polymarket orders are denominated in contracts. One contract pays $1 on resolution.
@@ -108,6 +114,8 @@ class LiveExecutor:
             side="BUY",
             price=round(limit_price, 3),
             size=round(contracts, 4),
+            post_only=decision.post_only,
+            category=category,
         )
         try:
             resp: OrderResponse = await self._clob.submit(req)
