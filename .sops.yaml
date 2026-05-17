@@ -1,0 +1,24 @@
+# Mozilla SOPS rules for the Pantheon Trades repo.
+#
+# Encrypts `.env.enc`, `secrets/*.yaml`, and any file with a `.enc`
+# suffix using the age recipients listed below. Add a new recipient
+# by appending another public key in `age:` — `sops updatekeys` will
+# re-wrap the data keys.
+#
+# Operators NEVER commit the matching private key. The active key
+# location is read from $SOPS_AGE_KEY_FILE; on dev machines this is
+# typically ~/.config/sops/age/keys.txt.
+
+creation_rules:
+  - path_regex: \.env\.enc$
+    age: >-
+      age1pantheonexamplepublickey0000000000000000000000000000000000000q
+
+  - path_regex: ^infra/secrets/.+\.yaml$
+    encrypted_regex: ^(data|stringData|secretKey|.*_KEY|.*_SECRET|.*_TOKEN)$
+    age: >-
+      age1pantheonexamplepublickey0000000000000000000000000000000000000q
+
+  - path_regex: \.enc(\.[a-z]+)?$
+    age: >-
+      age1pantheonexamplepublickey0000000000000000000000000000000000000q
