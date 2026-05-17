@@ -19,6 +19,8 @@ dependencies = [
     "python-jose[cryptography]>=3.3",
     "passlib>=1.7",
     "itsdangerous>=2.2",
+    "alembic>=1.13",
+    "slowapi>=0.1.9",
 ]
 
 [build-system]
