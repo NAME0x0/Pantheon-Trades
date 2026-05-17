@@ -1,0 +1,429 @@
+{
+  "schema": "pantheon-council-vs-manifold-v1",
+  "mode": "offline",
+  "n_markets": 50,
+  "started_at": "2026-05-17T13:41:17.528333+00:00",
+  "finished_at": "2026-05-17T13:41:21.274213+00:00",
+  "wall_seconds": 3.746,
+  "manifold_brier": 0.127839666458519,
+  "council_brier": 0.13806948456626603,
+  "brier_delta": 0.010229818107747035,
+  "council_wins": false,
+  "manifold_decomposition": {
+    "base_rate": 0.62,
+    "reliability": 0.0205801707204981,
+    "resolution": 0.12560000000000002,
+    "uncertainty": 0.2356,
+    "implied_brier": 0.1305801707204981
+  },
+  "council_decomposition": {
+    "base_rate": 0.62,
+    "reliability": 0.02992283714051206,
+    "resolution": 0.12669090909090913,
+    "uncertainty": 0.2356,
+    "implied_brier": 0.13883192804960293
+  },
+  "rows": [
+    {
+      "id": "n9tR5L9S26",
+      "question": "Ronda Rousey vs Gina Carano fight",
+      "manifold_p": 0.9901120587587616,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.8430784411311332
+    },
+    {
+      "id": "CsyLldLzps",
+      "question": "Will Finland win Eurovision 2026?",
+      "manifold_p": 0.010000000000000009,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.15700000000000003
+    },
+    {
+      "id": "Zqn6RqRddR",
+      "question": "Will the Kolkata Knight Riders beat the Gujarat Titans on 16 May 2026?",
+      "manifold_p": 0.5,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.5
+    },
+    {
+      "id": "PUNEEIhELR",
+      "question": "Will Embroidery win the G1 Victoria Mile at Tokyo?",
+      "manifold_p": 0.4900000000000001,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.49300000000000005
+    },
+    {
+      "id": "8A0y9lP9yP",
+      "question": "Will Jimmystar win the Doomben 10,000?",
+      "manifold_p": 0.33,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.381
+    },
+    {
+      "id": "UOsA6Olshd",
+      "question": "Will the San Antonio Spurs vs. Minnesota Timberwolves series go to a Game 7?",
+      "manifold_p": 0.010249334733263116,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.1571745343132842
+    },
+    {
+      "id": "lc0In9glQQ",
+      "question": "Will SPY close above $750 on Friday, May 15, 2026?",
+      "manifold_p": 0.039999999999999966,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.178
+    },
+    {
+      "id": "69UtCh252N",
+      "question": "Will Manifold double trader bonuses in May 2026?",
+      "manifold_p": 0.9903225053730264,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.8432257537611184
+    },
+    {
+      "id": "9AnPUhQIQg",
+      "question": "Will the U.S. Supreme Court grant a stay in the Virginia redistricting case?",
+      "manifold_p": 0.43828990482134494,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.4568029333749415
+    },
+    {
+      "id": "lCA55d0Ash",
+      "question": "Will I receive 6 USDC by May 15, 2026?",
+      "manifold_p": 0.06034513214451982,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.1922415925011639
+    },
+    {
+      "id": "hsUC65ZLsq",
+      "question": "Will Israel win the public vote at Eurovision 2026",
+      "manifold_p": 0.2799999999999997,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.3459999999999998
+    },
+    {
+      "id": "pZzCp9L8n9",
+      "question": "Daily Coinflip",
+      "manifold_p": 0.5031315281445372,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.502192069701176
+    },
+    {
+      "id": "E6qgP9RU2c",
+      "question": "Will Dogecoin reach 106% of its current price in the next 24 hours?",
+      "manifold_p": 0.02558298773944824,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.16790809141761376
+    },
+    {
+      "id": "yUsS9OsItP",
+      "question": "D\u00e4il\u00ff C\u00f6in Flip - Day 9\u00be",
+      "manifold_p": 0.5000452542426451,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.5000316779698516
+    },
+    {
+      "id": "ONLRsNQQcn",
+      "question": "Will Austria finish in the top 10 of the Eurovision 2026 Grand Final?",
+      "manifold_p": 0.010000000000000014,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.15700000000000003
+    },
+    {
+      "id": "0EtChUZ25I",
+      "question": "Will April 2026 US PPI final demand rise at least 0.6% month-over-month?",
+      "manifold_p": 0.38,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.41600000000000004
+    },
+    {
+      "id": "Ug5ZsOq8S5",
+      "question": "Wes streeting announces resignation as Secretary of State for health and social care within 48 hours?",
+      "manifold_p": 0.9909620374529181,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.8436734262170427
+    },
+    {
+      "id": "INPdZOszyR",
+      "question": "Will this coordination-metrics market get at least 3 unique traders in its first 24 hours?",
+      "manifold_p": 0.99,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.843
+    },
+    {
+      "id": "9s52cyOy5p",
+      "question": "Will USD strengthen against GBP in the next 24h?",
+      "manifold_p": 0.6312875372020956,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.5919012760414669
+    },
+    {
+      "id": "PsltcEUQNC",
+      "question": "China mainland will have the broadcasting rights for the World Cup 2026 by the end of May 2026",
+      "manifold_p": 0.9400537118741606,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.8080375983119124
+    },
+    {
+      "id": "U8pcnUt6tO",
+      "question": "D\u00e4il\u00ff C\u00f6in Flip - Day 3\u2156",
+      "manifold_p": 0.4998834915574437,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.4999184440902106
+    },
+    {
+      "id": "Pu0qE6t68n",
+      "question": "Will SPY close above $737.62 on Friday, May 15, 2026?",
+      "manifold_p": 0.99,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.843
+    },
+    {
+      "id": "AQQUh5SSy0",
+      "question": "Daily Coinflip",
+      "manifold_p": 0.5050127630472547,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.5035089341330783
+    },
+    {
+      "id": "Az9Uq5cAPq",
+      "question": "Will the ISS altitude increase in the next 24h?",
+      "manifold_p": 0.5681673986157054,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.5477171790309938
+    },
+    {
+      "id": "hRcOqzA62I",
+      "question": "Will I make my connection in Reykjavik?",
+      "manifold_p": 0.10276214180268023,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.22193349926187617
+    },
+    {
+      "id": "d9plItyU2L",
+      "question": "Will Claude become a Pok\u00e8mon Master by the end of August 2026?",
+      "manifold_p": 0.9899999999999999,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.843
+    },
+    {
+      "id": "RE9uNLtn0u",
+      "question": "Will any NFL team(s) use significant amounts of AI generated content in their 2026 schedule release video?",
+      "manifold_p": 0.6443765788164953,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.6010636051715468
+    },
+    {
+      "id": "ECP2dgq5Cz",
+      "question": "Will April 2026 headline CPI rise at least 0.6% month-over-month?",
+      "manifold_p": 0.4800000000000001,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.48600000000000004
+    },
+    {
+      "id": "8NRRLggAdC",
+      "question": "D\u00e4il\u00ff C\u00f6in Flip - Day 59752",
+      "manifold_p": 0.50025539281093,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.500178774967651
+    },
+    {
+      "id": "ZIsEZ2cQNS",
+      "question": "[short fuse] 'Starmer out by July' odds on Polymarket go up during today's speech?",
+      "manifold_p": 0.009999999999999986,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.15700000000000003
+    },
+    {
+      "id": "IdUndPS0U8",
+      "question": "Will Solana reach 105% of its current price in the next 24 hours?",
+      "manifold_p": 0.06355061361672565,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.194485429531708
+    },
+    {
+      "id": "uLq6UQZ0tl",
+      "question": "Will April 2026 core CPI rise at least 0.3% month-over-month?",
+      "manifold_p": 0.9899999999999999,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.843
+    },
+    {
+      "id": "SylOAI26PO",
+      "question": "Will this market have at least 1 trader",
+      "manifold_p": 0.9899999999999978,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.8429999999999984
+    },
+    {
+      "id": "hOdyuAZ6dz",
+      "question": "Will this have at least 1 unique trader",
+      "manifold_p": 0.9899999999999978,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.8429999999999984
+    },
+    {
+      "id": "OUlsNNAtsA",
+      "question": "Will the top HN story have 500+ points when this resolves?",
+      "manifold_p": 0.8524424030761653,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.7467096821533157
+    },
+    {
+      "id": "2CPAdhRn0O",
+      "question": "Will Manifold beat me at FTW?",
+      "manifold_p": 0.99,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.843
+    },
+    {
+      "id": "hAuAhln5Oq",
+      "question": "West Ham - Arsenal 10.05.2026. Both Teams To Score in a match",
+      "manifold_p": 0.02413383906557834,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.16689368734590482
+    },
+    {
+      "id": "zCRqOt0O9C",
+      "question": "Will Billie Jean by Michael Jackson reach #1 on the Spotify Global Top 50 during May 2026?",
+      "manifold_p": 0.8801240616749397,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.7660868431724578
+    },
+    {
+      "id": "yz28UQSZIz",
+      "question": "Will I use Hermes Agent for more than a week?",
+      "manifold_p": 0.66,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.612
+    },
+    {
+      "id": "A96Nzz9A9h",
+      "question": "Will Cardano go up in the next 24 hours?",
+      "manifold_p": 0.015226455137436317,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.16065851859620545
+    },
+    {
+      "id": "5uIZnRl6Ql",
+      "question": "Daily Coinflip",
+      "manifold_p": 0.5071016958629456,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.504971187104062
+    },
+    {
+      "id": "pOqdszNny2",
+      "question": "Will Sean Strickland beat Khamzat sat may 9, 2026?",
+      "manifold_p": 0.18315496148190674,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.27820847303733476
+    },
+    {
+      "id": "su0lRuy9h8",
+      "question": "D\u00e4il\u00ff C\u00f6in Flip - Day 142",
+      "manifold_p": 0.5000399984000011,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.5000279988800008
+    },
+    {
+      "id": "OSsIhlzchZ",
+      "question": "Will I avoid distractions during seminars, study groups, and workshops until the end of the month?",
+      "manifold_p": 0.21,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.297
+    },
+    {
+      "id": "I05OuIPhO0",
+      "question": "Will Barcelona beat Real Madrid in the El Clasico",
+      "manifold_p": 0.99,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.843
+    },
+    {
+      "id": "CdRAIO0pl0",
+      "question": "Will attendees of Minecraft Experience: Moonlight Trail receive a new exclusive Minecraft cape?",
+      "manifold_p": 0.9319264805990469,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.8023485364193328
+    },
+    {
+      "id": "Q62O05LQRn",
+      "question": "Will Bitcoin network hashrate go up in 24h?",
+      "manifold_p": 0.99,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.843
+    },
+    {
+      "id": "zPgN9UznAL",
+      "question": "Will Brandiel beat Aurick?",
+      "manifold_p": 0.47,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.479
+    },
+    {
+      "id": "t0zLLcdsnO",
+      "question": "will my friend successfully pull an all nighter",
+      "manifold_p": 0.5894647930925104,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.5626253551647573
+    },
+    {
+      "id": "5RR5pddRyE",
+      "question": "Will I complete 2 tasks every day for this week?",
+      "manifold_p": 0.53,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.521
+    }
+  ],
+  "verdict": "council is WORSE than Manifold consensus on this sample"
+}

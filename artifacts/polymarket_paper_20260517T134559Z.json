@@ -1,0 +1,154 @@
+{
+  "schema": "pantheon-polymarket-paper-v1",
+  "data_source": "synthetic_fallback",
+  "started_at": "2026-05-17T13:45:59.377079+00:00",
+  "finished_at": "2026-05-17T13:45:59.988893+00:00",
+  "wall_seconds": 0.612,
+  "n_markets_examined": 8,
+  "n_trades_fired": 4,
+  "fee_totals": {
+    "trades": 4.0,
+    "notional_usdc": 1925.9313948205356,
+    "fees_paid_usdc": 0.0,
+    "rebates_accrued_usdc": 21.405245343025893,
+    "net_cost_usdc": -21.405245343025893,
+    "net_bps": -111.14230444859902
+  },
+  "fee_by_category": {
+    "economics": {
+      "trades": 1.0,
+      "notional_usdc": 488.02816901408397,
+      "fees_paid_usdc": 0.0,
+      "rebates_accrued_usdc": 5.368309859154923
+    },
+    "sports": {
+      "trades": 1.0,
+      "notional_usdc": 500.0,
+      "fees_paid_usdc": 0.0,
+      "rebates_accrued_usdc": 3.3
+    },
+    "weather": {
+      "trades": 1.0,
+      "notional_usdc": 437.9032258064517,
+      "fees_paid_usdc": 0.0,
+      "rebates_accrued_usdc": 4.816935483870969
+    },
+    "crypto": {
+      "trades": 1.0,
+      "notional_usdc": 500.0,
+      "fees_paid_usdc": 0.0,
+      "rebates_accrued_usdc": 7.92
+    }
+  },
+  "ending_equity_usdc": 10000.0,
+  "rows": [
+    {
+      "slug": "election-2028-incumbent-win",
+      "category": "politics",
+      "yes_implied": 0.42,
+      "council_p": 0.42,
+      "edge": 0.0,
+      "decision": "skipped (edge below threshold)"
+    },
+    {
+      "slug": "btc-120k-by-eoy-2026",
+      "category": "crypto",
+      "yes_implied": 0.38,
+      "council_p": 0.4052,
+      "edge": 0.0252,
+      "decision": "skipped (edge below threshold)"
+    },
+    {
+      "slug": "fed-pause-may",
+      "category": "economics",
+      "question": "Will the Fed pause rate hikes at the May FOMC meeting?",
+      "yes_implied": 0.71,
+      "council_p": 0.6407,
+      "edge": -0.06929999999999992,
+      "direction": "NO",
+      "size_pct": 0.0488028169014084,
+      "size_usdc": 488.02816901408397,
+      "mode": "maker",
+      "post_only": true,
+      "limit_price": 0.28500000000000003,
+      "fill_price": 0.3019521126760564,
+      "expected_taker_fee_bps": 0.0,
+      "expected_maker_rebate_bps": 110.0,
+      "fee_paid_usdc": 0.0,
+      "rebate_accrued_usdc": 5.368309859154923
+    },
+    {
+      "slug": "russia-ukraine-ceasefire-by-q4",
+      "category": "geopolitics",
+      "yes_implied": 0.16,
+      "council_p": 0.18040000000000006,
+      "edge": 0.020400000000000057,
+      "decision": "skipped (edge below threshold)"
+    },
+    {
+      "slug": "lakers-finals-2026",
+      "category": "sports",
+      "question": "Will the Lakers win the 2026 NBA Finals?",
+      "yes_implied": 0.08,
+      "council_p": 0.2648,
+      "edge": 0.18479999999999996,
+      "direction": "YES",
+      "size_pct": 0.05,
+      "size_usdc": 500.0,
+      "mode": "maker",
+      "post_only": true,
+      "limit_price": 0.075,
+      "fill_price": 0.092,
+      "expected_taker_fee_bps": 0.0,
+      "expected_maker_rebate_bps": 66.0,
+      "fee_paid_usdc": 0.0,
+      "rebate_accrued_usdc": 3.3
+    },
+    {
+      "slug": "cpi-yoy-above-3",
+      "category": "economics",
+      "yes_implied": 0.45,
+      "council_p": 0.46975,
+      "edge": 0.01974999999999999,
+      "decision": "skipped (edge below threshold)"
+    },
+    {
+      "slug": "atlantic-hurricane-cat4",
+      "category": "weather",
+      "question": "Will there be a Cat 4+ Atlantic hurricane this season?",
+      "yes_implied": 0.62,
+      "council_p": 0.5657,
+      "edge": -0.054300000000000015,
+      "direction": "NO",
+      "size_pct": 0.04379032258064517,
+      "size_usdc": 437.9032258064517,
+      "mode": "maker",
+      "post_only": true,
+      "limit_price": 0.375,
+      "fill_price": 0.3917516129032258,
+      "expected_taker_fee_bps": 0.0,
+      "expected_maker_rebate_bps": 110.0,
+      "fee_paid_usdc": 0.0,
+      "rebate_accrued_usdc": 4.816935483870969
+    },
+    {
+      "slug": "eth-merge-issue",
+      "category": "crypto",
+      "question": "Will Ethereum experience a significant chain issue in Q3?",
+      "yes_implied": 0.12,
+      "council_p": 0.29556,
+      "edge": 0.17556,
+      "direction": "YES",
+      "size_pct": 0.05,
+      "size_usdc": 500.0,
+      "mode": "maker",
+      "post_only": true,
+      "limit_price": 0.11499999999999999,
+      "fill_price": 0.132,
+      "expected_taker_fee_bps": 0.0,
+      "expected_maker_rebate_bps": 158.4,
+      "fee_paid_usdc": 0.0,
+      "rebate_accrued_usdc": 7.92
+    }
+  ]
+}
