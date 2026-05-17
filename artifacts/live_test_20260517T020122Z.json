@@ -1,0 +1,231 @@
+{
+  "schema": "pantheon-live-test-v1",
+  "model": "gemini-2.5-flash-lite",
+  "started_at": "2026-05-17T02:01:22.322781+00:00",
+  "finished_at": "2026-05-17T02:02:12.750204+00:00",
+  "total_duration_ms": 50427,
+  "spacing_seconds_between_calls": 0.4,
+  "signal": {
+    "market_id": "0xPM-BTC-120K-2026-12-31",
+    "question": "Will Bitcoin trade above $120,000 on or before 2026-12-31 UTC?",
+    "category": "crypto",
+    "market_probability": 0.42,
+    "oracle_probability": 0.58,
+    "edge_signed": 0.16,
+    "band": "A",
+    "liquidity_score": 0.82,
+    "volatility_score": 0.55,
+    "catalyst_score": 0.71,
+    "sentiment_score": 0.61,
+    "days_to_resolution": 230.0,
+    "volume_24h": 412300.0,
+    "open_interest": 1870000.0
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "agents": [
+        {
+          "duration_ms": 3276,
+          "http_status": 200,
+          "tokens_in": 649,
+          "tokens_out": 300,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "The edge is **real and tradable**. The market is too cautious.\n\nMy analysis indicates a **65% probability for YES**. Here's why:\n\n*   **Edge:** The current market probability of 42% versus the oracle's 58% presents a significant 16% edge in",
+          "finish_reason": "STOP",
+          "agent": "ares"
+        },
+        {
+          "duration_ms": 2338,
+          "http_status": 200,
+          "tokens_in": 608,
+          "tokens_out": 197,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "Hark, council. I have reviewed the signal presented for Market 0xPM-BTC-120K-2026-12-31.\n\nThe market currently stands at 42.00%, with an oracle probability of 58.00%. This yields a signed edge of +16.00%.\n\nMy initial assessment is that this",
+          "finish_reason": "STOP",
+          "agent": "athena"
+        },
+        {
+          "duration_ms": 3542,
+          "http_status": 200,
+          "tokens_in": 652,
+          "tokens_out": 320,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "This market presents a question of Bitcoin's ascent to $120,000 by the end of 2026. The stated edge of +16% is derived from a 42% market probability versus a 58% oracle probability. Let us dissect the potential for loss.\n\nThe maximum loss i",
+          "finish_reason": "MAX_TOKENS",
+          "agent": "hades"
+        },
+        {
+          "duration_ms": 1432,
+          "http_status": 200,
+          "tokens_in": 669,
+          "tokens_out": 182,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "The edge of +16% on a 42% market probability for Bitcoin reaching $120,000 by year-end 2026 appears to be a statistically significant deviation. However, my role demands I look beyond immediate probabilities and examine the potential for ca",
+          "finish_reason": "STOP",
+          "agent": "cassandra"
+        },
+        {
+          "duration_ms": 1393,
+          "http_status": 200,
+          "tokens_in": 687,
+          "tokens_out": 72,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "My gaze falls upon this market, a whisper of potential within the digital ether. The edge, a mere flicker at 16%, is too faint to ignite my thunder. The council's analysis must delve deeper, for the foundations of our trades must be built o",
+          "finish_reason": "STOP",
+          "agent": "zeus"
+        },
+        {
+          "duration_ms": 3150,
+          "http_status": 200,
+          "tokens_in": 685,
+          "tokens_out": 320,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "This proposal requires careful consideration of several compliance factors.\n\nThe signed edge of +16.00% appears substantial, suggesting a potential discrepancy between market sentiment and oracle probabilities. However, the market probabili",
+          "finish_reason": "MAX_TOKENS",
+          "agent": "solon"
+        },
+        {
+          "duration_ms": 2170,
+          "http_status": 200,
+          "tokens_in": 651,
+          "tokens_out": 320,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "I observe the following:\n\n*   **Market:** Will Bitcoin trade above $120,000 on or before 2026-12-31 UTC?\n*   **Market Probability (YES):** 42.00%\n*   **Oracle Probability (YES):** 58.00%\n*   **Signed Edge:** +16.00%\n*   **Days to Resolution",
+          "finish_reason": "MAX_TOKENS",
+          "agent": "themis"
+        },
+        {
+          "duration_ms": 2799,
+          "http_status": 200,
+          "tokens_in": 733,
+          "tokens_out": 265,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "Let's examine the forge. Bitcoin above $120,000 by 2026-12-31.\n\nThe signal suggests a 16% edge, but the market probability and oracle probability are quite close. This isn't a roaring endorsement from the gods, but it's not a death knell ei",
+          "finish_reason": "STOP",
+          "agent": "hephaestus"
+        },
+        {
+          "duration_ms": 2824,
+          "http_status": 200,
+          "tokens_in": 649,
+          "tokens_out": 219,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "This is a bet on Bitcoin's price reaching a very high level in a few years.\n\nMy first thought is: would I be comfortable explaining this trade to a skeptical auditor?\n\nThe council's probability (42%) is lower than the oracle's (58%), which ",
+          "finish_reason": "STOP",
+          "agent": "humans"
+        },
+        {
+          "duration_ms": 2850,
+          "http_status": 200,
+          "tokens_in": 841,
+          "tokens_out": 320,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "Here's Eris's take:\n\n**Vote:** NO\n\n**Probability Estimate (YES):** 35.00%\n\n**Reasoning:**\n\nThe consensus appears to be leaning towards NO, with the Oracle probability at 58% and the Market probability at 42%, indicating a general skepticism",
+          "finish_reason": "MAX_TOKENS",
+          "agent": "eris"
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "agents": [
+        {
+          "duration_ms": 3807,
+          "http_status": 200,
+          "tokens_in": 672,
+          "tokens_out": 78,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 0.85\nPROBABILITY: 0.68\nFLAGS: NONE\nREASON: The market is significantly underpricing the probability of Bitcoin exceeding $120,000 by year-end 2026, given historical bull market cycles, increasing institutional adop",
+          "finish_reason": "STOP",
+          "agent": "ares"
+        },
+        {
+          "duration_ms": 1075,
+          "http_status": 429,
+          "error": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 10, model: gemini-2.5-flash-lite\\nPlease retry in 3.024299303s.\",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n ",
+          "agent": "athena"
+        },
+        {
+          "duration_ms": 1167,
+          "http_status": 200,
+          "tokens_in": 675,
+          "tokens_out": 84,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "VOTE: REJECT\nCONFIDENCE: 0.90\nPROBABILITY: 0.26\nFLAGS: LIQUIDITY, CORRELATION, NOVEL_RISK\nREASON: The projected downside, even factoring in a 42% YES probability, presents an unacceptable maximum loss in USDC, compounded by potential liquid",
+          "finish_reason": "STOP",
+          "agent": "hades"
+        },
+        {
+          "duration_ms": 1094,
+          "http_status": 429,
+          "error": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 10, model: gemini-2.5-flash-lite\\nPlease retry in 59.936948068s.\",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n",
+          "agent": "cassandra"
+        },
+        {
+          "duration_ms": 1106,
+          "http_status": 429,
+          "error": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 10, model: gemini-2.5-flash-lite\\nPlease retry in 58.421865937s.\",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n",
+          "agent": "zeus"
+        },
+        {
+          "duration_ms": 1134,
+          "http_status": 429,
+          "error": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 10, model: gemini-2.5-flash-lite\\nPlease retry in 56.884958633s.\",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n",
+          "agent": "solon"
+        },
+        {
+          "duration_ms": 1630,
+          "http_status": 200,
+          "tokens_in": 674,
+          "tokens_out": 84,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "VOTE: REJECT\nCONFIDENCE: 0.65\nPROBABILITY: 0.42\nFLAGS: SIZE_TOO_LARGE, SYSTEMIC_BIAS_DIRECTIONAL\nREASON: The recommended position size appears disproportionately large given the calculated half-Kelly criterion and the observed market probab",
+          "finish_reason": "STOP",
+          "agent": "themis"
+        },
+        {
+          "duration_ms": 1819,
+          "http_status": 200,
+          "tokens_in": 756,
+          "tokens_out": 75,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "VOTE: REJECT\nCONFIDENCE: 0.80\nPROBABILITY: 0.42\nFLAGS: DAYS_TO_RESOLUTION, LIQUIDITY_SCORE\nREASON: The market has insufficient time for entry and exit given the short resolution date, and the liquidity score indicates potential difficulty i",
+          "finish_reason": "STOP",
+          "agent": "hephaestus"
+        },
+        {
+          "duration_ms": 1811,
+          "http_status": 200,
+          "tokens_in": 672,
+          "tokens_out": 60,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 0.85\nPROBABILITY: 0.42\nFLAGS: NONE\nREASON: The market is in a speculative asset class, and the probabilities suggest a reasonable range of outcomes, so I'm comfortable with this trade.",
+          "finish_reason": "STOP",
+          "agent": "humans"
+        },
+        {
+          "duration_ms": 1785,
+          "http_status": 200,
+          "tokens_in": 864,
+          "tokens_out": 100,
+          "model_version": "gemini-2.5-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 0.85\nPROBABILITY: 0.62\nFLAGS: NONE\nREASON: The current market probability of 42% YES, significantly below the oracle's 58%, indicates a consensus leaning towards NO, and I will argue for YES by highlighting the his",
+          "finish_reason": "STOP",
+          "agent": "eris"
+        }
+      ]
+    }
+  ],
+  "tokens": {
+    "in": 11137,
+    "out": 2996
+  },
+  "cost_usd_estimate": 0.002312,
+  "pricing_assumed": {
+    "input_per_mtok": 0.1,
+    "output_per_mtok": 0.4
+  },
+  "failure_count": 4,
+  "agent_count": 10
+}

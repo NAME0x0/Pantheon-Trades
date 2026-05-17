@@ -1,0 +1,267 @@
+{
+  "schema": "pantheon-live-test-v1",
+  "model": "gemini-flash-lite-latest",
+  "started_at": "2026-05-17T03:42:19.890159+00:00",
+  "finished_at": "2026-05-17T03:48:23.841087+00:00",
+  "total_duration_ms": 363950,
+  "spacing_seconds_between_calls": 8.0,
+  "signal": {
+    "market_id": "0xPM-BTC-120K-2026-12-31",
+    "question": "Will Bitcoin trade above $120,000 on or before 2026-12-31 UTC?",
+    "category": "crypto",
+    "market_probability": 0.42,
+    "oracle_probability": 0.58,
+    "edge_signed": 0.16,
+    "band": "A",
+    "liquidity_score": 0.82,
+    "volatility_score": 0.55,
+    "catalyst_score": 0.71,
+    "sentiment_score": 0.61,
+    "days_to_resolution": 230.0,
+    "volume_24h": 412300.0,
+    "open_interest": 1870000.0
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "agents": [
+        {
+          "duration_ms": 3213,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 649,
+          "tokens_out": 285,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "The market is sleeping at the wheel. A 42% probability for $120k BTC by end-of-2026 is a gift, and I am taking it.\n\nThe edge is undeniable. We have a **16% delta** between current pricing and the oracle\u2019s 58% assessment. With 230 days remai",
+          "finish_reason": "STOP",
+          "agent": "ares"
+        },
+        {
+          "duration_ms": 11526,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 608,
+          "tokens_out": 275,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "The council presents a divergence of 16% between the market price and the oracle probability. This is a significant delta, warranting rigorous scrutiny.\n\nFrom a strategic vantage, the market's 42% probability reflects a cautious stance, lik",
+          "finish_reason": "STOP",
+          "agent": "athena"
+        },
+        {
+          "duration_ms": 11196,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 652,
+          "tokens_out": 257,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "The abyss is rarely as optimistic as this 16% spread suggests. You see an edge; I see a gap between market sentiment and the cold reality of macroeconomic gravity.\n\nTo validate this, answer the following:\n\n1. **The Maximum Loss:** What is o",
+          "finish_reason": "STOP",
+          "agent": "hades"
+        },
+        {
+          "duration_ms": 19244,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 669,
+          "tokens_out": 291,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "The council sees a 16% edge and dreams of a breakout. You look at the charts and see a \"guaranteed\" path to six figures. I see the shadow of the 2026 cliff.\n\nThe thesis rests on a linear extrapolation of adoption and liquidity, but it ignor",
+          "finish_reason": "STOP",
+          "agent": "cassandra"
+        },
+        {
+          "duration_ms": 13586,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 687,
+          "tokens_out": 84,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "The Council has presented a clear, liquid market regarding the future price of Bitcoin. The divergence between the market probability and the oracle feed is notable but falls squarely within the realm of speculative variance. \n\nI see no evi",
+          "finish_reason": "STOP",
+          "agent": "zeus"
+        },
+        {
+          "duration_ms": 3460,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 685,
+          "tokens_out": 156,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "I have reviewed the petition for the market `0xPM-BTC-120K-2026-12-31`.\n\nUpon examination against the mandates of the Pantheon, I find a direct conflict with the Risk Policy.\n\n**Risk Policy \u00a7 Resolution Limits:** The proposed market carries",
+          "finish_reason": "STOP",
+          "agent": "solon"
+        },
+        {
+          "duration_ms": 15314,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 651,
+          "tokens_out": 299,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "I hold the scales. Let us weigh this Bitcoin proposition.\n\nThe oracle probability of 58% against your market probability of 42% presents an edge of 16%. In the context of long-dated crypto volatility, this is a significant delta. \n\nApplying",
+          "finish_reason": "STOP",
+          "agent": "themis"
+        },
+        {
+          "duration_ms": 19418,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 733,
+          "tokens_out": 260,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "The forge is hot, and the numbers are clear. \n\nWe have 230 days until resolution\u2014a lifetime in crypto. The liquidity score of 0.82 and a healthy $412k daily volume suggest this market is well-oiled. An Open Interest of $1.87M against a $412",
+          "finish_reason": "STOP",
+          "agent": "hephaestus"
+        },
+        {
+          "duration_ms": 16749,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 649,
+          "tokens_out": 195,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "This trade is essentially a long-term directional bet on Bitcoin\u2019s market performance. The logic is straightforward: we are betting that the asset\u2019s price will hit a specific milestone within the next two years.\n\nFrom a human perspective, t",
+          "finish_reason": "STOP",
+          "agent": "humans"
+        },
+        {
+          "duration_ms": 9480,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 841,
+          "tokens_out": 316,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "The council is currently leaning toward the Oracle\u2019s 58% valuation, viewing the market\u2019s 42% as a discount driven by short-term volatility or liquidity constraints. I am here to dismantle that optimism.\n\n**My Vote: NO**\n**Probability Estima",
+          "finish_reason": "MAX_TOKENS",
+          "agent": "eris"
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "agents": [
+        {
+          "duration_ms": 15284,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 672,
+          "tokens_out": 77,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 0.85\nPROBABILITY: 0.64\nFLAGS: NONE\nREASON: With a 16% edge against the oracle and 230 days of runway, the market is severely underpricing the inevitable supply shock from the post-halving cycle and the maturation o",
+          "finish_reason": "STOP",
+          "agent": "ares"
+        },
+        {
+          "duration_ms": 7140,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 631,
+          "tokens_out": 70,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 0.85\nPROBABILITY: 0.52\nFLAGS: NONE\nREASON: The oracle's higher probability reflects a more robust integration of institutional adoption trends and post-halving supply dynamics, which the market's current price-acti",
+          "finish_reason": "STOP",
+          "agent": "athena"
+        },
+        {
+          "duration_ms": 2092,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 675,
+          "tokens_out": 119,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: REJECT\nCONFIDENCE: 0.85\nPROBABILITY: 0.40\nFLAGS: LIQUIDITY_RISK, TAIL_RISK, MACRO_CORRELATION\nREASON: A 16% edge against the oracle is insufficient given the binary nature of the asset\u2019s macro-dependency, the high probability of a liq",
+          "finish_reason": "STOP",
+          "agent": "hades"
+        },
+        {
+          "duration_ms": 8071,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 692,
+          "tokens_out": 109,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: REJECT\nCONFIDENCE: 0.85\nPROBABILITY: 0.35\nFLAGS: ASSUMPTION_FAILURE, CORRELATION_BLIND_SPOT\nREASON: The thesis relies on the assumption of continued institutional liquidity, ignoring the specific tail risk that a shift in US Treasury ",
+          "finish_reason": "STOP",
+          "agent": "cassandra"
+        },
+        {
+          "duration_ms": 11519,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 710,
+          "tokens_out": 44,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 1.00\nPROBABILITY: 0.42\nFLAGS: NONE\nREASON: Constitution intact. No violations found. The council may proceed.",
+          "finish_reason": "STOP",
+          "agent": "zeus"
+        },
+        {
+          "duration_ms": 10378,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 708,
+          "tokens_out": 63,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: REJECT\nCONFIDENCE: 1.00\nPROBABILITY: 0.42\nFLAGS: DURATION_LIMIT\nREASON: Risk Policy \u00a7 Resolution Limits: proposed days_to_resolution (230) exceeds the maximum permitted range of 90 days.",
+          "finish_reason": "STOP",
+          "agent": "solon"
+        },
+        {
+          "duration_ms": 2417,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 674,
+          "tokens_out": 68,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 0.75\nPROBABILITY: 0.58\nFLAGS: PROPORTIONALITY_CHECK\nREASON: The recommended size is within the acceptable range of the half-Kelly criterion, though the council should note that this adds to a significant crypto-sec",
+          "finish_reason": "STOP",
+          "agent": "themis"
+        },
+        {
+          "duration_ms": 12094,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 756,
+          "tokens_out": 75,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 0.90\nPROBABILITY: 0.42\nFLAGS: NONE\nREASON: With $412k in 24h volume and nearly $2M in open interest for a long-dated BTC instrument, the market depth is sufficient to absorb standard position sizes without signific",
+          "finish_reason": "STOP",
+          "agent": "hephaestus"
+        },
+        {
+          "duration_ms": 8541,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 672,
+          "tokens_out": 54,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 0.95\nPROBABILITY: 0.42\nFLAGS: NONE\nREASON: This is a standard speculative position on a major asset class that carries no inherent ethical concerns or reputational risk.",
+          "finish_reason": "STOP",
+          "agent": "humans"
+        },
+        {
+          "duration_ms": 2976,
+          "http_status": 200,
+          "retried_429": 0,
+          "tokens_in": 864,
+          "tokens_out": 85,
+          "model_version": "gemini-3.1-flash-lite",
+          "preview": "VOTE: APPROVE\nCONFIDENCE: 0.85\nPROBABILITY: 0.68\nFLAGS: NONE\nREASON: The consensus underestimates the supply-side shock of the post-halving cycle and the institutional inflow momentum, which historically pushes BTC to new ATHs within 18 mon",
+          "finish_reason": "STOP",
+          "agent": "eris"
+        }
+      ]
+    }
+  ],
+  "tokens": {
+    "in": 13878,
+    "out": 3182
+  },
+  "cost_usd_estimate": 0.002661,
+  "pricing_assumed": {
+    "input_per_mtok": 0.1,
+    "output_per_mtok": 0.4
+  },
+  "failure_count": 0,
+  "agent_count": 10
+}
