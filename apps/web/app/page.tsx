@@ -38,6 +38,85 @@ const AGENTS = [
   { name: "Hephaestus", greek: "ΗΦΑΙΣΤΟΣ",       role: "Execution — sizes and routes." },
   { name: "Daedalus",   greek: "ΔΑΙΔΑΛΟΣ",       role: "Execution — strategy fit." },
   { name: "Humans",     greek: "ΑΝΘΡΩΠΟΙ",       role: "Execution — crowd sentiment." },
+  { name: "Eris",       greek: "ΕΡΙΣ",           role: "Adversarial dissent. Breaks groupthink.", adversarial: true },
+];
+
+// Seven-tier robustness pass — what landed after the founding council.
+const TIER_BUILD = [
+  {
+    tier: "A",
+    title: "Survival foundation",
+    features: [
+      "Prometheus + Grafana on every council service",
+      "Polymarket L2 WebSocket depth",
+      "Correlation-aware portfolio sizing",
+      "Multi-sig admin migration script",
+      "Hypothesis property tests across sizing / slippage / calibration",
+    ],
+  },
+  {
+    tier: "B",
+    title: "Execution quality",
+    features: [
+      "Drawdown-adjusted Kelly haircut",
+      "Walk-forward + decayed agent calibration",
+      "Argos resolution-lag state machine",
+      "Strategos maker/taker chooser",
+      "Online slippage learner from realised fills",
+    ],
+  },
+  {
+    tier: "C",
+    title: "Intelligence",
+    features: [
+      "RAG over resolved markets (in-memory + ChromaDB)",
+      "Eris adversarial dissenter against consensus",
+      "Reflection-driven prompt evolution",
+      "Leave-one-out agent ablation scoring",
+      "Nitter RSS crowd-sentiment feed",
+    ],
+  },
+  {
+    tier: "D",
+    title: "Venues and data",
+    features: [
+      "Kalshi venue connector",
+      "DeFiLlama TVL + stablecoin flows + yields",
+      "TradingView screener adapter",
+      "spaCy / regex headline NER → market matcher",
+    ],
+  },
+  {
+    tier: "E",
+    title: "Operational maturity",
+    features: [
+      "Alembic async migrations",
+      "Hourly Postgres + Redis backup service",
+      "Mozilla SOPS + age secrets",
+      "slowapi global rate limiting",
+      "Deep /health/deep probes",
+    ],
+  },
+  {
+    tier: "F",
+    title: "Frontend",
+    features: [
+      "Pure-SVG Sankey trace flow",
+      "Equity / Sharpe / PnL chart primitives",
+      "Manual trade-approval card",
+      "Brier-ranked agent leaderboard",
+    ],
+  },
+  {
+    tier: "G",
+    title: "Safety hygiene",
+    features: [
+      "mutmut mutation testing scaffold",
+      "Shopify Toxiproxy chaos drills",
+      "a16z Halmos symbolic verification",
+      "IRS Form 8949 tax CSV export",
+    ],
+  },
 ];
 
 const PIPELINE = [
@@ -122,9 +201,9 @@ export default function Home() {
             </Reveal>
 
             <div className="grid max-w-2xl grid-cols-2 gap-x-10 gap-y-6 pt-2 md:grid-cols-4">
-              <HeroStat value={10} label="Council agents" />
+              <HeroStat value={11} label="Council agents" />
               <HeroStat value={4} label="Rounds of debate" />
-              <HeroStat value={51} label="Foundry tests" />
+              <HeroStat value={334} label="Python tests" />
               <HeroStat value={1} label="On-chain witness" />
             </div>
           </div>
@@ -251,6 +330,57 @@ export default function Home() {
         </ol>
       </section>
 
+      {/* ── TIER A-G — what landed after the founding council ──────── */}
+      <section className="py-20">
+        <Reveal>
+          <Eyebrow numeral="II·5" label="Seven tiers of hardening" />
+        </Reveal>
+        <Reveal delay={0.05}>
+          <h2 className="display mb-6 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-6xl">
+            Built for the trades we refuse,
+            <br />
+            <span className="serif italic text-primary">
+              hardened for the ones we take.
+            </span>
+          </h2>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <p className="serif mb-12 max-w-3xl text-lg leading-[1.7] text-muted-foreground">
+            Thirty-five commits across seven tiers landed the safety,
+            intelligence, observability, and venue surface a live trading
+            council needs. Every upstream picked is open-source MIT or
+            Apache — no paid vendor lock-in.
+          </p>
+        </Reveal>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {TIER_BUILD.map((t) => (
+            <Reveal key={t.tier} delay={0.05}>
+              <article className="h-full rounded-lg border border-primary/20 bg-card/40 p-6">
+                <header className="mb-4 flex items-baseline justify-between">
+                  <span className="display text-[10px] uppercase tracking-[0.45em] text-primary">
+                    Tier {t.tier}
+                  </span>
+                  <span className="serif italic text-sm text-muted-foreground">
+                    {t.title}
+                  </span>
+                </header>
+                <ul className="space-y-2">
+                  {t.features.map((f) => (
+                    <li
+                      key={f}
+                      className="serif text-sm leading-relaxed text-foreground/90"
+                    >
+                      <span className="mr-2 text-primary/60">·</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
       {/* ── VOTE SIMULATOR (interactive widget) ─────────────────────── */}
       <section className="relative -mx-6 my-12 overflow-hidden rounded-3xl border border-primary/15 px-6 py-20 md:py-24">
         <div className="absolute inset-0 -z-10">
@@ -275,9 +405,9 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.1}>
             <p className="serif mb-12 max-w-2xl text-xl leading-[1.7] text-muted-foreground">
-              Twelve agents. Three states. Real weights from the constitution.
-              Click an agent to cycle their vote — watch the verdict update
-              live. Zeus and Solon can veto the whole room.
+              The full council. Three states. Real weights from the
+              constitution. Click an agent to cycle their vote — watch the
+              verdict update live. Zeus and Solon can veto the whole room.
             </p>
           </Reveal>
           <Reveal delay={0.15}>

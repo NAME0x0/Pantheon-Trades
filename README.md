@@ -45,6 +45,24 @@ Pantheon Trades inverts that. Every signal flows through a structured four-round
 
 ---
 
+## Recent additions (Tier A–G build)
+
+A seven-tier robustness pass landed in 35 commits. Highlights below; full per-feature notes in [docs/CHANGELOG_TIERS.md](./docs/CHANGELOG_TIERS.md).
+
+| Tier | What shipped |
+|------|--------------|
+| **A — survival foundation** | Prometheus metrics + Grafana dashboard · Polymarket L2 WebSocket depth · correlation-aware portfolio sizing · multi-sig admin migration script for ProofOfRestraint · Hypothesis property tests across sizing / calibration / slippage. |
+| **B — execution quality** | Drawdown-adjusted Kelly · walk-forward / decayed calibration windows · Argos resolution-lag state machine · Strategos maker/taker chooser · online slippage learner that refines from realised fills. |
+| **C — intelligence** | Pluggable RAG (in-memory cosine + optional ChromaDB) over resolved markets · Eris adversarial dissenter against council groupthink · reflection-driven prompt evolution from Underworld post-mortems · agent ablation via leave-one-out council Brier · Nitter RSS X/Twitter sentiment with built-in VADER-style scorer. |
+| **D — venues + data** | Kalshi venue connector · DeFiLlama TVL + stablecoin flows + yields · TradingView screener adapter · spaCy/regex news-headline NER and market matcher. |
+| **E — operational maturity** | Alembic async migrations · hourly Postgres + Redis backup compose service · Mozilla SOPS + age secrets · slowapi global rate limiting · `/health/deep` probes (Redis info / DB version / RPC chainId / IPFS id). |
+| **F — frontend** | Pure-SVG trace Sankey · line + bar chart primitives + perf metrics (equity, rolling Sharpe, max DD) · manual trade-approval card · Brier-ranked agent leaderboard. |
+| **G — safety hygiene** | mutmut mutation testing scaffold · Shopify Toxiproxy chaos drills · a16z Halmos symbolic specs for ProofOfRestraint + PantheonConstitution · IRS Form 8949 tax CSV export. |
+
+Every upstream picked is open-source MIT/Apache and runs without paid vendors: ChromaDB, Nitter, Kalshi REST, DeFiLlama public API, tradingview-screener, spaCy, Alembic, SOPS + age, slowapi, mutmut, Toxiproxy, Halmos.
+
+---
+
 ## How it works
 
 ```mermaid
@@ -183,13 +201,15 @@ uv run python tests/dry_run_chain_write.py
 This repo treats correctness as a deploy gate, not a hope. The current `main` passes:
 
 ```
-forge test               18 suites · 51 tests passing · 0 failed
-python -m compileall     295 files · 0 syntax errors
-pytest sweep             76+ tests across 10 service suites
-docker compose config    valid
+forge test               20 suites · 51 tests + 2 symbolic specs · 0 failed
+halmos                   ProofOfRestraint + PantheonConstitution invariants proved
+python -m compileall     320+ files · 0 syntax errors
+pytest sweep             334+ tests across 12 service suites
+docker compose config    valid (incl. observability + backup stack)
 pnpm install             frozen-lockfile clean
 pnpm --filter web build  56 routes · /demo first-load 122 kB
 tests/bench.py           every microbenchmark gate green
+ruff check               all checks passed
 ```
 
 Run them yourself before touching anything: `python tests/bench.py`.
@@ -270,19 +290,43 @@ tests/          Cross-service benchmarks + live dry-runs
 
 **Working today**
 
-- Full Boule council against live Gemini and Anthropic providers
-- Areopagus gating · half-Kelly · constitutional caps
-- Strategos paper book execution
-- Static demo site on Vercel with interactive council replay
-- **Proof of Restraint anchored on Arc Testnet — first witness in [block 42,337,549](https://testnet.arcscan.app/tx/0xf9ae0e7ba73ecaece1af840b20e2ef5a20868df960e62ba238e53a828dfa4edb)**
-- 51/51 Foundry tests · 76+ Python tests · full compose stack healthy
+- Full Boule council against live Gemini (default `gemini-2.5-flash-lite`, ~6s spacing on free tier) and Anthropic providers · Eris adversarial dissenter opt-in via `BOULE_ERIS_ENABLED=1`
+- Areopagus gating · half-Kelly · drawdown haircut · correlation-aware sizing · constitutional caps
+- Strategos paper book execution + maker/taker chooser + online slippage learner
+- Pythia connectors: Polymarket REST + L2 WebSocket · Kalshi · DeFiLlama · TradingView screener
+- Apollo features: RAG over resolved markets · Nitter crowd sentiment · news-NER market matcher · on-chain TVL
+- Argos resolution-lag state machine surfacing stuck-payout positions
+- Observability: Prometheus metrics on every council service · provisioned Grafana dashboard at :3001
+- Backup: hourly pg_dump + Redis BGSAVE · retention configurable · operator runbook in `infra/backup`
+- Secrets: SOPS + age for encrypted `.env.enc` and `infra/secrets/*.yaml`
+- Static demo site on Vercel with interactive council replay + Sankey trace · approval card · leaderboard primitives
+- **Proof of Restraint anchored on Arc Testnet — first witness in [block 42,337,549](https://testnet.arcscan.app/tx/0xf9ae0e7ba73ecaece1af840b20e2ef5a20868df960e62ba238e53a828dfa4edb)** · multi-sig migration script ready in `contracts/script/TransferRestraintAdmin.s.sol`
+- Symbolic verification (Halmos) on `ProofOfRestraint` and `PantheonConstitution` runs in CI alongside Foundry tests
+- 53+ Foundry suites · 334+ Python tests · full compose stack healthy
 
 **On the roadmap**
 
 - Live Polymarket CLOB routing (paper mode complete, live mode behind `EXECUTION_MODE=live`)
 - Parthenon Merkle batching + Arc anchor cadence tuning
 - ERC-8004 passport portability across testnets
-- Adversarial-mode strategy retirement via Moirai
+- Adversarial-mode strategy retirement via Moirai (council adversarial agent shipped; lifecycle retirement next)
+
+---
+
+## Live test artifact
+
+Run the scripted Gemini live test to produce a JSON timing artifact:
+
+```bash
+uv run --project services/boule --with httpx python scripts/live_test_gemini.py
+# -> artifacts/live_test_<UTC>.json
+```
+
+The script reads `.env`, walks ten agents through round 1 (opening) and round 4 (vote)
+against `gemini-2.5-flash-lite` (overridable via `BOULE_GEMINI_MODEL`), and records
+per-call duration, token in/out, finish reason, model fingerprint, and an estimated
+USD cost. Spacing defaults to 6.2s for free-tier compliance — bump down via
+`LIVE_TEST_SPACING_S=0.5` on paid tier (25k RPD).
 
 ---
 
