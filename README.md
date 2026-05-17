@@ -4,7 +4,7 @@
 
 # Pantheon Trades
 
-**A ten-agent AI council debates every prediction-market trade — and anchors every restraint on-chain.**
+**An AI council debates every prediction-market trade before it fires. Restraint is recorded on-chain.**
 
 [![Foundry](https://img.shields.io/badge/Foundry-tests%20passing-success?logo=ethereum&logoColor=white)](./contracts)
 [![Python](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)](./services)
@@ -21,14 +21,70 @@
 
 ---
 
-## The premise
+## TL;DR (60 seconds, no jargon)
 
-Most automated trading systems optimize for one number: PnL. They have no notion of *why* a trade is right, no record of trades they refused, and no way for the public to verify their discipline.
+**What it is.** A trading system that doesn't trade until ten AI agents — each playing a role: bull, bear, risk officer, execution clerk — argue about the trade and vote. Two of them can refuse alone. When the system *declines* a trade, it stamps that decision onto a public blockchain so anyone can audit the discipline later.
 
-Pantheon Trades inverts that. Every signal flows through a structured four-round deliberation between ten Greek-god-named AI agents — bulls argue, bears challenge, risk vetoes, execution sizes. The verdict, whether *trade* or *no trade*, is anchored as a cryptographic witness on Circle's Arc Testnet. Discipline becomes auditable. Restraint becomes alpha.
+**Why that's different.** Most trading bots are a black box optimising one number: profit. This one is glass-box, optimising two things at once — profit *and* a public record of every trade it walked away from. Walking away is half the alpha. *Showing* that you walked away is what makes it auditable.
+
+**What you can do with it right now.**
+1. Open [the live demo](https://pantheon-trades-web.vercel.app/demo). Four real captured deliberations replay event-by-event in your browser — a Bitcoin approval, a Bitcoin veto, a US-election NO trade, and an NFL market the system refused. No login. Optional wallet connect to see the on-chain side.
+2. Clone this repo. The whole thing runs locally with one `docker compose up`. Use `gemini`, `openai`, `anthropic`, `openrouter`, `groq`, `together`, `deepseek`, `xai`, or a local `ollama` / `lm_studio` server — same code path, swap an env var.
+3. Run a paper trade against real CoinGecko prices: `python scripts/live_paper_trade_coingecko.py`. Artifact lands in `artifacts/` with PnL, fees, drawdown, and Sharpe.
+
+**Will it make you money?** Honest answer further down in the FAQ. Short version: the harness shows the pipeline runs end-to-end on live data, and it also shows naïve strategies lose money to fees. The hard part — finding signals where the edge survives 4% round-trip costs — is what the council exists to filter.
+
+> **Try it now (no install):** [pantheon-trades-web.vercel.app/demo](https://pantheon-trades-web.vercel.app/demo)
+>
+> **Try it locally (no API key):** `pnpm install && pnpm --filter @pantheon/web dev`
+>
+> **Try it with your own LLM:** `BOULE_LLM_PROVIDER=openai OPENAI_API_KEY=... uv run python scripts/live_test_gemini.py`
+
+---
+
+## What this actually is
+
+**For a trader:** a half-Kelly position sizer wrapped around a 10-agent deliberation that vetoes anything breaking 26 explicit risk rules. The constitution caps single-position size at 5% of NAV, single-category exposure at one of {politics 4%, crypto 5%, sports 3%, science 2%}, and a 50% gross drawdown stops opening new positions for 30 days. Half-Kelly, not full — never. Edge below 2pp after fees, never.
+
+**For an engineer:** a Python monorepo (uv per service, no shared `pip`) of 13 deployable services behind a FastAPI gateway, a Next.js 14 marketing site, and a Foundry-built Solidity contract suite on Circle Arc Testnet. Provider-agnostic LLM layer. 334 Python tests. 51 Foundry tests + 2 symbolic specs proved by Halmos. Prometheus + Grafana provisioned. Backups hourly. Secrets in SOPS+age. Migration via Alembic async.
+
+**For a researcher:** a council whose composition itself is the experiment. Round-1 openings, round-2 challenges, Athena's round-3 synthesis, round-4 blind votes. Two agents (Zeus, Solon) have veto power and can short-circuit the debate. One adversarial agent (Eris) reads the round-1 transcript and argues the minority side to force the council off groupthink. Agent weights update from Brier scores. Leave-one-out council ablation tells you which agents are pulling weight.
+
+**For a sceptic:** the *no-trade* path is on-chain, not the *trade* path. So either the system declines real trades (in which case the chain is the receipt) or it doesn't (in which case the chain is empty and the claim is falsified). The first witness is at [block 42,337,549](https://testnet.arcscan.app/tx/0xf9ae0e7ba73ecaece1af840b20e2ef5a20868df960e62ba238e53a828dfa4edb).
 
 > **First on-chain restraint witness — recorded live during build:**
 > [`0xf9ae0e7b…df960e62ba238e53a828dfa4edb`](https://testnet.arcscan.app/tx/0xf9ae0e7ba73ecaece1af840b20e2ef5a20868df960e62ba238e53a828dfa4edb) · block `42,337,549` · `onchain_proof_id = 1`
+
+---
+
+## Plain-English glossary
+
+The agents are named after Greek gods. Each name maps to one job. You only need the right column:
+
+| Name | What it actually does |
+|------|-----------------------|
+| **Pythia** | Goes and gets the data (Polymarket book, news headlines, crowd sentiment, on-chain TVL, Kalshi). |
+| **Apollo** | Builds a scored signal from Pythia's data and rates it S/A/B/C/D. |
+| **Boule** | Runs the deliberation — the round-1..round-4 council. The orchestrator. |
+| **Ares, Hades** | Bull researchers. Argue *for* the trade. |
+| **Athena, Cassandra** | Bear researchers. Argue *against*. Athena also writes the round-3 synthesis. |
+| **Zeus** | Risk officer. Can veto alone on constitutional violations. |
+| **Solon** | Compliance officer. Can veto alone on regulatory / liquidity / category-cap violations. |
+| **Themis** | Procedural arbiter. Checks for data freshness, source integrity, recommends resizes. |
+| **Hephaestus, Daedalus** | Execution planners. Pick maker vs taker, model slippage, design exits. |
+| **Humans** | Crowd-sentiment input — Reddit, Twitter (via Nitter), trade-news. |
+| **Eris** | Adversarial dissenter. Reads round-1, argues the minority side hard. Opt-in. |
+| **Areopagus** | The court. Final gatekeeper. Half-Kelly sizer. Writes Proof of Restraint on rejection. |
+| **Strategos** | The exchange clerk. Routes the trade to Polymarket CLOB (paper or live). |
+| **Argos** | Watches open positions. Surfaces stuck payouts, exits via Argos rules. |
+| **Parthenon** | Archive. IPFS + Irys bundles every deliberation. ERC-8004 agent passports. |
+| **Ostrakon** | Scoring. Brier scores, Sharpe, calibration, agent leaderboards. |
+| **Underworld** | Post-mortems. Reflects on losing trades, proposes prompt edits. |
+| **Olympus** | Coordinator. Goals board. Adversarial-mode trigger. |
+| **Moirai** | Strategy lifecycle (Clotho, Lachesis, Atropos — spin, allocate, retire). |
+| **Elysium** | Backtest + paper arena. |
+
+If a name confuses you in any document, look here first.
 
 ---
 
@@ -40,8 +96,41 @@ Pantheon Trades inverts that. Every signal flows through a structured four-round
 | **Two veto powers** | Zeus and Solon can halt a trade unilaterally on a constitutional violation. Early-veto short-circuits the debate to save tokens. |
 | **Half-Kelly with caps** | Areopagus sizes positions using directional edge and a confidence-weighted half-Kelly fraction, then clamps against constitutional position limits and category exposure. |
 | **Proof of Restraint** | When the council declines, Areopagus writes a `Restrained(signalHash, marketId, reasonCode, note)` record to a deployed Solidity contract on Arc. The repo's flagship feature is provably live at [`0x4b35…4895`](https://testnet.arcscan.app/address/0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895). |
-| **Pluggable LLMs** | `BOULE_LLM_PROVIDER=anthropic` or `gemini`. Provider-specific retry/timeout/throttle logic isolated in `services/boule/src/boule/llm/`. |
+| **Pluggable LLMs (11 providers)** | One env var switches Anthropic / Gemini / OpenAI / OpenRouter / Groq / Together / DeepSeek / xAI Grok / Fireworks / local Ollama / local LM Studio / any self-hosted OpenAI-compatible server. See [LLM provider matrix](#llm-provider-matrix). |
 | **Portable identities** | ERC-8004 agent passports — councilors carry their reputation across deployments. |
+| **Self-calibrating** | Agent weights update from realised Brier scores. Platt + isotonic regression recalibrate council probability from outcomes. Slippage learner refines from each fill. The system gets sharper the longer it runs. |
+
+---
+
+## LLM provider matrix
+
+The council debate code is written against one `LLMClient` protocol so the provider is a config switch, not a code path. Pick whichever LLM you have a key for (or run locally on Ollama / LM Studio):
+
+| Provider | `BOULE_LLM_PROVIDER` | Required env | Notes |
+|----------|----------------------|--------------|-------|
+| **Anthropic Claude** | `anthropic` *(default)* | `ANTHROPIC_API_KEY` | Best reasoning depth for the council role-plays; what most production tests are pinned to. |
+| **Google Gemini** | `gemini` | `GEMINI_API_KEY` | Free tier supports 25k RPD on flash-lite. `scripts/live_test_gemini.py` targets this directly. |
+| **OpenAI** | `openai` | `OPENAI_API_KEY` (+ `OPENAI_MODEL`) | Standard OpenAI `/v1/chat/completions`. Default model `gpt-4o-mini`. |
+| **OpenRouter** | `openrouter` | `OPENROUTER_API_KEY` (or `OPENAI_API_KEY`) | One key → 200+ models. Pin a specific model with `OPENROUTER_MODEL=anthropic/claude-sonnet-4`. |
+| **Groq** | `groq` | `GROQ_API_KEY` | Fastest inference on the list. Default `llama-3.1-70b-versatile`. |
+| **Together AI** | `together` | `TOGETHER_API_KEY` | Open-weight models. Default `meta-llama/Llama-3.3-70B-Instruct-Turbo`. |
+| **DeepSeek** | `deepseek` | `DEEPSEEK_API_KEY` | Cheap; `deepseek-chat` / `deepseek-reasoner`. |
+| **xAI Grok** | `xai` (or `grok`) | `XAI_API_KEY` | `grok-2-latest` by default. |
+| **Fireworks / vLLM / TGI / LocalAI** | `openai_compat` | `OPENAI_BASE_URL` + `OPENAI_API_KEY` + `OPENAI_MODEL` | Generic OpenAI-compatible server escape hatch. |
+| **Ollama (local)** | `ollama` | none (auto-detects `http://localhost:11434/v1`) | Default model `llama3.1`. Override with `OLLAMA_MODEL`. |
+| **LM Studio (local)** | `lm_studio` | none (auto-detects `http://localhost:1234/v1`) | Default model `local-model`. Override with `LM_STUDIO_MODEL`. |
+
+Every provider shares the same cache, retry-with-backoff, semaphore concurrency limit, and minimum-spacing throttle. If you've taken any LLM call before, you know how this one works — except it also caches identical-input → identical-output for free re-runs in your CI.
+
+```bash
+# Run the same script against four providers without touching any code:
+BOULE_LLM_PROVIDER=anthropic ANTHROPIC_API_KEY=...   uv run python scripts/live_test_gemini.py
+BOULE_LLM_PROVIDER=openai    OPENAI_API_KEY=sk-...   OPENAI_MODEL=gpt-4o-mini   uv run python scripts/live_test_gemini.py
+BOULE_LLM_PROVIDER=groq      GROQ_API_KEY=gsk-...    GROQ_MODEL=llama-3.1-70b-versatile   uv run python scripts/live_test_gemini.py
+BOULE_LLM_PROVIDER=ollama    OLLAMA_MODEL=llama3.1   uv run python scripts/live_test_gemini.py
+```
+
+Source: [`services/boule/src/boule/llm/__init__.py`](./services/boule/src/boule/llm/__init__.py).
 
 ---
 
@@ -313,20 +402,186 @@ tests/          Cross-service benchmarks + live dry-runs
 
 ---
 
-## Live test artifact
+## Live tests + artifacts
 
-Run the scripted Gemini live test to produce a JSON timing artifact:
+Two harnesses you can run today to see the system move under your own keys / against real data:
+
+### 1. Gemini live council deliberation
 
 ```bash
 uv run --project services/boule --with httpx python scripts/live_test_gemini.py
 # -> artifacts/live_test_<UTC>.json
 ```
 
-The script reads `.env`, walks ten agents through round 1 (opening) and round 4 (vote)
-against `gemini-2.5-flash-lite` (overridable via `BOULE_GEMINI_MODEL`), and records
-per-call duration, token in/out, finish reason, model fingerprint, and an estimated
-USD cost. Spacing defaults to 6.2s for free-tier compliance — bump down via
-`LIVE_TEST_SPACING_S=0.5` on paid tier (25k RPD).
+Walks ten agents through round 1 (opening) and round 4 (vote) against `gemini-2.5-flash-lite` (overridable via `BOULE_GEMINI_MODEL`). Records per-call duration, token in/out, finish reason, model fingerprint, and an estimated USD cost. Spacing defaults to 6.2s for free-tier compliance — bump down via `LIVE_TEST_SPACING_S=0.5` on paid tier (25k RPD).
+
+The canonical artifact is checked in at [`artifacts/live_test_20260517T034219Z.json`](./artifacts/live_test_20260517T034219Z.json) — 20/20 successful calls, 364 seconds, **$0.00266 estimated cost**. See [artifacts/README.md](./artifacts/README.md) for full schema.
+
+### 2. CoinGecko paper trade against live BTC prices
+
+```bash
+LIVE_PAPER_MODE=history LIVE_PAPER_DAYS=7 LIVE_PAPER_TICKS=100 \
+LIVE_PAPER_EDGE_THRESHOLD=0.02 \
+python scripts/live_paper_trade_coingecko.py
+# -> artifacts/coingecko_paper_<UTC>.json
+```
+
+Pulls a real BTC/USD bar series from CoinGecko's free `/coins/{id}/market_chart` endpoint, builds a synthetic "will next bar print higher?" binary question per bar, sizes with the production `areopagus.kelly.size_position` (half-Kelly, 5% cap, 0.5% floor), fills through the production `strategos.paper.PaperBook` (half-spread + slippage + 2% taker fees), and settles on the next bar.
+
+**Canonical run:** 7-day window, 100 hourly bars, 79 trades fired, **49.4% win rate**, **-39.5% PnL**, **$1,346 in fees on $10k starting bankroll**. The plumbing works end-to-end; naïve momentum doesn't survive round-trip costs. *This is by design* — the harness uses a toy momentum estimator in place of the LLM council so the result is honest, not flattering. Replace `council_probability()` with a real Boule deliberation if you want the real comparison (and the LLM bill that goes with it).
+
+See the full breakdown at [`artifacts/coingecko_paper_20260517T091551Z.json`](./artifacts/coingecko_paper_20260517T091551Z.json).
+
+---
+
+## FAQ — the honest answers
+
+Three things people ask first. Plain answers, with code pointers:
+
+### Is this recursive? Does it self-improve?
+
+Yes. Four feedback loops, all running today:
+
+1. **Prompt evolution** ([`services/underworld/src/underworld/prompt_evolver.py`](./services/underworld/src/underworld/prompt_evolver.py)). Underworld writes post-mortems on settled trades. After enough samples (default 20), it proposes edits to the agent prompts in `services/boule/src/boule/prompts/`. Edits land between `LESSONS_LEARNED_START` / `LESSONS_LEARNED_END` markers so prompts stay diff-friendly.
+2. **Agent weight updates** ([`services/ostrakon/src/ostrakon/agent_calibration.py`](./services/ostrakon/src/ostrakon/agent_calibration.py)). Brier scores on each agent's vote probability vs realised outcome update the agent's voting weight. Better-calibrated agents matter more next time.
+3. **Walk-forward council calibration**. Platt scaling + isotonic regression are refit on a rolling window of settled trades. Optional exponential time-decay so older trades count less.
+4. **Online slippage learner** ([`services/strategos/src/strategos/slippage_learner.py`](./services/strategos/src/strategos/slippage_learner.py)). EWMA per `(market, log10(depth))` bucket. Every fill that beats or misses expected price refines the next sizing call.
+
+There's also leave-one-out council ablation (`ostrakon ablate`) that tells you which agents are pulling weight. Run it weekly. Drop the ones that aren't.
+
+### Does it calibrate itself, or do I have to tune it?
+
+It does, but you should *check* not *trust*. The system is shipped pre-tuned with:
+
+- Conservative half-Kelly (not full).
+- A `MAX_POSITION_PCT=5%` constitutional cap. You can lower it. You cannot raise it.
+- Category exposure caps: politics 4%, crypto 5%, sports 3%, science 2%.
+- A liquidity floor: $50k 24h volume. Below this, Solon rejects automatically.
+- A drawdown haircut: half-Kelly multiplier ramps linearly from 1.0 → 0.2 between 0 and 30% drawdown.
+
+You should still run the [verification gates](#verification-gates) and the CoinGecko paper harness before pointing at real capital. The calibration loops adapt the *probabilities*; they do not adapt the *risk policy*. That is yours to set.
+
+### Will it make money if I deploy it for real, right now?
+
+Probably not without work. Honest reasons:
+
+- **Polymarket taker fees are 2% per side** = 4% round-trip. Any binary edge below ~6pp gets eaten by fees alone. Most binary markets do not have a 6pp edge.
+- **The CoinGecko paper-trade artifact above shows -39.5% PnL on a naïve momentum strategy.** That is what happens when you fire on every tick without an edge that survives fees.
+- **The council is good at refusing trades**, which is what the on-chain restraint witnesses prove. The harder, unsolved problem is *generating* signals where the edge survives fees. Apollo's seven-dimension scorer is a starting point, not a finished alpha source.
+- **Live mode is gated behind `EXECUTION_MODE=live`** specifically so an enthusiastic user can't deploy paper-tested code with real money on accident.
+
+What it is genuinely useful for *today*:
+
+- **Auditable discipline.** If you're a fund that wants to publish proof-of-restraint as part of an investor letter, the on-chain receipts are a credible primitive.
+- **Multi-agent research infrastructure.** Council composition, agent weights, and prompt evolution are all running and instrumented. Easier to experiment with here than to build from scratch.
+- **A teaching tool for risk discipline.** The 26 explicit constitutional rules + the half-Kelly + drawdown haircut + category caps are conservative by design, and they're encoded in code, not posters on the wall.
+
+What it would take to make money on real Polymarket flow:
+
+1. A Pythia data source that genuinely sees edge other people don't (the public-data sources here are a baseline, not an alpha source).
+2. Calibrated council probabilities sharper than the market on the markets you actually trade.
+3. Discipline to *not* trade when the edge isn't there. (This part the system already does well.)
+
+If you build #1 and #2, this repo handles #3 cleanly and writes the receipts to chain.
+
+---
+
+## Walkthrough — running it end-to-end for the first time
+
+This works on macOS, Linux, and Windows (PowerShell). Roughly 10 minutes for a clean machine.
+
+### 1. Prerequisites (one-time)
+
+```bash
+# Node 20+ (for the web app and the monorepo)
+node --version
+
+# pnpm (the JS package manager — fast, monorepo-friendly)
+npm install -g pnpm
+
+# uv (the Python package manager — replaces pip + venv)
+curl -LsSf https://astral.sh/uv/install.sh | sh    # Linux/Mac
+# Windows: irm https://astral.sh/uv/install.ps1 | iex
+
+# Foundry (for the Solidity contracts)
+curl -L https://foundry.paradigm.xyz | bash && foundryup
+
+# Docker (for the local services stack)
+# Install Docker Desktop from docker.com if you don't have it
+```
+
+If you only want to look at the demo site you can skip Foundry and Docker.
+
+### 2. Clone + install
+
+```bash
+git clone https://github.com/NAME0x0/Pantheon-Trades
+cd Pantheon-Trades
+pnpm install           # installs JS deps for all packages
+cp .env.example .env   # then fill in keys — see below for the minimum
+```
+
+The very minimum to *run something* is one LLM key. Either:
+
+```env
+# .env
+ANTHROPIC_API_KEY=sk-ant-...    # default provider
+# or
+BOULE_LLM_PROVIDER=gemini
+GEMINI_API_KEY=AIza...
+# or
+BOULE_LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+```
+
+For everything else (chain writes, live Polymarket, IPFS archives) you'll need the keys in [`.env.example`](./.env.example). For local-only experimentation, the [LLM provider matrix](#llm-provider-matrix) lets you point at `ollama` / `lm_studio` instead and skip all paid keys.
+
+### 3. Pick your path
+
+**(a) Just look at the demo.** No backend, no docker, no API keys.
+
+```bash
+pnpm --filter @pantheon/web dev
+# open http://localhost:3000
+```
+
+Watch four real captured deliberations replay event-by-event. Optionally connect your wallet to see the SIWE + Arc Testnet switch flow.
+
+**(b) Run a live LLM council deliberation against your key.**
+
+```bash
+uv run --project services/boule --with httpx python scripts/live_test_gemini.py
+```
+
+Produces `artifacts/live_test_*.json` with per-agent timings and costs.
+
+**(c) Run a paper trade against real BTC prices.**
+
+```bash
+LIVE_PAPER_MODE=history LIVE_PAPER_DAYS=7 LIVE_PAPER_TICKS=100 \
+  python scripts/live_paper_trade_coingecko.py
+```
+
+Produces `artifacts/coingecko_paper_*.json` with PnL, fees, drawdown.
+
+**(d) Bring up the whole stack.**
+
+```bash
+docker compose up -d
+pnpm test
+forge test --root contracts
+```
+
+13 services + Postgres + Redis + IPFS + Prometheus + Grafana. Grafana is at `http://localhost:3001` (admin / pantheon).
+
+**(e) Fire one real Proof of Restraint on Arc Testnet.**
+
+Needs `PRIVATE_KEY`, `RPC_URL`, `PROOF_OF_RESTRAINT_ADDRESS` in `.env`. The contract is deployed at [`0x4b35…4895`](https://testnet.arcscan.app/address/0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895). USDC is the native gas token on Arc, so you'll need test USDC in your wallet.
+
+```bash
+uv run python tests/dry_run_chain_write.py
+# Arcscan link printed at end
+```
 
 ---
 

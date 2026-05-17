@@ -111,7 +111,15 @@ export function ReplayPlayer({ scenario }: { scenario: string }) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const url = `/demo/btc-120k-${scenario}.json`;
+    // Back-compat: the v1 router passed "approve" / "restraint" — map those
+    // to the canonical BTC bundles. New callers pass the full scenario slug.
+    const slug =
+      scenario === "approve"
+        ? "btc-120k-approve"
+        : scenario === "restraint"
+          ? "btc-120k-restraint"
+          : scenario;
+    const url = `/demo/${slug}.json`;
     setBundle(null);
     setLoadErr(null);
     setCursor(0);
@@ -162,9 +170,11 @@ export function ReplayPlayer({ scenario }: { scenario: string }) {
   return (
     <div className="space-y-6">
       <Tabs value={scenario} onValueChange={onTabChange}>
-        <TabsList>
-          <TabsTrigger value="approve">Approval</TabsTrigger>
-          <TabsTrigger value="restraint">Proof of Restraint</TabsTrigger>
+        <TabsList className="flex-wrap">
+          <TabsTrigger value="btc-120k-approve">Crypto · Approve</TabsTrigger>
+          <TabsTrigger value="btc-120k-restraint">Crypto · Restraint</TabsTrigger>
+          <TabsTrigger value="election-2028-approve">Politics · NO</TabsTrigger>
+          <TabsTrigger value="nfl-superbowl-restraint">Sports · Reject</TabsTrigger>
         </TabsList>
       </Tabs>
 

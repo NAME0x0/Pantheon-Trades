@@ -74,3 +74,52 @@ uv run --project services/boule --with httpx python scripts/live_test_gemini.py
 currently calls "latest" (Gemini 3.1 flash-lite as of 2026-05). Pin
 explicitly with `BOULE_GEMINI_MODEL=gemini-2.5-flash-lite` for
 deterministic comparison runs.
+
+---
+
+## CoinGecko paper-trade artifacts
+
+The harness in `scripts/live_paper_trade_coingecko.py` walks the real
+BTC/USD bar series from CoinGecko's free `/coins/{id}/market_chart`
+endpoint, builds a synthetic "will next tick be higher?" binary
+question for each bar, sizes a paper trade with the production
+half-Kelly + caps, fills it through the production `PaperBook` with
+half-spread + slippage + 2% taker fees, and settles on the next bar.
+
+### `coingecko_paper_20260517T091551Z.json` (canonical)
+- mode: `history`, 7-day window, 100 hourly bars (BTC ≈ $78,000 range)
+- edge threshold: 2% absolute  ·  momentum lookback: 3 bars
+- bankroll: $10,000 USDC  ·  synthetic CLOB depth: $50,000
+- trades fired: **79**  ·  settled: 79  ·  wins: 39  ·  losses: 40
+- win rate: 49.4%  ·  realised PnL: **–$3,951.20** (–39.5%)
+- fees paid: **$1,346.52** (entry + exit at 2% each on every trade)
+- max drawdown: 56.8%  ·  sharpe (raw, per-tick): –0.11
+
+**What this proves:** the full sizing/execution pipeline runs end-to-end
+on real data. **What this shows:** naive momentum is not profitable as
+a binary tick predictor — taker fees alone are 4% round-trip, and the
+half-spread + slippage push every break-even slightly negative even
+when the directional call is right. *This is exactly the kind of result
+the council-driven flow is meant to filter out: 79 trades that would
+not pass Areopagus gates in production because the edge does not survive
+costs.*
+
+The point of the artifact is honesty: the plumbing is real, the data is
+real, and the strategy in the harness is intentionally a toy so the
+result is not flattering. Replace the `council_probability()` function
+with an actual Boule deliberation and you can rerun the same harness
+with real council probabilities — but that costs LLM tokens.
+
+### Reproducing
+
+```bash
+# Single API call, 7-day history window, 100 hourly bars
+LIVE_PAPER_MODE=history LIVE_PAPER_DAYS=7 \
+LIVE_PAPER_TICKS=100 LIVE_PAPER_EDGE_THRESHOLD=0.02 \
+python scripts/live_paper_trade_coingecko.py
+
+# Live polling (each tick = one API call; trips CoinGecko free-tier
+# limits past ~6 calls — keep TICK_S high or use a Pro key).
+LIVE_PAPER_MODE=poll LIVE_PAPER_TICKS=8 LIVE_PAPER_TICK_S=30 \
+python scripts/live_paper_trade_coingecko.py
+```
