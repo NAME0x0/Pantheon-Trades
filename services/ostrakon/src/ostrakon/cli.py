@@ -130,6 +130,20 @@ async def serve(consumer_name: str) -> None:
         await redis.aclose()
 
 
+def _cmd_ablate(in_csv, out_json: str) -> None:
+    """Leave-one-out agent ablation from a backtest CSV."""
+    from pathlib import Path
+
+    from ostrakon import ablation
+
+    in_path = Path(in_csv)
+    out_path = Path(out_json)
+    rows = ablation.ablate_from_csv(in_path)
+    ablation.dump_json(rows, out_path)
+    print(ablation.format_report(rows))
+    print(f"\nWrote {len(rows)} agent ablation row(s) -> {out_path}")
+
+
 def _cmd_calibrate(
     in_csv,
     out_json: str,
@@ -199,6 +213,18 @@ def main() -> None:
         help="Walk-forward (decayed): weight rows by exp(-ln2 * age / H).",
     )
 
+    ap = sub.add_parser(
+        "ablate",
+        help="Leave-one-out council Brier scoring per agent.",
+    )
+    ap.add_argument("--in", dest="in_csv", required=True, help="backtest_per_agent.csv")
+    ap.add_argument(
+        "--out",
+        dest="out_json",
+        default="agent_ablation.json",
+        help="Output JSON with per-agent delta-Brier.",
+    )
+
     rp = sub.add_parser(
         "recalibrate-loop",
         help="Background daemon: refit calibration every N resolutions, "
@@ -221,6 +247,8 @@ def main() -> None:
             window_days=args.window_days,
             half_life_days=args.half_life_days,
         )
+    elif args.cmd == "ablate":
+        _cmd_ablate(args.in_csv, args.out_json)
     elif args.cmd == "recalibrate-loop":
         from pathlib import Path
 
