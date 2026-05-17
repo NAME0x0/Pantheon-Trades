@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from pantheon_api.db import dispose_engine, init_engine
 from pantheon_api.logging import configure_logging
+from pantheon_api.middleware import install_rate_limiting
 from pantheon_api.routers import (
     adversarial,
     agents,
@@ -63,6 +64,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Global IP-keyed rate limiting (slowapi). Backstop, not business
+# logic — auth-specific limits live in pantheon_api.auth.rate_limit.
+install_rate_limiting(app)
 
 app.include_router(health.router)
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
