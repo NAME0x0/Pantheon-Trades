@@ -187,6 +187,29 @@ services:
     ports: ["9090:9090"]
     restart: unless-stopped
 
+  # Hourly Postgres pg_dump + Redis BGSAVE -> ./backups on the host.
+  # Retention is BACKUP_RETENTION_DAYS days (default 14). Override the
+  # cadence via BACKUP_INTERVAL_SECONDS (default 3600).
+  backup:
+    build:
+      context: ./infra/backup
+    environment:
+      PG_HOST: postgres
+      PG_USER: pantheon
+      PG_DB: pantheon
+      PGPASSWORD: pantheon
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-3600}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+    volumes:
+      - ./backups:/backups
+      - pantheon-redis:/redis-data:ro
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis:    { condition: service_healthy }
+    restart: unless-stopped
+
   grafana:
     image: grafana/grafana:11.4.0
     environment:
