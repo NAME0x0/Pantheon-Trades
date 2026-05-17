@@ -59,6 +59,7 @@ for svc_path in (
     ROOT / "packages" / "pantheon-core" / "src",
     ROOT / "services" / "pythia" / "src",
     ROOT / "services" / "apollo" / "src",
+    ROOT / "services" / "boule" / "src",
 ):
     if str(svc_path) not in sys.path:
         sys.path.insert(0, str(svc_path))
@@ -135,6 +136,104 @@ def heuristic_council_p(question: str, manifold_p: float) -> float:
     return manifold_p
 
 
+# ─── Full-mode LLM council ────────────────────────────────────────────
+
+
+FULL_SYSTEM_PROMPT = """You are a calibrated forecaster on prediction
+markets. Your only job is to read a single binary question and emit a
+probability of YES resolution. You must:
+
+  - Output ONLY a single number between 0.01 and 0.99 on the first line.
+  - No prose. No reasoning. No markdown.
+  - If you genuinely cannot estimate, output 0.50.
+
+You will see the question, the publicly-traded Manifold consensus, and
+no other context. Do not anchor on the Manifold number — it is shown
+so you can disagree. Use your own knowledge cutoff and base rates."""
+
+
+FULL_USER_TEMPLATE = """Question: {question}
+
+Manifold play-money consensus: {manifold_p:.3f}
+
+Your probability of YES (one number, 0.01–0.99):"""
+
+
+def _parse_full_probability(raw_text: str, fallback: float) -> float:
+    """Pull the first number we find in the model output. Coerce to
+    a valid probability. Fall back to ``fallback`` (Manifold prior)
+    on any parse failure — keeps the harness honest if the model
+    refuses or rambles.
+    """
+    import re
+
+    if not raw_text:
+        return fallback
+    match = re.search(r"-?\d+(?:\.\d+)?", raw_text.strip())
+    if not match:
+        return fallback
+    try:
+        p = float(match.group(0))
+    except ValueError:
+        return fallback
+    if p > 1.0:
+        # Some models output "75" meaning 75% — accept that form.
+        if p <= 100.0:
+            p = p / 100.0
+        else:
+            return fallback
+    return max(0.01, min(0.99, p))
+
+
+async def full_council_p(
+    llm,
+    question: str,
+    manifold_p: float,
+) -> tuple[float, dict]:
+    """One LLM call per market. Returns (probability, telemetry).
+
+    ``llm`` is a ``boule.llm.LLMClient`` (anthropic / gemini / openai /
+    groq / openrouter / etc — same provider matrix the production
+    council uses). The prompt is the most stripped-down single-shot
+    forecast possible; the council's value-add over the model is what
+    the harness is measuring, but in this script we treat ONE model
+    as a stand-in for the council so the LLM bill stays bounded at
+    one call per market instead of ten.
+
+    Cost on Gemini flash-lite: ~$0.0002 per market. 100 markets ≈ $0.02.
+    """
+    import time as _time
+
+    user = FULL_USER_TEMPLATE.format(question=question, manifold_p=manifold_p)
+    t0 = _time.perf_counter()
+    try:
+        result = await llm.complete(
+            system=FULL_SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": user}],
+            max_tokens=24,  # one number is all we want
+        )
+        latency_ms = int((_time.perf_counter() - t0) * 1000)
+        p = _parse_full_probability(result.text, fallback=manifold_p)
+        return p, {
+            "latency_ms": latency_ms,
+            "tokens_in": result.tokens_in,
+            "tokens_out": result.tokens_out,
+            "model_fingerprint": result.model_fingerprint,
+            "raw_text": (result.text or "")[:120],
+            "parse_fallback": False,
+        }
+    except Exception as exc:  # noqa: BLE001
+        latency_ms = int((_time.perf_counter() - t0) * 1000)
+        return manifold_p, {
+            "latency_ms": latency_ms,
+            "tokens_in": 0,
+            "tokens_out": 0,
+            "model_fingerprint": "",
+            "error": str(exc)[:200],
+            "parse_fallback": True,
+        }
+
+
 # ─── brier + decomposition ────────────────────────────────────────────
 
 
@@ -201,24 +300,42 @@ async def run(mode: str, n: int) -> dict:
         return {"error": "no resolved markets returned"}
     print(f"  got {len(markets)} resolved markets")
 
-    council_fn = offline_council_p if mode == "offline" else heuristic_council_p
+    if mode == "full":
+        # Lazy import — only build the LLM client when we actually need it.
+        from boule.llm import build_default_client
+
+        llm = build_default_client()
+        print(f"  mode=full: using LLM client {type(llm).__name__}")
+    else:
+        llm = None
+
+    council_fn = (
+        offline_council_p if mode == "offline"
+        else heuristic_council_p if mode == "heuristic"
+        else None  # full mode is handled async below
+    )
 
     manifold_probs: list[float] = []
     council_probs: list[float] = []
     outcomes: list[int] = []
     per_row: list[dict] = []
 
-    for m in markets:
-        cp = council_fn(m["question"], m["manifold_p"])
+    for i, m in enumerate(markets):
+        if mode == "full":
+            cp, telem = await full_council_p(llm, m["question"], m["manifold_p"])
+            row = {**m, "council_p": cp, "_llm": telem}
+            if (i + 1) % 10 == 0 or i == 0:
+                print(f"    [{i + 1}/{len(markets)}] cp={cp:.3f} manifold={m['manifold_p']:.3f}")
+        else:
+            cp = council_fn(m["question"], m["manifold_p"])
+            row = {**m, "council_p": cp}
         # Clip to valid probability range
         cp = max(0.01, min(0.99, cp))
+        row["council_p"] = cp
         manifold_probs.append(m["manifold_p"])
         council_probs.append(cp)
         outcomes.append(m["outcome_yes"])
-        per_row.append({
-            **m,
-            "council_p": cp,
-        })
+        per_row.append(row)
 
     manifold_brier = brier(manifold_probs, outcomes)
     council_brier = brier(council_probs, outcomes)
@@ -274,9 +391,25 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.mode == "full":
-        print("ERROR: --mode=full not yet implemented (needs Boule consumer wiring).")
-        print("       Use --mode=heuristic for now; it exercises the same pipeline.")
-        sys.exit(1)
+        # Verify the operator has set a provider + key. Don't burn
+        # the LLM client construction trying to discover a missing key.
+        import os
+        provider = os.environ.get("BOULE_LLM_PROVIDER", "anthropic").lower()
+        env_key = {
+            "anthropic": "ANTHROPIC_API_KEY",
+            "gemini": "GEMINI_API_KEY",
+            "openai": "OPENAI_API_KEY",
+            "openrouter": "OPENROUTER_API_KEY",
+            "groq": "GROQ_API_KEY",
+            "together": "TOGETHER_API_KEY",
+            "deepseek": "DEEPSEEK_API_KEY",
+            "xai": "XAI_API_KEY",
+            "grok": "XAI_API_KEY",
+        }.get(provider)
+        if env_key and not os.environ.get(env_key):
+            print(f"ERROR: --mode=full needs {env_key} (for BOULE_LLM_PROVIDER={provider}).")
+            print("       Set it in your env or .env and retry.")
+            sys.exit(1)
 
     result = asyncio.run(run(args.mode, args.n))
     if "error" in result:

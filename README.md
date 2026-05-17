@@ -152,6 +152,35 @@ Every upstream picked is open-source MIT/Apache and runs without paid vendors: C
 
 ---
 
+## Profitability-readiness build (post Tier A–G)
+
+After Tier A–G the project had hardened plumbing but no proven *edge source*. Six waves landed since to close that gap. The honest bottom line is in [`docs/FEES_AND_EDGE.md`](./docs/FEES_AND_EDGE.md) — short version below.
+
+| Wave | What shipped | Why it matters |
+|------|--------------|----------------|
+| **1 — fee path** | `post_only` flag plumbed `OrderRequest → LiveExecutor → choose_execution`; new `strategos.maker_rebate.FeeLedger` accounts per-trade fees + rebates per the Polymarket V2 schedule. | Switches a patient politics trade from –4% round-trip to **+88 bps** rebate inflow. Validated: 4 maker trades on the synthetic Polymarket harness accrued $21.41 in rebates against $0 fees — same trades all-taker would have cost ~$76. |
+| **2 — 3 new pythia sources** | `wikipedia.py` (pageviews + attention z-score), `fred.py` (816k macro time series, no key required), `manifold.py` (free human consensus prior). All async, all hermetically tested. | Plumbs the *unconsidered* public-data feeds catalogued in [docs/EDGE_SOURCES.md](./docs/EDGE_SOURCES.md). Each one validated against a falsification criterion before it earns a spot in the live signal. |
+| **3 — 4 new Apollo features** | `geopolitical_risk` (GDELT volume + tone composite), `attention` (Wikipedia velocity sigmoid), `macro_basis` (FRED gap with tanh saturation), `consensus_delta` (Manifold ≠ Polymarket → sizing cap). Each capped at ±0.05 oracle-probability movement so no single source dominates. | Turns raw pythia signals into bounded oracle-probability adjustments. Combined cap of ±0.20 leaves the council with real say. |
+| **4 — Apollo scorer wiring** | `score_market` now consumes the four new features as optional `MarketSnapshot` fields. Legacy callers unchanged. | The new sources actually reach `Signal.oracle_probability` end-to-end. 11 integration tests verify each delta moves the right direction by the right amount, and unused features stay no-ops. |
+| **5 — Conformal prediction** | `ostrakon.conformal_calibration` — split + adaptive (time-decayed) variants. `ConformalInterval` around any council probability. `conservative_kelly_p()` returns the lower bound. | Distribution-free, finite-sample coverage guarantees on probability intervals. Areopagus can size against `p_lo` instead of the point estimate — natural Kelly overconfidence regulariser at the [0, 1] extremes. |
+| **6 — Falsification + Polymarket paper** | `scripts/backtest_council_vs_manifold.py` (offline / heuristic / **full** modes — full hits real Anthropic / Gemini / OpenAI / Groq / etc); `scripts/paper_trade_polymarket.py` runs the whole pipeline against the live Polymarket book with proper fee accounting (synthetic fallback when Polymarket geo-blocks). | The empirical falsification question — *does Boule beat free Manifold consensus on N resolved markets?* — is now one shell command. The Polymarket harness is the 30-day precondition before `EXECUTION_MODE=live`. |
+
+```bash
+# Cheap sanity (no LLM calls — runs against 50 resolved Manifold markets)
+python scripts/backtest_council_vs_manifold.py --mode=offline --n=50
+
+# Real council via Gemini, 100 markets, ≈ $0.02 total
+BOULE_LLM_PROVIDER=gemini GEMINI_API_KEY=AIza... \
+  python scripts/backtest_council_vs_manifold.py --mode=full --n=100
+
+# 30-day paper test against live Polymarket flow
+python scripts/paper_trade_polymarket.py --markets=50 --edge-threshold=0.04
+```
+
+**What this does NOT do:** find a working edge source for you. The pipeline is now profit-capable — `Signal → Thesis → Approval → Maker Rebate` is end-to-end with the new feature sources and proper fee accounting. The remaining work is empirical: pick one source from [`docs/EDGE_SOURCES.md`](./docs/EDGE_SOURCES.md), validate it on resolved markets through the council-vs-Manifold harness, and only ship to live mode once the Brier delta is negative on a 200+ market sample.
+
+---
+
 ## How it works
 
 ```mermaid
@@ -292,11 +321,11 @@ This repo treats correctness as a deploy gate, not a hope. The current `main` pa
 ```
 forge test               20 suites · 51 tests + 2 symbolic specs · 0 failed
 halmos                   ProofOfRestraint + PantheonConstitution invariants proved
-python -m compileall     320+ files · 0 syntax errors
-pytest sweep             334+ tests across 12 service suites
+python -m compileall     330+ files · 0 syntax errors
+pytest sweep             430+ tests across 12 service suites
 docker compose config    valid (incl. observability + backup stack)
-pnpm install             frozen-lockfile clean
-pnpm --filter web build  56 routes · /demo first-load 122 kB
+pnpm install             clean (node-linker=hoisted)
+pnpm --filter web build  56 routes · /demo first-load 126 kB
 tests/bench.py           every microbenchmark gate green
 ruff check               all checks passed
 ```

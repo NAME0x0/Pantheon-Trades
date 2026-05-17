@@ -1,0 +1,109 @@
+{
+  "schema": "pantheon-council-vs-manifold-v1",
+  "mode": "full",
+  "n_markets": 5,
+  "started_at": "2026-05-17T14:08:39.971210+00:00",
+  "finished_at": "2026-05-17T14:09:09.769411+00:00",
+  "wall_seconds": 29.798,
+  "manifold_brier": 0.123839554276398,
+  "council_brier": 0.1535,
+  "brier_delta": 0.02966044572360199,
+  "council_wins": false,
+  "manifold_decomposition": {
+    "base_rate": 0.6,
+    "reliability": 0.12383955427639802,
+    "resolution": 0.24,
+    "uncertainty": 0.24,
+    "implied_brier": 0.12383955427639802
+  },
+  "council_decomposition": {
+    "base_rate": 0.6,
+    "reliability": 0.15316666666666665,
+    "resolution": 0.24,
+    "uncertainty": 0.24,
+    "implied_brier": 0.15316666666666665
+  },
+  "rows": [
+    {
+      "id": "n9tR5L9S26",
+      "question": "Ronda Rousey vs Gina Carano fight",
+      "manifold_p": 0.9901120587587616,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.5,
+      "_llm": {
+        "latency_ms": 7478,
+        "tokens_in": 179,
+        "tokens_out": 4,
+        "model_fingerprint": "google/gemini-2.5-flash-lite",
+        "raw_text": "0.50",
+        "parse_fallback": false
+      }
+    },
+    {
+      "id": "CsyLldLzps",
+      "question": "Will Finland win Eurovision 2026?",
+      "manifold_p": 0.010000000000000009,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.05,
+      "_llm": {
+        "latency_ms": 2218,
+        "tokens_in": 181,
+        "tokens_out": 4,
+        "model_fingerprint": "google/gemini-2.5-flash-lite",
+        "raw_text": "0.05",
+        "parse_fallback": false
+      }
+    },
+    {
+      "id": "Zqn6RqRddR",
+      "question": "Will the Kolkata Knight Riders beat the Gujarat Titans on 16 May 2026?",
+      "manifold_p": 0.5,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.5,
+      "_llm": {
+        "latency_ms": 5909,
+        "tokens_in": 191,
+        "tokens_out": 4,
+        "model_fingerprint": "google/gemini-2.5-flash-lite",
+        "raw_text": "0.50",
+        "parse_fallback": false
+      }
+    },
+    {
+      "id": "PUNEEIhELR",
+      "question": "Will Embroidery win the G1 Victoria Mile at Tokyo?",
+      "manifold_p": 0.4900000000000001,
+      "outcome_yes": 1,
+      "resolved_at": null,
+      "council_p": 0.55,
+      "_llm": {
+        "latency_ms": 4949,
+        "tokens_in": 182,
+        "tokens_out": 4,
+        "model_fingerprint": "google/gemini-2.5-flash-lite",
+        "raw_text": "0.55",
+        "parse_fallback": false
+      }
+    },
+    {
+      "id": "8A0y9lP9yP",
+      "question": "Will Jimmystar win the Doomben 10,000?",
+      "manifold_p": 0.33,
+      "outcome_yes": 0,
+      "resolved_at": null,
+      "council_p": 0.25,
+      "_llm": {
+        "latency_ms": 6584,
+        "tokens_in": 188,
+        "tokens_out": 4,
+        "model_fingerprint": "google/gemini-2.5-flash-lite",
+        "raw_text": "0.25",
+        "parse_fallback": false
+      }
+    }
+  ],
+  "verdict": "council is WORSE than Manifold consensus on this sample"
+}
