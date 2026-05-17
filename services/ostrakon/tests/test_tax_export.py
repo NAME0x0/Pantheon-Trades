@@ -5,7 +5,6 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-import pytest
 
 from ostrakon.tax_export import (
     COLUMNS,

@@ -48,9 +48,9 @@ import json
 import os
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable
 
 import httpx
 
@@ -340,7 +340,7 @@ async def main() -> int:
     if results:
         avg_brier = sum(r["brier"] for r in results) / len(results)
         print(f"\n[backtest] mean Brier across {len(results)} markets = {avg_brier:.4f}")
-        print(f"  Brier 0.250 = coin flip · 0.000 = perfect")
+        print("  Brier 0.250 = coin flip · 0.000 = perfect")
         print(f"  out: {args.out}")
         print(f"  out: {args.out_agents}")
     return 0

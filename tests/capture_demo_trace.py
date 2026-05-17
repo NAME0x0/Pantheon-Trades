@@ -89,7 +89,7 @@ async def main() -> int:
 
     from areopagus.court import AreopagusCourt
     from areopagus.gates import PortfolioState
-    from pantheon_core.schema import ApprovalToken, RejectionRecord
+    from pantheon_core.schema import ApprovalToken
     from strategos.paper import PaperBook
 
     from boule.swarm import deliberate

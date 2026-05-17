@@ -319,7 +319,7 @@ async def main() -> int:
         return 1
 
     print(f"\n[bootstrap] {total} new resolved markets cached at {args.out}")
-    print(f"            run `uv run python tests/backtest_polymarket.py` to replay.")
+    print("            run `uv run python tests/backtest_polymarket.py` to replay.")
     return 0
 
 

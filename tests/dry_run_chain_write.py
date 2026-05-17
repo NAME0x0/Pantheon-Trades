@@ -50,7 +50,7 @@ async def main() -> int:
         print("  Required: PROOF_OF_RESTRAINT_ADDRESS, RPC_URL, PRIVATE_KEY")
         return 1
 
-    print(f"=== Arc Testnet dry-run ===")
+    print("=== Arc Testnet dry-run ===")
     print(f"  contract     : {writer._contract_address}")
     print(f"  rpc          : {writer._rpc_url}")
     print(f"  chain_id     : {writer._chain_id}")
@@ -64,14 +64,14 @@ async def main() -> int:
         note=f"dry-run from tests/dry_run_chain_write.py at {datetime.now(timezone.utc).isoformat()}",
     )
 
-    print(f"\nproof bundle:")
+    print("\nproof bundle:")
     print(f"  proof_id     : {proof.proof_id}")
     print(f"  signal_hash  : {proof.signal_hash}")
     print(f"  market       : {proof.market_id}")
     print(f"  reason       : {proof.reason_code}")
     print(f"  note         : {proof.note[:80]}")
 
-    print(f"\nfiring declineTrade(...)...")
+    print("\nfiring declineTrade(...)...")
     result = await writer.write(proof)
     await writer.close()
 
@@ -79,11 +79,11 @@ async def main() -> int:
         print("\nFAIL chain write returned None — check logs above")
         return 1
 
-    print(f"\nOK on-chain witness landed")
+    print("\nOK on-chain witness landed")
     print(f"  tx_hash          : {result.tx_hash}")
     print(f"  onchain proof_id : {result.proof_id}")
     print(f"  explorer         : {result.explorer_url}")
-    print(f"\nThis is the flagship feature firing live on Arc Testnet.")
+    print("\nThis is the flagship feature firing live on Arc Testnet.")
     return 0
 
 

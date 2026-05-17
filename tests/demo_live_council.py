@@ -88,7 +88,7 @@ async def _pick_market(http: httpx.AsyncClient) -> dict | None:
 
 def _synthetic_signal():
     """Realistic Polymarket-shaped MarketSnapshot for offline demos."""
-    from datetime import datetime, timedelta, timezone
+    from datetime import datetime, timezone
 
     from apollo.features.catalyst import CatalystEvent
     from apollo.features.sentiment import SentimentSample
@@ -163,7 +163,7 @@ async def main() -> int:
     else:
         snap = snapshot_from_market_payload(market)
         signal = score_market(snap)
-    print(f"\nsignal:")
+    print("\nsignal:")
     print(f"  market_id   = {signal.market_id}")
     print(f"  question    = {signal.question[:90]}")
     print(f"  category    = {signal.category}")
@@ -190,13 +190,13 @@ async def main() -> int:
     print(f"  solon_veto          = {thesis.solon_veto}")
     print(f"  cassandra_flags     = {thesis.cassandra_flags}")
     print(f"  votes               = {thesis.vote_summary}")
-    print(f"  per-agent:")
+    print("  per-agent:")
     for v in thesis.agents:
         print(f"    {v.agent:11s} {v.vote:8s} c={v.confidence:.2f} p={v.probability_estimate:.2f}  flags={v.flags}")
 
     court = AreopagusCourt(portfolio=PortfolioState())
     verdict = court.evaluate_thesis(thesis, signal)
-    print(f"\nareopagus verdict:")
+    print("\nareopagus verdict:")
     if isinstance(verdict, ApprovalToken):
         print(f"  decision       = {verdict.decision}")
         print(f"  final size     = {verdict.final_size_pct:.2%}")
@@ -204,7 +204,7 @@ async def main() -> int:
         print(f"  note           = {verdict.note}")
         paper = PaperBook(portfolio_usdc=args.portfolio)
         trade = paper.execute(verdict, thesis, mid_price=signal.market_probability, depth_usdc=signal.volume_24h or 50_000)
-        print(f"\npaper trade:")
+        print("\npaper trade:")
         print(f"  direction   = {trade.direction}")
         print(f"  size_usdc   = ${trade.size_usdc:,.2f}")
         print(f"  entry price = {trade.entry_price:.3f}")

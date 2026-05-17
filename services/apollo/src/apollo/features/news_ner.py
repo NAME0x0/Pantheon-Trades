@@ -62,9 +62,9 @@ def extract_entities(headline: str) -> list[Entity]:
 
 
 def _extract_via_spacy(headline: str) -> list[Entity] | None:
-    try:
-        import spacy  # type: ignore[import-not-found]
-    except ImportError:
+    from importlib.util import find_spec
+
+    if find_spec("spacy") is None:
         return None
     try:
         nlp = _spacy_pipeline()
@@ -77,7 +77,7 @@ def _extract_via_spacy(headline: str) -> list[Entity] | None:
 
 def _spacy_pipeline():
     """Module-level cache for the spaCy pipeline to amortise load."""
-    import spacy  # type: ignore[import-not-found]
+    import spacy  # type: ignore[import-not-found]  # noqa: PLC0415
 
     global _NLP_SINGLETON  # noqa: PLW0603
     if _NLP_SINGLETON is None:

@@ -38,7 +38,6 @@ from pantheon_core.schema import (
     AgentVote,
     ApprovalToken,
     ExitConditions,
-    RejectionRecord,
     Thesis,
     ThesisBlock,
     TraceEvent,
