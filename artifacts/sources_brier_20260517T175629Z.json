@@ -1,0 +1,190 @@
+{
+  "schema": "pantheon-sources-brier-v1",
+  "provider": "gemini",
+  "model": "gemini-flash-lite-latest",
+  "mode": "council",
+  "started_at": "2026-05-17T17:48:32.579088+00:00",
+  "finished_at": "2026-05-17T17:56:29.589399+00:00",
+  "wall_seconds": 477.01,
+  "n_markets": 100,
+  "n_evaluations": 100,
+  "base_rate_yes": 0.59,
+  "brier_manifold_baseline": 0.1235,
+  "brier_gemini_baseline": 0.1415,
+  "brier_delta_gemini_vs_manifold": 0.018,
+  "manifold_decomposition": {
+    "reliability": 0.00869,
+    "resolution": 0.12552,
+    "uncertainty": 0.2419,
+    "implied_brier": 0.12507,
+    "n": 100
+  },
+  "gemini_decomposition": {
+    "reliability": 0.01369,
+    "resolution": 0.1156,
+    "uncertainty": 0.2419,
+    "implied_brier": 0.13999,
+    "n": 100
+  },
+  "per_source": {
+    "basis_arb": {
+      "n_applied": 4,
+      "applicability_rate": 0.04,
+      "mean_abs_adjustment": 0.00032,
+      "stdev_adjustment": 0.00144,
+      "brier_with_source": 0.14142,
+      "brier_delta_vs_manifold": 0.01792,
+      "brier_delta_vs_gemini": -8e-05,
+      "verdict": "untestable",
+      "reason": "applies to only 4.0% of sample (n=4/100)"
+    },
+    "consensus_delta": {
+      "n_applied": 0,
+      "applicability_rate": 0.0,
+      "mean_abs_adjustment": 2e-05,
+      "stdev_adjustment": 0.0002,
+      "brier_with_source": 0.1415,
+      "brier_delta_vs_manifold": 0.018,
+      "brier_delta_vs_gemini": 0.0,
+      "verdict": "untestable",
+      "reason": "applies to only 0.0% of sample (n=0/100)"
+    },
+    "orderbook_imbalance": {
+      "n_applied": 5,
+      "applicability_rate": 0.05,
+      "mean_abs_adjustment": 0.00088,
+      "stdev_adjustment": 0.0028,
+      "brier_with_source": 0.14152,
+      "brier_delta_vs_manifold": 0.01802,
+      "brier_delta_vs_gemini": 2e-05,
+      "verdict": "HOLD",
+      "reason": "no meaningful change (+0.0000) on 5.0% of markets"
+    },
+    "perps_signal": {
+      "n_applied": 5,
+      "applicability_rate": 0.05,
+      "mean_abs_adjustment": 0.00075,
+      "stdev_adjustment": 0.0033,
+      "brier_with_source": 0.14164,
+      "brier_delta_vs_manifold": 0.01813,
+      "brier_delta_vs_gemini": 0.00014,
+      "verdict": "HOLD",
+      "reason": "no meaningful change (+0.0001) on 5.0% of markets"
+    },
+    "cot_positioning": {
+      "n_applied": 5,
+      "applicability_rate": 0.05,
+      "mean_abs_adjustment": 0.00056,
+      "stdev_adjustment": 0.00277,
+      "brier_with_source": 0.14164,
+      "brier_delta_vs_manifold": 0.01813,
+      "brier_delta_vs_gemini": 0.00014,
+      "verdict": "HOLD",
+      "reason": "no meaningful change (+0.0001) on 5.0% of markets"
+    },
+    "geopolitical_risk": {
+      "n_applied": 11,
+      "applicability_rate": 0.11,
+      "mean_abs_adjustment": 0.0013,
+      "stdev_adjustment": 0.00463,
+      "brier_with_source": 0.14179,
+      "brier_delta_vs_manifold": 0.01829,
+      "brier_delta_vs_gemini": 0.00029,
+      "verdict": "HOLD",
+      "reason": "no meaningful change (+0.0003) on 11.0% of markets"
+    },
+    "macro_basis": {
+      "n_applied": 4,
+      "applicability_rate": 0.04,
+      "mean_abs_adjustment": 0.00042,
+      "stdev_adjustment": 0.00268,
+      "brier_with_source": 0.14157,
+      "brier_delta_vs_manifold": 0.01807,
+      "brier_delta_vs_gemini": 7e-05,
+      "verdict": "untestable",
+      "reason": "applies to only 4.0% of sample (n=4/100)"
+    },
+    "attention": {
+      "n_applied": 19,
+      "applicability_rate": 0.19,
+      "mean_abs_adjustment": 0.00278,
+      "stdev_adjustment": 0.0058,
+      "brier_with_source": 0.14061,
+      "brier_delta_vs_manifold": 0.01711,
+      "brier_delta_vs_gemini": -0.00089,
+      "verdict": "HOLD",
+      "reason": "no meaningful change (-0.0009) on 19.0% of markets"
+    },
+    "onchain_tvl": {
+      "n_applied": 5,
+      "applicability_rate": 0.05,
+      "mean_abs_adjustment": 0.00026,
+      "stdev_adjustment": 0.00127,
+      "brier_with_source": 0.14153,
+      "brier_delta_vs_manifold": 0.01802,
+      "brier_delta_vs_gemini": 3e-05,
+      "verdict": "HOLD",
+      "reason": "no meaningful change (+0.0000) on 5.0% of markets"
+    },
+    "crowd_sentiment": {
+      "n_applied": 10,
+      "applicability_rate": 0.1,
+      "mean_abs_adjustment": 0.00256,
+      "stdev_adjustment": 0.00438,
+      "brier_with_source": 0.14075,
+      "brier_delta_vs_manifold": 0.01724,
+      "brier_delta_vs_gemini": -0.00075,
+      "verdict": "HOLD",
+      "reason": "no meaningful change (-0.0008) on 10.0% of markets"
+    },
+    "lead_lag": {
+      "n_applied": 8,
+      "applicability_rate": 0.08,
+      "mean_abs_adjustment": 0.00063,
+      "stdev_adjustment": 0.0025,
+      "brier_with_source": 0.14141,
+      "brier_delta_vs_manifold": 0.01791,
+      "brier_delta_vs_gemini": -8e-05,
+      "verdict": "HOLD",
+      "reason": "no meaningful change (-0.0001) on 8.0% of markets"
+    },
+    "macro_release_consensus": {
+      "n_applied": 3,
+      "applicability_rate": 0.03,
+      "mean_abs_adjustment": 0.00028,
+      "stdev_adjustment": 0.00154,
+      "brier_with_source": 0.14158,
+      "brier_delta_vs_manifold": 0.01808,
+      "brier_delta_vs_gemini": 8e-05,
+      "verdict": "untestable",
+      "reason": "applies to only 3.0% of sample (n=3/100)"
+    }
+  },
+  "verdicts": {
+    "adopt": [],
+    "reject": [],
+    "hold": [
+      "orderbook_imbalance",
+      "perps_signal",
+      "cot_positioning",
+      "geopolitical_risk",
+      "attention",
+      "onchain_tvl",
+      "crowd_sentiment",
+      "lead_lag"
+    ],
+    "untestable": [
+      "basis_arb",
+      "consensus_delta",
+      "macro_basis",
+      "macro_release_consensus"
+    ]
+  },
+  "llm": {
+    "tokens_in": 39494,
+    "tokens_out": 142301,
+    "latency_ms": 399395,
+    "model_version": "gemini-3.1-flash-lite",
+    "estimated_cost_usd": 0.06087
+  }
+}

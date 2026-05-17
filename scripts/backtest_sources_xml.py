@@ -197,7 +197,7 @@ def build_xml(markets: list[dict[str, Any]]) -> str:
     return ET.tostring(root, encoding="unicode")
 
 
-SYSTEM_PROMPT = """You are a calibrated forecaster grading prediction-market questions.
+SYSTEM_PROMPT_SINGLE = """You are a calibrated forecaster grading prediction-market questions.
 
 You will receive ONE XML payload containing:
   - A <sources> block: 12 Apollo edge sources with mechanism + applicability descriptions.
@@ -227,6 +227,73 @@ Response format (strict XML):
   ...
 </evaluations>
 """
+
+
+# ─── Council-mode role prompts ───────────────────────────────────────
+# Each role gets the same XML user payload but a different "persona"
+# system prompt. Aggregated by simple mean across the 5 baselines for
+# the first run; future iteration can switch to Brier-weighted mean
+# once we have per-agent calibration history.
+
+
+_COUNCIL_BASE = """You will receive ONE XML payload containing:
+  - A <sources> block: 12 Apollo edge sources.
+  - A <markets> block: N resolved binary questions with `manifold_p`.
+
+For EACH market output baseline_p (your independent estimate, not
+Manifold's) and per-source applies + adjustment per the strict format:
+
+<evaluations>
+  <market id="...">
+    <baseline_p>0.XX</baseline_p>
+    <source name="basis_arb" applies="yes" adjustment="-0.02"/>
+    ... all 12 sources ...
+  </market>
+</evaluations>
+
+Rules: NO prose outside XML. NO markdown. baseline_p in [0.01, 0.99].
+Adjustments in [-0.10, +0.10]. Inapplicable sources get applies="no"
+adjustment="0.0".
+"""
+
+COUNCIL_ROLES: list[tuple[str, str]] = [
+    (
+        "ares_bull",
+        "You are Ares, the bull researcher. Argue the case for YES first; "
+        "make every baseline_p you would defend as a long position. "
+        "Bias toward YES on borderline questions where the upside thesis is plausible.\n\n"
+        + _COUNCIL_BASE,
+    ),
+    (
+        "athena_bear",
+        "You are Athena, the bear researcher and synthesiser. Argue the case for NO; "
+        "weight historical base rates over recent news. "
+        "Bias toward NO on borderline questions where the downside thesis is plausible.\n\n"
+        + _COUNCIL_BASE,
+    ),
+    (
+        "cassandra_tail",
+        "You are Cassandra, the tail-risk specialist. You flag low-probability high-impact "
+        "outcomes others miss. Be conservative: most binary questions resolve to the modal "
+        "outcome. Pull baseline_p toward the base rate (0.50 minus the obvious-answer side) "
+        "on tail-shaped questions.\n\n"
+        + _COUNCIL_BASE,
+    ),
+    (
+        "themis_procedural",
+        "You are Themis, the procedural arbiter. You weight institutional / structural / "
+        "calendar evidence over sentiment. Trust scheduled events, established trends, "
+        "and explicit rules over speculation.\n\n"
+        + _COUNCIL_BASE,
+    ),
+    (
+        "humans_crowd",
+        "You are Humans, the crowd-sentiment input. You weight what retail / social would "
+        "say about each question. Use simple-vivid heuristics: brand recognition, recent "
+        "news cycle, public emotion. Less analytical, more pulse-of-the-room.\n\n"
+        + _COUNCIL_BASE,
+    ),
+]
 
 
 # ─── Gemini call (one shot) ──────────────────────────────────────────
@@ -476,6 +543,73 @@ def parse_response(text: str) -> list[MarketEval]:
     return out
 
 
+# ─── Council aggregation ────────────────────────────────────────────
+
+
+def aggregate_council(role_evals: dict[str, list[MarketEval]]) -> list[MarketEval]:
+    """Combine N per-role evaluations into one MarketEval per market.
+
+    Strategy: mean of baseline_p across roles + mean adjustment per
+    source. Skip roles that failed to parse. If no role survived for
+    a market, that market drops out — caller sees ``n_evaluations``
+    lower than ``n_markets`` and can investigate.
+
+    Future: weight by realised per-agent Brier from past resolutions
+    (already wired in ostrakon.agent_calibration). For now equal weight
+    so the first council run produces a clean baseline number.
+    """
+    if not role_evals:
+        return []
+    # Pull the per-market dict from each role.
+    per_role_indexes: dict[str, dict[str, MarketEval]] = {
+        role: {ev.market_id: ev for ev in evs}
+        for role, evs in role_evals.items()
+    }
+    # Union of all market ids across roles.
+    all_ids: set[str] = set()
+    for d in per_role_indexes.values():
+        all_ids.update(d.keys())
+
+    out: list[MarketEval] = []
+    for mid in all_ids:
+        baselines = [d[mid].baseline_p for d in per_role_indexes.values() if mid in d]
+        if not baselines:
+            continue
+        baseline_mean = sum(baselines) / len(baselines)
+        # Per-source mean adjustment, ignoring roles that don't have the source.
+        source_adjustments: dict[str, float] = {}
+        source_applies: dict[str, bool] = {}
+        for src in SOURCES:
+            name = src["name"]
+            adjs = []
+            applies_count = 0
+            present = 0
+            for d in per_role_indexes.values():
+                ev = d.get(mid)
+                if ev is None:
+                    continue
+                present += 1
+                adjs.append(ev.source_adjustments.get(name, 0.0))
+                if ev.source_applies.get(name, False):
+                    applies_count += 1
+            if not adjs:
+                continue
+            source_adjustments[name] = sum(adjs) / len(adjs)
+            # Majority vote on applicability.
+            source_applies[name] = applies_count > (present / 2)
+        out.append(MarketEval(
+            market_id=mid,
+            baseline_p=max(0.01, min(0.99, baseline_mean)),
+            source_adjustments=source_adjustments,
+            source_applies=source_applies,
+        ))
+    # Preserve a stable order — same as the first role that has the market.
+    first_role = next(iter(per_role_indexes.values()))
+    order = {ev.market_id: i for i, ev in enumerate(first_role.values())}
+    out.sort(key=lambda e: order.get(e.market_id, 10_000))
+    return out
+
+
 # ─── Brier compute ───────────────────────────────────────────────────
 
 
@@ -554,6 +688,7 @@ async def run(
     model: str,
     *,
     provider: str = "gemini",
+    council: bool = False,
     dry_run: bool = False,
     batch_size: int = 25,
 ) -> dict:
@@ -578,35 +713,64 @@ async def run(
     evals: list[MarketEval] = []
     llm_records: list[dict[str, Any]] = []
 
+    # When --council, gather per-role evals per batch and aggregate
+    # locally (mean of the 5 baselines + mean of each source adjustment).
+    # When single mode, just use SYSTEM_PROMPT_SINGLE.
+    role_evals_by_batch: list[dict[str, list[MarketEval]]] = []
+
     try:
         if dry_run:
-            print("  --dry-run: skipping Gemini calls")
+            print("  --dry-run: skipping LLM calls")
         else:
             for bi, batch in enumerate(batches):
                 xml_user = build_xml(batch)
                 TEMP_XML.write_text(xml_user, encoding="utf-8")
                 print(f"  [batch {bi + 1}/{len(batches)}] {len(batch)} markets, XML {len(xml_user)} bytes...")
-                rec = await llm_one_shot(
-                    SYSTEM_PROMPT, xml_user,
-                    provider=provider, model=model,
-                )
-                llm_records.append(rec)
-                if rec.get("http_status") != 200:
-                    err = rec.get("error", "unknown")
-                    raise RuntimeError(
-                        f"Gemini call failed on batch {bi + 1}: "
-                        f"HTTP {rec.get('http_status')}: {err[:400]}"
+
+                if council:
+                    role_evals: dict[str, list[MarketEval]] = {}
+                    for role_name, role_prompt in COUNCIL_ROLES:
+                        print(f"    [{role_name}] firing...")
+                        rec = await llm_one_shot(
+                            role_prompt, xml_user,
+                            provider=provider, model=model,
+                        )
+                        llm_records.append(rec)
+                        if rec.get("http_status") != 200:
+                            err = rec.get("error", "unknown")
+                            print(f"    [{role_name}] HTTP {rec.get('http_status')}: {err[:200]} — skipping role")
+                            continue
+                        try:
+                            role_evals[role_name] = parse_response(rec["text"])
+                            print(f"    [{role_name}] parsed {len(role_evals[role_name])} ({rec['tokens_in']} in / {rec['tokens_out']} out)")
+                        except RuntimeError as exc:
+                            print(f"    [{role_name}] parse failed: {exc}")
+                            continue
+                    role_evals_by_batch.append(role_evals)
+                    batch_evals = aggregate_council(role_evals)
+                    print(f"  [batch {bi + 1}] aggregated {len(batch_evals)} council evaluations from {len(role_evals)} roles")
+                else:
+                    rec = await llm_one_shot(
+                        SYSTEM_PROMPT_SINGLE, xml_user,
+                        provider=provider, model=model,
                     )
-                print(
-                    f"  [batch {bi + 1}] {rec['tokens_in']} in / {rec['tokens_out']} out, "
-                    f"{rec['latency_ms']}ms"
-                )
-                try:
-                    batch_evals = parse_response(rec["text"])
-                except RuntimeError as exc:
-                    print(f"  [batch {bi + 1}] parse failed: {exc}")
-                    continue
-                print(f"  [batch {bi + 1}] parsed {len(batch_evals)} evaluations")
+                    llm_records.append(rec)
+                    if rec.get("http_status") != 200:
+                        err = rec.get("error", "unknown")
+                        raise RuntimeError(
+                            f"LLM call failed on batch {bi + 1}: "
+                            f"HTTP {rec.get('http_status')}: {err[:400]}"
+                        )
+                    print(
+                        f"  [batch {bi + 1}] {rec['tokens_in']} in / {rec['tokens_out']} out, "
+                        f"{rec['latency_ms']}ms"
+                    )
+                    try:
+                        batch_evals = parse_response(rec["text"])
+                    except RuntimeError as exc:
+                        print(f"  [batch {bi + 1}] parse failed: {exc}")
+                        continue
+                    print(f"  [batch {bi + 1}] parsed {len(batch_evals)} evaluations")
                 evals.extend(batch_evals)
     finally:
         # Delete the temp XML per the user's spec.
@@ -708,6 +872,7 @@ async def run(
         "schema": "pantheon-sources-brier-v1",
         "provider": provider,
         "model": model,
+        "mode": "council" if council else "single",
         "started_at": started,
         "finished_at": datetime.now(timezone.utc).isoformat(),
         "wall_seconds": round(time.perf_counter() - t_start, 2),
@@ -787,6 +952,10 @@ def main() -> None:
                              "gemini-flash-lite-latest for gemini, "
                              "claude-sonnet-4-6 for anthropic")
     parser.add_argument("--batch-size", type=int, default=25)
+    parser.add_argument("--council", action="store_true",
+                        help="run 5-role council mode instead of single-shot — "
+                             "5x the LLM cost but tests whether council aggregation "
+                             "beats one model alone")
     parser.add_argument("--dry-run", action="store_true",
                         help="skip LLM call, just build + delete the XML")
     args = parser.parse_args()
@@ -805,6 +974,7 @@ def main() -> None:
     result = asyncio.run(run(
         args.n, model,
         provider=args.provider,
+        council=args.council,
         dry_run=args.dry_run,
         batch_size=args.batch_size,
     ))

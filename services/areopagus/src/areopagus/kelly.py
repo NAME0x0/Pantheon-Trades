@@ -79,3 +79,82 @@ def size_position(
         return max_pct, fk, "capped"
 
     return hk, fk, "ok"
+
+
+def size_position_conformal(
+    council_p_point: float,
+    market_p: float,
+    direction: str,
+    *,
+    q_hat: float,
+    alpha: float = 0.10,
+    max_pct: float = DEFAULT_MAX_PCT,
+    min_threshold: float = DEFAULT_MIN_THRESHOLD,
+) -> tuple[float, float, str, dict[str, float]]:
+    """Half-Kelly sizing against the CONFORMAL LOWER BOUND of the
+    council probability, not the point estimate.
+
+    The point estimate is sharpest in expectation but most fragile at
+    the extremes — over-sizing on a p=0.95 prediction when the true
+    probability is 0.85 is the classic Kelly blow-up. Sizing against
+    ``p_lo`` (conformal lower bound) gives natural overconfidence
+    regularisation that widens the interval exactly where calibration
+    data is thinnest. Our backtest confirms the council's tails are
+    over-confident relative to Manifold consensus.
+
+    Args:
+        council_p_point: point-estimate council probability of YES.
+        market_p: implied market probability of YES.
+        direction: ``"YES"`` or ``"NO"``.
+        q_hat: conformal half-width. Operator fits this from settled
+            trades via ``ostrakon.conformal_calibration.split_quantile``
+            and passes the value here. We don't import ostrakon to
+            keep areopagus self-contained.
+        alpha: nominal miscoverage rate (for diagnostics only — the
+            arithmetic uses ``q_hat`` directly).
+        max_pct, min_threshold: same as ``size_position``.
+
+    Returns:
+        ``(final_size_pct, kelly_fraction, reason, diagnostics)``
+        where ``diagnostics`` has ``p_lo``, ``p_hi``, ``p_used``,
+        ``edge_point``, ``edge_conservative``.
+    """
+    if direction not in ("YES", "NO"):
+        raise ValueError(f"direction must be YES or NO; got {direction}")
+
+    # Build the conformal interval inline (matches
+    # ostrakon.conformal_calibration.interval exactly).
+    p_clamped = max(0.0, min(1.0, float(council_p_point)))
+    p_lo = max(0.0, p_clamped - q_hat)
+    p_hi = min(1.0, p_clamped + q_hat)
+
+    # Conservative p on the trade's side.
+    p_used = p_lo if direction == "YES" else (1.0 - p_hi)
+
+    # Directional edge using the conservative p.
+    if direction == "YES":
+        entry = market_p
+        edge_conservative = max(0.0, p_used - market_p)
+        edge_point = max(0.0, p_clamped - market_p)
+    else:
+        entry = 1.0 - market_p
+        edge_conservative = max(0.0, p_used - (1.0 - market_p))
+        edge_point = max(0.0, (1.0 - p_clamped) - (1.0 - market_p))
+
+    final_pct, kelly_f, reason = size_position(
+        directional_edge=edge_conservative,
+        entry_price=entry,
+        max_pct=max_pct,
+        min_threshold=min_threshold,
+    )
+    diagnostics = {
+        "p_lo": p_lo,
+        "p_hi": p_hi,
+        "p_point": p_clamped,
+        "p_used_for_kelly": p_used,
+        "edge_point": edge_point,
+        "edge_conservative": edge_conservative,
+        "q_hat": q_hat,
+        "alpha": alpha,
+    }
+    return final_pct, kelly_f, reason, diagnostics
