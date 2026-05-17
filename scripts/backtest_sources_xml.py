@@ -135,15 +135,21 @@ SOURCES: list[dict[str, str]] = [
 
 
 async def fetch_resolved_markets(n: int) -> list[dict[str, Any]]:
-    """Pull resolved binary markets from Manifold."""
+    """Pull resolved binary markets from Manifold.
+
+    Pages through up to ``max(n * 5, 5000)`` raw records to find ``n``
+    resolved binaries — the resolved rate on Manifold is ~20-25% of
+    recent activity, so we over-fetch.
+    """
     import httpx
 
     from pythia.manifold import ManifoldSource
 
     out: list[dict[str, Any]] = []
-    async with httpx.AsyncClient(timeout=20.0) as http:
+    target_raw = max(n * 5, 5000)
+    async with httpx.AsyncClient(timeout=30.0) as http:
         src = ManifoldSource(client=http)
-        rows = await src.list_markets(limit=1000)
+        rows = await src.list_markets_paginated(total=target_raw, page_size=1000)
         for m in rows:
             if not m.get("isResolved"):
                 continue
@@ -226,18 +232,41 @@ Response format (strict XML):
 # ─── Gemini call (one shot) ──────────────────────────────────────────
 
 
-async def gemini_one_shot(
+async def llm_one_shot(
+    system: str,
+    user: str,
+    *,
+    provider: str = "gemini",
+    model: str | None = None,
+    max_retries: int = 4,
+    max_output_tokens: int = 32_000,
+) -> dict[str, Any]:
+    """Provider-agnostic single LLM call with retries on 429 / 5xx.
+
+    Dispatches to Gemini (v1beta REST) or Anthropic (messages API).
+    Each provider has the same return shape:
+        {latency_ms, http_status, text, tokens_in, tokens_out,
+         model_version, retries, error?}
+    """
+    if provider == "gemini":
+        return await _gemini_call(system, user, model or "gemini-flash-lite-latest",
+                                   max_retries=max_retries,
+                                   max_output_tokens=max_output_tokens)
+    if provider == "anthropic":
+        return await _anthropic_call(system, user, model or "claude-sonnet-4-6",
+                                      max_retries=max_retries,
+                                      max_output_tokens=max_output_tokens)
+    raise ValueError(f"unknown provider: {provider}")
+
+
+async def _gemini_call(
     system: str,
     user: str,
     model: str,
     *,
-    max_retries: int = 4,
+    max_retries: int,
+    max_output_tokens: int,
 ) -> dict[str, Any]:
-    """Single Gemini v1beta REST call with retries on 429 / 5xx.
-
-    Each retry waits a parsed `retry in Xs` value (capped at 30s) or
-    an exponential backoff starting at 4s.
-    """
     import httpx
 
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -252,14 +281,13 @@ async def gemini_one_shot(
         "systemInstruction": {"parts": [{"text": system}]},
         "contents": [{"role": "user", "parts": [{"text": user}]}],
         "generationConfig": {
-            "maxOutputTokens": 32_000,
+            "maxOutputTokens": max_output_tokens,
             "temperature": 0.2,
         },
     }
 
     attempt = 0
     backoff = 4.0
-    record: dict[str, Any] = {}
     while True:
         async with httpx.AsyncClient(timeout=600.0) as http:
             t0 = time.perf_counter()
@@ -268,23 +296,14 @@ async def gemini_one_shot(
             except (httpx.ReadTimeout, httpx.ConnectError) as exc:
                 latency_ms = int((time.perf_counter() - t0) * 1000)
                 if attempt >= max_retries:
-                    return {
-                        "latency_ms": latency_ms,
-                        "http_status": 0,
-                        "error": f"transport: {type(exc).__name__}",
-                        "text": "",
-                        "tokens_in": 0,
-                        "tokens_out": 0,
-                    }
+                    return {"latency_ms": latency_ms, "http_status": 0,
+                            "error": f"transport: {type(exc).__name__}",
+                            "text": "", "tokens_in": 0, "tokens_out": 0}
                 attempt += 1
-                wait_s = min(30.0, backoff * (2 ** (attempt - 1)))
-                print(f"      transport error {type(exc).__name__}, retry in {wait_s:.1f}s")
-                await asyncio.sleep(wait_s)
+                await asyncio.sleep(min(30.0, backoff * (2 ** (attempt - 1))))
                 continue
             latency_ms = int((time.perf_counter() - t0) * 1000)
-        record = {"latency_ms": latency_ms, "http_status": resp.status_code}
         if resp.status_code in (429, 500, 502, 503, 504) and attempt < max_retries:
-            # Parse Gemini's "Please retry in Xs" if present
             wait_s = backoff * (2 ** attempt)
             m = re.search(r"retry in ([0-9.]+)s", resp.text)
             if m:
@@ -298,11 +317,9 @@ async def gemini_one_shot(
             await asyncio.sleep(wait_s)
             continue
         if resp.status_code != 200:
-            record["error"] = resp.text[:1000]
-            record["text"] = ""
-            record["tokens_in"] = 0
-            record["tokens_out"] = 0
-            return record
+            return {"latency_ms": latency_ms, "http_status": resp.status_code,
+                    "error": resp.text[:1000], "text": "",
+                    "tokens_in": 0, "tokens_out": 0}
         body = resp.json()
         candidates = body.get("candidates") or []
         text = ""
@@ -310,15 +327,96 @@ async def gemini_one_shot(
             parts = candidates[0].get("content", {}).get("parts") or []
             text = "".join(p.get("text", "") for p in parts)
         usage = body.get("usageMetadata") or {}
-        record.update({
-            "text": text,
+        return {
+            "latency_ms": latency_ms, "http_status": 200, "text": text,
             "tokens_in": int(usage.get("promptTokenCount", 0)),
             "tokens_out": int(usage.get("candidatesTokenCount", 0)),
             "model_version": body.get("modelVersion") or model,
             "finish_reason": candidates[0].get("finishReason") if candidates else None,
             "retries": attempt,
-        })
-        return record
+        }
+
+
+async def _anthropic_call(
+    system: str,
+    user: str,
+    model: str,
+    *,
+    max_retries: int,
+    max_output_tokens: int,
+) -> dict[str, Any]:
+    import httpx
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise RuntimeError("ANTHROPIC_API_KEY missing")
+
+    url = "https://api.anthropic.com/v1/messages"
+    headers = {
+        "x-api-key": api_key,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    }
+    payload = {
+        "model": model,
+        "max_tokens": min(max_output_tokens, 64_000),
+        "temperature": 0.2,
+        "system": system,
+        "messages": [{"role": "user", "content": user}],
+    }
+
+    attempt = 0
+    backoff = 4.0
+    while True:
+        async with httpx.AsyncClient(timeout=600.0) as http:
+            t0 = time.perf_counter()
+            try:
+                resp = await http.post(url, headers=headers, json=payload)
+            except (httpx.ReadTimeout, httpx.ConnectError) as exc:
+                latency_ms = int((time.perf_counter() - t0) * 1000)
+                if attempt >= max_retries:
+                    return {"latency_ms": latency_ms, "http_status": 0,
+                            "error": f"transport: {type(exc).__name__}",
+                            "text": "", "tokens_in": 0, "tokens_out": 0}
+                attempt += 1
+                await asyncio.sleep(min(30.0, backoff * (2 ** (attempt - 1))))
+                continue
+            latency_ms = int((time.perf_counter() - t0) * 1000)
+        if resp.status_code in (429, 500, 502, 503, 504, 529) and attempt < max_retries:
+            wait_s = min(30.0, backoff * (2 ** attempt))
+            retry_after = resp.headers.get("retry-after")
+            if retry_after:
+                try:
+                    wait_s = min(60.0, max(2.0, float(retry_after)))
+                except ValueError:
+                    pass
+            attempt += 1
+            print(f"      HTTP {resp.status_code}, retry {attempt}/{max_retries} in {wait_s:.1f}s")
+            await asyncio.sleep(wait_s)
+            continue
+        if resp.status_code != 200:
+            return {"latency_ms": latency_ms, "http_status": resp.status_code,
+                    "error": resp.text[:1000], "text": "",
+                    "tokens_in": 0, "tokens_out": 0}
+        body = resp.json()
+        # Anthropic returns content as a list of blocks
+        text = ""
+        for block in body.get("content", []):
+            if isinstance(block, dict) and block.get("type") == "text":
+                text += block.get("text", "")
+        usage = body.get("usage", {}) or {}
+        return {
+            "latency_ms": latency_ms, "http_status": 200, "text": text,
+            "tokens_in": int(usage.get("input_tokens", 0)),
+            "tokens_out": int(usage.get("output_tokens", 0)),
+            "model_version": body.get("model") or model,
+            "finish_reason": body.get("stop_reason"),
+            "retries": attempt,
+        }
+
+
+# Backwards-compatible alias for any older imports.
+gemini_one_shot = llm_one_shot
 
 
 # ─── Response parse ──────────────────────────────────────────────────
@@ -401,11 +499,11 @@ def decompose(probs: list[float], outcomes: list[int], n_bins: int = 10) -> dict
         bins[idx][1].append(o)
     rel = 0.0
     res = 0.0
-    for ps, os in bins:
+    for ps, obs in bins:
         if not ps:
             continue
         bp = sum(ps) / len(ps)
-        bo = sum(os) / len(os)
+        bo = sum(obs) / len(obs)
         w = len(ps) / n
         rel += w * (bp - bo) ** 2
         res += w * (bo - base) ** 2
@@ -451,7 +549,14 @@ def adoption_verdict(
 # ─── Main ────────────────────────────────────────────────────────────
 
 
-async def run(n: int, model: str, *, dry_run: bool = False, batch_size: int = 25) -> dict:
+async def run(
+    n: int,
+    model: str,
+    *,
+    provider: str = "gemini",
+    dry_run: bool = False,
+    batch_size: int = 25,
+) -> dict:
     started = datetime.now(timezone.utc).isoformat()
     t_start = time.perf_counter()
 
@@ -481,7 +586,10 @@ async def run(n: int, model: str, *, dry_run: bool = False, batch_size: int = 25
                 xml_user = build_xml(batch)
                 TEMP_XML.write_text(xml_user, encoding="utf-8")
                 print(f"  [batch {bi + 1}/{len(batches)}] {len(batch)} markets, XML {len(xml_user)} bytes...")
-                rec = await gemini_one_shot(SYSTEM_PROMPT, xml_user, model=model)
+                rec = await llm_one_shot(
+                    SYSTEM_PROMPT, xml_user,
+                    provider=provider, model=model,
+                )
                 llm_records.append(rec)
                 if rec.get("http_status") != 200:
                     err = rec.get("error", "unknown")
@@ -598,6 +706,7 @@ async def run(n: int, model: str, *, dry_run: bool = False, batch_size: int = 25
 
     return {
         "schema": "pantheon-sources-brier-v1",
+        "provider": provider,
         "model": model,
         "started_at": started,
         "finished_at": datetime.now(timezone.utc).isoformat(),
@@ -622,13 +731,35 @@ async def run(n: int, model: str, *, dry_run: bool = False, batch_size: int = 25
             "tokens_out": llm_record.get("tokens_out"),
             "latency_ms": llm_record.get("latency_ms"),
             "model_version": llm_record.get("model_version"),
-            "estimated_cost_usd": round(
-                (llm_record.get("tokens_in", 0) / 1_000_000) * 0.10
-                + (llm_record.get("tokens_out", 0) / 1_000_000) * 0.40,
-                6,
-            ),
+            "estimated_cost_usd": _estimate_cost(provider, model,
+                                                  llm_record.get("tokens_in", 0),
+                                                  llm_record.get("tokens_out", 0)),
         },
     }
+
+
+def _estimate_cost(provider: str, model: str, tokens_in: int, tokens_out: int) -> float:
+    """Best-effort USD cost given current published per-MTok pricing."""
+    # Gemini flash-lite: $0.10 in / $0.40 out (2026 schedule).
+    # Claude Sonnet 4.6: $3.00 in / $15.00 out (2026 schedule).
+    # Claude Haiku 4.5: $0.80 in / $4.00 out.
+    # Default to gemini-flash-lite if model not recognised — caller
+    # uses this as a back-of-envelope, not an invoice.
+    if provider == "anthropic":
+        if "haiku" in model.lower():
+            p_in, p_out = 0.80, 4.00
+        elif "opus" in model.lower():
+            p_in, p_out = 15.00, 75.00
+        else:
+            p_in, p_out = 3.00, 15.00
+    else:
+        if "flash-lite" in model.lower():
+            p_in, p_out = 0.10, 0.40
+        elif "pro" in model.lower():
+            p_in, p_out = 1.25, 5.00
+        else:
+            p_in, p_out = 0.30, 2.50
+    return round((tokens_in / 1_000_000) * p_in + (tokens_out / 1_000_000) * p_out, 6)
 
 
 def _force_load_env():
@@ -650,19 +781,33 @@ def _force_load_env():
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--n", type=int, default=200, help="number of resolved markets")
-    parser.add_argument("--model", default="gemini-flash-lite-latest",
-                        help="Gemini model id")
+    parser.add_argument("--provider", choices=["gemini", "anthropic"], default="gemini")
+    parser.add_argument("--model", default=None,
+                        help="model id (provider-specific). default: "
+                             "gemini-flash-lite-latest for gemini, "
+                             "claude-sonnet-4-6 for anthropic")
+    parser.add_argument("--batch-size", type=int, default=25)
     parser.add_argument("--dry-run", action="store_true",
-                        help="skip Gemini call, just build + delete the XML")
+                        help="skip LLM call, just build + delete the XML")
     args = parser.parse_args()
 
     _force_load_env()
-    if not args.dry_run and not os.environ.get("GEMINI_API_KEY"):
-        print("ERROR: GEMINI_API_KEY missing (set in .env or shell)")
-        sys.exit(1)
+    if not args.dry_run:
+        env_key = "ANTHROPIC_API_KEY" if args.provider == "anthropic" else "GEMINI_API_KEY"
+        if not os.environ.get(env_key):
+            print(f"ERROR: {env_key} missing (set in .env or shell)")
+            sys.exit(1)
 
-    print(f"backtest_sources_xml: n={args.n} model={args.model}")
-    result = asyncio.run(run(args.n, args.model, dry_run=args.dry_run))
+    model = args.model or (
+        "claude-sonnet-4-6" if args.provider == "anthropic" else "gemini-flash-lite-latest"
+    )
+    print(f"backtest_sources_xml: n={args.n} provider={args.provider} model={model}")
+    result = asyncio.run(run(
+        args.n, model,
+        provider=args.provider,
+        dry_run=args.dry_run,
+        batch_size=args.batch_size,
+    ))
     if "error" in result:
         print(f"FAIL: {result['error']}")
         if "llm_record" in result:

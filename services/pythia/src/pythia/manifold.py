@@ -42,15 +42,56 @@ class ManifoldSource(DataSource):
             data={"markets": markets},
         )
 
-    async def list_markets(self, *, limit: int = 100) -> list[dict[str, Any]]:
-        """List recently-traded markets. Default 100, max 1000."""
+    async def list_markets(
+        self,
+        *,
+        limit: int = 100,
+        before: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """List recently-traded markets. Default 100, max 1000 per page.
+
+        Pass ``before`` (a market id) to page backwards through history —
+        Manifold returns markets in reverse-chronological order of
+        `lastUpdatedTime`. Use ``list_markets_paginated`` for the easy
+        path when you want more than 1000.
+        """
+        params: dict[str, str] = {"limit": str(min(1000, max(1, limit)))}
+        if before:
+            params["before"] = before
         resp = await self._client.get(
             f"{API_BASE}/markets",
-            params={"limit": str(min(1000, max(1, limit)))},
+            params=params,
             timeout=15.0,
         )
         resp.raise_for_status()
         return resp.json()
+
+    async def list_markets_paginated(
+        self,
+        *,
+        total: int = 2000,
+        page_size: int = 1000,
+    ) -> list[dict[str, Any]]:
+        """Page through Manifold's market history until ``total`` records
+        accumulate or the feed runs dry. Each page passes the last id
+        as ``before``.
+
+        Manifold's free API has no explicit rate limit on this endpoint;
+        we keep page_size at the documented max (1000) and stop on the
+        first empty page.
+        """
+        out: list[dict[str, Any]] = []
+        last_id: str | None = None
+        while len(out) < total:
+            batch = await self.list_markets(limit=page_size, before=last_id)
+            if not batch:
+                break
+            out.extend(batch)
+            new_last = batch[-1].get("id")
+            if not new_last or new_last == last_id:
+                break
+            last_id = new_last
+        return out[:total]
 
     async def get_market(self, market_id: str) -> dict[str, Any]:
         """Full market record by Manifold id."""
