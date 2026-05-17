@@ -215,3 +215,30 @@
     transform: translate3d(-50%, 0, 0);
   }
 }
+
+/* Reveal: CSS-only rise + fade triggered by a class toggle.
+   Used in place of framer-motion <Reveal> to avoid mounting ~85
+   motion instances on the home page. See components/anim.tsx for
+   the shared IntersectionObserver that adds .reveal-in. */
+.reveal {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 24px));
+  transition:
+    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+
+.reveal.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect prefers-reduced-motion — reveal is instant. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transition: none;
+    transform: none;
+    opacity: 1;
+  }
+}

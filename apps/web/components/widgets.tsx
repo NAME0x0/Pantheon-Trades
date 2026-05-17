@@ -1,22 +1,23 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 /* ─── Scroll progress bar ────────────────────────────────────────────
  * Thin gold bar across the very top of the viewport that fills as the
- * reader scrolls. Pure-CSS smooth via useScroll + useSpring. */
+ * reader scrolls.
+ *
+ * Recommendation G: dropped useSpring. The spring added damped motion
+ * but produced 60-80 motion-value updates per scroll second on
+ * mid-range hardware. Binding scrollYProgress to scaleX directly is
+ * effectively free — framer-motion subscribes the DOM transform to
+ * the scroll listener without intermediate spring math. */
 export function ScrollProgress() {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 140,
-    damping: 24,
-    mass: 0.3,
-  });
   return (
     <motion.div
-      style={{ scaleX }}
+      style={{ scaleX: scrollYProgress }}
       className="fixed left-0 right-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-primary via-primary/80 to-primary/40"
     />
   );

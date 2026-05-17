@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Cinzel, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 
+import { RevealProvider } from "@/components/anim";
 import { ChainTicker } from "@/components/chain-ticker";
 import { ThemeToggle, themeInitScript } from "@/components/theme-toggle";
 import { ScrollProgress } from "@/components/widgets";
@@ -73,8 +74,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        <ScrollProgress />
-        <ChainTicker />
+        {/* Single shared IntersectionObserver for all <Reveal> children
+            on the page. Cuts 85+ duplicate observers down to one and
+            converts the rise+fade from framer-motion springs to a CSS
+            transition (GPU-composited, ~free per frame). */}
+        <RevealProvider>
+          <ScrollProgress />
+          <ChainTicker />
 
         <header className="sticky top-0 z-40 border-b border-primary/12 bg-background/70 backdrop-blur-xl">
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
@@ -166,7 +172,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </footer>
 
-        <Analytics />
+          <Analytics />
+        </RevealProvider>
       </body>
     </html>
   );

@@ -1,12 +1,91 @@
 "use client";
 
 import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { cn } from "@/lib/utils";
+
+/* ─── Shared IntersectionObserver for Reveal ─────────────────────────
+ *
+ * Recommendation H: the home page mounts ~85 Reveal instances. Before
+ * this change each one ran its own framer-motion observer + spring,
+ * producing a 200-400 ms hitch on first paint. This provider exposes
+ * a single IntersectionObserver shared across every Reveal child.
+ * Each child registers a callback; the observer fires it once when
+ * the element scrolls into view and then unobserves.
+ *
+ * The actual "rise + fade" animation is now plain CSS — see the
+ * .reveal / .reveal-in classes in styles/globals.css. CSS transitions
+ * are GPU-composited and free at the per-frame level.
+ *
+ * Components that want the old framer-motion behaviour can opt back
+ * in by importing motion directly; this just replaces the default
+ * Reveal export.
+ */
+
+type RevealCallback = () => void;
+
+interface RevealCtxValue {
+  observe: (el: Element, cb: RevealCallback) => () => void;
+}
+
+const RevealCtx = createContext<RevealCtxValue | null>(null);
+
+export function RevealProvider({ children }: { children: React.ReactNode }) {
+  const callbacks = useRef<Map<Element, RevealCallback>>(new Map());
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    const cbs = callbacks.current;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const cb = cbs.get(e.target);
+          if (cb) {
+            cb();
+            cbs.delete(e.target);
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { rootMargin: "-10% 0px -10% 0px", threshold: 0 },
+    );
+    observerRef.current = io;
+    return () => {
+      io.disconnect();
+      observerRef.current = null;
+      cbs.clear();
+    };
+  }, []);
+
+  const observe = useCallback((el: Element, cb: RevealCallback) => {
+    callbacks.current.set(el, cb);
+    observerRef.current?.observe(el);
+    return () => {
+      callbacks.current.delete(el);
+      observerRef.current?.unobserve(el);
+    };
+  }, []);
+
+  const value = useMemo(() => ({ observe }), [observe]);
+  return <RevealCtx.Provider value={value}>{children}</RevealCtx.Provider>;
+}
 
 /**
  * Reveals child once the wrapper is in view. Default: rise + fade,
- * 0.7s out, slight stagger via `delay` prop.
+ * 0.85 s out, slight stagger via `delay` prop.
+ *
+ * Uses the shared RevealProvider observer when available; falls back
+ * to its own IntersectionObserver if a caller forgot to wrap their
+ * tree (so we never silently break).
  */
 export function Reveal({
   children,
@@ -20,17 +99,42 @@ export function Reveal({
   y?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-10% 0px -10% 0px" });
+  const [visible, setVisible] = useState(false);
+  const ctx = useContext(RevealCtx);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+    if (ctx) {
+      return ctx.observe(el, () => setVisible(true));
+    }
+    // Fallback: standalone observer if no provider.
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "-10% 0px -10% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ctx]);
+
+  const style = {
+    "--reveal-y": `${y}px`,
+    "--reveal-delay": `${delay}s`,
+  } as React.CSSProperties;
+
   return (
-    <motion.div
+    <div
       ref={ref}
-      className={className}
-      initial={{ opacity: 0, y }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay }}
+      className={cn("reveal", visible && "reveal-in", className)}
+      style={style}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
