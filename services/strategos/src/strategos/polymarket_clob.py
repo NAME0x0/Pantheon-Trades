@@ -41,6 +41,11 @@ class OrderRequest:
     # right fee bucket for ex-post rebate booking.
     post_only: bool = False
     category: str | None = None
+    # Polymarket V2 builder code — see strategos.polymarket_builder.
+    # When set, every fill on this order is attributed to our builder
+    # program and pays a daily USDC fee to the registered payout
+    # address. Independent of maker rebates.
+    builder_code: str | None = None
 
 
 @dataclass(frozen=True)
@@ -113,11 +118,20 @@ class PolymarketClobClient:
         }
         if order.post_only:
             args_kwargs["post_only"] = True
+        if order.builder_code:
+            # py-clob-client-v2 accepts builder code as `builder_code`
+            # (kebab on the wire, snake in the client). Some pre-v2
+            # snapshots used `builderCode`; we pass the canonical one
+            # and let the TypeError fallback below strip it if absent.
+            args_kwargs["builder_code"] = order.builder_code
         try:
             args = OrderArgs(**args_kwargs)
         except TypeError:
-            # v1 client doesn't know `post_only`. Drop it and continue.
+            # v1 client doesn't know `post_only` / `builder_code`.
+            # Strip both and retry — order still goes out, just without
+            # the V2 attributions.
             args_kwargs.pop("post_only", None)
+            args_kwargs.pop("builder_code", None)
             args = OrderArgs(**args_kwargs)
         signed = client.create_order(args)
         result = client.post_order(signed)

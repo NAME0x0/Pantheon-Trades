@@ -18,6 +18,7 @@ from pantheon_core.direction import entry_price as direction_entry_price
 from pantheon_core.schema import ApprovalToken, Thesis, Trade, utc_now
 
 from strategos.execution_mode import choose_execution
+from strategos.polymarket_builder import BuilderConfig, BuilderLedger
 from strategos.polymarket_clob import OrderRequest, OrderResponse, PolymarketClobClient
 from strategos.slippage import slippage_eats_edge
 from strategos.slippage_learner import SlippageLearner
@@ -31,10 +32,19 @@ class LiveExecutor:
         clob: PolymarketClobClient,
         portfolio_usdc: float,
         slippage_learner: SlippageLearner | None = None,
+        builder_config: BuilderConfig | None = None,
     ) -> None:
         self._clob = clob
         self._portfolio_usdc = portfolio_usdc
         self._learner = slippage_learner
+        self._builder = builder_config
+        self._builder_ledger: BuilderLedger | None = (
+            BuilderLedger(config=builder_config) if builder_config else None
+        )
+
+    @property
+    def builder_ledger(self) -> BuilderLedger | None:
+        return self._builder_ledger
 
     @property
     def slippage_learner(self) -> SlippageLearner | None:
@@ -116,6 +126,7 @@ class LiveExecutor:
             size=round(contracts, 4),
             post_only=decision.post_only,
             category=category,
+            builder_code=self._builder.code if self._builder else None,
         )
         try:
             resp: OrderResponse = await self._clob.submit(req)
@@ -161,7 +172,7 @@ class LiveExecutor:
                     error=str(e),
                 )
 
-        return Trade(
+        trade = Trade(
             thesis_id=token.thesis_id,
             market_id=thesis.market_id,
             direction=thesis.direction,
@@ -173,3 +184,33 @@ class LiveExecutor:
             fill_price=resp.avg_price,
             fill_time=utc_now(),
         )
+
+        # Builder-code attribution. Records every filled / partially-filled
+        # trade that originated from our builder program so we can
+        # reconcile the daily USDC payout from Polymarket against
+        # expected revenue.
+        if (
+            self._builder_ledger is not None
+            and resp.filled_size
+            and resp.filled_size > 0
+        ):
+            filled_notional = float(resp.filled_size) * (resp.avg_price or limit_price)
+            try:
+                self._builder_ledger.book(
+                    trade_id=trade.trade_id,
+                    market_id=thesis.market_id,
+                    category=category,
+                    notional_usdc=filled_notional,
+                    raw={
+                        "order_id": resp.order_id,
+                        "thesis_id": thesis.thesis_id,
+                    },
+                )
+            except Exception as e:  # noqa: BLE001
+                log.warning(
+                    "strategos.builder_book_failed",
+                    thesis_id=thesis.thesis_id,
+                    error=str(e),
+                )
+
+        return trade

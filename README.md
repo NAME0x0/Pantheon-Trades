@@ -19,6 +19,8 @@
 
 </div>
 
+> **Hackathon judges:** the submission packet lives at [`docs/HACKATHON_SUBMISSION.md`](./docs/HACKATHON_SUBMISSION.md) — video script, Circle-tools checklist, traction template. Built for the **Agora Agents Hackathon** · Canteen × Circle × Arc · May 11–25 2026 · RFB 02 (Prediction Market Trader Intelligence). Polymarket V2 builder codes + Arc-anchored reasoning traces wired per the hackathon research notes.
+
 ---
 
 ## TL;DR (60 seconds, no jargon)
