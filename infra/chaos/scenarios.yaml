@@ -1,0 +1,99 @@
+# Chaos drill scenarios — Toxiproxy (Shopify, MIT).
+#
+# Each scenario is a sequence of proxy + toxic definitions. The runner
+# applies them via the Toxiproxy admin API at http://toxiproxy:8474.
+# Toxics are reversible and can be cleared independently — see
+# clear-scenarios.sh.
+#
+# Reference: https://github.com/Shopify/toxiproxy
+
+scenarios:
+  # ── Baseline ─────────────────────────────────────────────────────
+  # All proxies up, no toxics. Sanity check that the chaos layer
+  # itself is healthy before drills begin.
+  - name: baseline
+    description: "All proxies healthy, no fault injection."
+    proxies:
+      - name: redis_proxy
+        listen: 0.0.0.0:16379
+        upstream: redis:6379
+      - name: postgres_proxy
+        listen: 0.0.0.0:15432
+        upstream: postgres:5432
+      - name: rpc_proxy
+        listen: 0.0.0.0:18545
+        upstream: anvil:8545
+
+  # ── Redis latency ───────────────────────────────────────────────
+  - name: redis_high_latency
+    description: "Redis adds 500ms +/- 100ms latency. Tests pub/sub and stream backpressure."
+    proxies:
+      - name: redis_proxy
+        listen: 0.0.0.0:16379
+        upstream: redis:6379
+        toxics:
+          - name: redis_latency
+            type: latency
+            attributes:
+              latency: 500
+              jitter: 100
+
+  # ── Redis partial outage ────────────────────────────────────────
+  - name: redis_packet_loss
+    description: "30% packet loss between services and Redis. Reveals retry logic gaps."
+    proxies:
+      - name: redis_proxy
+        listen: 0.0.0.0:16379
+        upstream: redis:6379
+        toxics:
+          - name: redis_drop
+            type: limit_data
+            attributes:
+              bytes: 10240  # cap each connection's bytes mid-stream
+
+  # ── Postgres latency ────────────────────────────────────────────
+  - name: postgres_slow
+    description: "Postgres responses delayed 300ms. Surfaces request-timeout misconfigs."
+    proxies:
+      - name: postgres_proxy
+        listen: 0.0.0.0:15432
+        upstream: postgres:5432
+        toxics:
+          - name: pg_latency
+            type: latency
+            attributes:
+              latency: 300
+
+  # ── RPC instability ─────────────────────────────────────────────
+  - name: rpc_flaky
+    description: "30% of RPC calls time out. Probes settlement + restraint recovery."
+    proxies:
+      - name: rpc_proxy
+        listen: 0.0.0.0:18545
+        upstream: anvil:8545
+        toxics:
+          - name: rpc_timeout
+            type: timeout
+            attributes:
+              timeout: 5000
+            stream: downstream
+
+  # ── Catastrophe ─────────────────────────────────────────────────
+  - name: catastrophe
+    description: "Everything degraded simultaneously. Validates graceful-degrade modes."
+    proxies:
+      - name: redis_proxy
+        listen: 0.0.0.0:16379
+        upstream: redis:6379
+        toxics:
+          - { name: redis_lat, type: latency, attributes: { latency: 1000, jitter: 300 } }
+      - name: postgres_proxy
+        listen: 0.0.0.0:15432
+        upstream: postgres:5432
+        toxics:
+          - { name: pg_slow, type: latency, attributes: { latency: 800 } }
+      - name: rpc_proxy
+        listen: 0.0.0.0:18545
+        upstream: anvil:8545
+        toxics:
+          - { name: rpc_to, type: timeout, attributes: { timeout: 3000 } }
