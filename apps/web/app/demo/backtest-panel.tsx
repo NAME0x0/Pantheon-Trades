@@ -93,13 +93,15 @@ export function BacktestPanel() {
           Empirical backtest · {LATEST_RUN.date}
         </div>
         <CardTitle className="display text-xl tracking-[0.06em] text-foreground">
-          Council Brier {FORECASTERS[2].brier.toFixed(3)} · closes 80% of the gap to Manifold
+          Council closes 80% of the LLM-vs-human Brier gap
         </CardTitle>
-        <p className="serif max-w-3xl text-sm italic text-muted-foreground">
-          Ran <code className="font-mono">scripts/backtest_sources_xml.py</code> against{" "}
-          {LATEST_RUN.n_markets} resolved Manifold binary markets. Five distinct council roles
-          (Ares bull · Athena bear · Cassandra tail · Themis procedural · Humans crowd) aggregated
-          per market. Total cost ${LATEST_RUN.cost_usd.toFixed(3)} on {LATEST_RUN.provider}.
+        <p className="serif max-w-3xl text-sm leading-[1.55] italic text-muted-foreground">
+          Honest framing: the council does <strong className="not-italic">not</strong> beat
+          free human consensus on this 200-market Manifold sample
+          (0.149 vs 0.126 Brier). What it does do is close 80% of the gap between a
+          single-shot LLM and the human prior. Aggregation across 5 distinct roles is
+          worth ~0.11 Brier — an order of magnitude more than any individual data source.
+          Total cost ${LATEST_RUN.cost_usd.toFixed(3)} on {LATEST_RUN.provider}.
         </p>
       </CardHeader>
       <CardContent className="space-y-6">

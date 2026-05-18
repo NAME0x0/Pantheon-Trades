@@ -135,25 +135,28 @@ export function EdgeSourcesPanel() {
           What the council sees
         </div>
         <CardTitle className="display text-xl tracking-[0.06em] text-foreground">
-          12 edge sources · 7 bounded oracle deltas · ±0.35 combined cap
+          2 ADOPTED · 10 in falsification · ±0.35 combined cap
         </CardTitle>
-        <p className="serif max-w-3xl text-sm italic text-muted-foreground">
-          Every source below feeds an Apollo feature that contributes a capped
-          bounded delta to the council&apos;s oracle probability. No single source
-          can move oracle by more than ±0.05 — the council still has the final say,
-          and the constitution still gates the size.
+        <p className="serif max-w-3xl text-sm leading-[1.55] italic text-muted-foreground">
+          12 sources are wired, but only 2 have <strong className="not-italic">survived
+          empirical Brier-delta testing</strong> on a 200-market Manifold sample (Wikipedia
+          attention + Nitter crowd_sentiment). The other 10 are HOLD or UNTESTABLE pending
+          a Polymarket-flavoured corpus once the geo-block proxy is deployed. Honest empirical
+          posture: a source is only ADOPTED when negative Brier-delta beats noise.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <Section title="High signal-to-noise" rows={byTier.high} />
         <Section title="Medium signal-to-noise" rows={byTier.medium} />
         <Section title="Experimental / qualitative" rows={byTier.experimental} />
-        <p className="rounded-md border border-primary/15 bg-card/40 p-3 text-xs text-muted-foreground">
-          <strong className="font-mono text-foreground">Pipeline status:</strong>{" "}
-          all 12 sources are wired into <code className="font-mono">apollo.scorer.MarketSnapshot</code>{" "}
-          and contribute to <code className="font-mono">Signal.oracle_probability</code>{" "}
-          when populated. Falsification per source is the empirical work that follows —
-          see <code className="font-mono">scripts/backtest_council_vs_manifold.py</code>.
+        <p className="rounded-md border border-primary/15 bg-card/40 p-3 text-xs leading-[1.55] text-muted-foreground">
+          <strong className="font-mono text-foreground">Falsification protocol:</strong>{" "}
+          all 12 sources are plumbed into <code className="font-mono">apollo.scorer.MarketSnapshot</code>,
+          but a source only graduates from HOLD → ADOPT after a paired Brier test on a real
+          resolved-market sample beats the council baseline by &gt;0.002. The 10 non-adopted
+          sources stay live for telemetry but their oracle delta is set to zero. Re-run{" "}
+          <code className="font-mono">scripts/backtest_sources_xml.py</code> on every new
+          corpus. No source ships unfalsified.
         </p>
       </CardContent>
     </Card>

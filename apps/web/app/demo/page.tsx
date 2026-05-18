@@ -20,13 +20,13 @@ const SCENARIOS = {
     title: "Pantheon Council — BTC $120k by 2026-12-31",
     label: "Crypto · Approval",
     intro:
-      "Eleven agents deliberate a +17pp edge signal on a Bitcoin price-target market. Watch the four rounds, the synthesis, the votes, and the Areopagus verdict that sizes the position at the constitutional cap.",
+      "Identical +17pp edge signal — clean portfolio, no correlated BTC exposure already on the books. Eleven agents deliberate, Themis resizes from raw half-Kelly 10.5% to a category-capped 5% NAV, Areopagus approves. Watch the four rounds and the final size land at the constitutional cap.",
   },
   "btc-120k-restraint": {
     title: "Pantheon Council — BTC $120k by 2026-12-31",
     label: "Crypto · Proof of Restraint",
     intro:
-      "A constitutional cluster-correlation violation on the same Bitcoin market. Zeus identifies it in Round 1 and casts the supreme veto. The debate short-circuits. Areopagus writes a Proof of Restraint witness to Arc Testnet.",
+      "Identical +17pp edge signal — but the portfolio already holds correlated crypto exposure (ETH-3500-Q2 long). Zeus runs the cluster-correlation check, finds the macro-cluster correlation at 0.78 above the 0.65 constitutional ceiling, casts the supreme veto in Round 1. Debate short-circuits. Areopagus writes the Proof of Restraint witness on Arc.",
   },
   "election-2028-approve": {
     title: "Pantheon Council — US Presidential 2028 (incumbent)",
@@ -72,9 +72,23 @@ export default function DemoPage({
         <h1 className="font-display text-4xl md:text-5xl font-medium tracking-[0.02em] text-foreground">
           {meta.title}
         </h1>
-        <p className="max-w-3xl font-serif text-lg leading-relaxed text-muted-foreground">
+        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
           {meta.intro}
         </p>
+        {(scenario === "btc-120k-approve" || scenario === "btc-120k-restraint") && (
+          <div className="mt-4 max-w-3xl rounded-md border border-primary/25 bg-primary/[0.04] p-4">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-primary/80">
+              Twin scenarios — same signal, different portfolio
+            </p>
+            <p className="mt-2 font-serif text-sm leading-[1.6] text-muted-foreground">
+              The Bitcoin approval and Bitcoin restraint scenarios use the
+              <em> identical</em> +17pp edge signal — 0.59 oracle vs 0.42 market.
+              What differs is the portfolio state: clean book → APPROVED, already-correlated
+              book → VETOED. This is the discipline the system encodes: an edge alone
+              does not justify a trade; the constitution still gates it.
+            </p>
+          </div>
+        )}
       </header>
 
       <WalletConnect />
@@ -100,16 +114,29 @@ export default function DemoPage({
 
       <div className="space-y-3 pt-6">
         <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
-          Live paper trade — real BTC bars
+          Pipeline integrity check — real BTC bars, no council
         </h2>
-        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
-          Below: the checked-in run of{" "}
-          <code className="font-mono">scripts/live_paper_trade_coingecko.py</code> against
-          the last 7 days of BTC/USD hourly bars from CoinGecko. The plumbing is real
-          (Apollo signal → Areopagus half-Kelly → Strategos paper book). The strategy
-          is intentionally a toy momentum estimator, not the council — so the result
-          is honest. Naïve momentum loses to fees. That is the system telling you the
-          truth.
+        <div className="max-w-3xl rounded-md border border-amber-500/40 bg-amber-500/5 p-4">
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-amber-200">
+            ⚠ This panel is NOT the council — it&apos;s the plumbing check
+          </p>
+          <p className="mt-2 font-serif text-sm leading-[1.6] text-muted-foreground">
+            What you are about to see lost $3,951 on $10,000 starting equity. That is{" "}
+            <em>by design</em>. The panel uses a deliberately naïve momentum estimator
+            (long if last bar was up, short if down) in place of the council so we can
+            prove the plumbing — Apollo signal → Areopagus half-Kelly → Strategos paper
+            book — survives real market data without simulator tricks. A 4% round-trip
+            cost mathematically kills naïve momentum. The council&apos;s job is to refuse
+            those trades. The empirical backtest panel below shows what happens when
+            the council <em>is</em> in the loop.
+          </p>
+        </div>
+        <p className="max-w-3xl font-serif text-base leading-[1.7] text-muted-foreground">
+          Run:{" "}
+          <code className="font-mono text-primary">scripts/live_paper_trade_coingecko.py</code>{" "}
+          against 7 days of BTC/USD hourly bars. Fills go through the real{" "}
+          <code className="font-mono">strategos.paper.PaperBook</code> with half-spread,
+          slippage, and 2% taker fees. No mock.
         </p>
       </div>
 
@@ -133,9 +160,11 @@ export default function DemoPage({
           Where the council&apos;s prior comes from
         </h2>
         <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
-          12 Pythia data sources feed 7 bounded Apollo features into{" "}
-          <code className="font-mono">Signal.oracle_probability</code>. Each delta is
-          capped at ±0.05 — combined cap ±0.35. The council still votes on top of
+          12 Pythia data sources are plumbed in, but only the 2 that have survived
+          empirical Brier-delta falsification on a 200-market Manifold sample contribute
+          to <code className="font-mono">Signal.oracle_probability</code>. Each ADOPTED
+          delta is capped at ±0.05 — combined cap ±0.35. The remaining 10 stay HOLD until
+          a Polymarket-flavoured corpus is available. The council still votes on top of
           this prior; the constitution still gates the size.
         </p>
       </div>

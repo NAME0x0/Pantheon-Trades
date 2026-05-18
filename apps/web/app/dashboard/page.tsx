@@ -183,6 +183,13 @@ export default async function Dashboard() {
             <code className="mono text-primary">Restrained</code> event ever
             written by the council. No backend dependency.
           </p>
+          <p className="mt-3 max-w-2xl rounded-md border border-amber-500/30 bg-amber-500/5 p-3 font-mono text-xs leading-[1.5] text-amber-200/85">
+            ⚠ Testnet only. Contracts have passed{" "}
+            <code className="text-amber-100">forge test</code> + Halmos symbolic
+            verification on <code className="text-amber-100">ProofOfRestraint</code> and{" "}
+            <code className="text-amber-100">PantheonConstitution</code>, but have not
+            undergone external audit. Do not deploy to mainnet without one.
+          </p>
         </div>
       </Reveal>
 

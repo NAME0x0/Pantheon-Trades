@@ -74,4 +74,3 @@ uv run pytest tests/ -v
 - `docs/BOULE.md` — full deliberation protocol
 - `docs/AGENTS.md` — agent roster and roles
 - `docs/TRACE_FORMAT.md` — trace event schema
-- `docs/PNYX.md` — voting mechanics

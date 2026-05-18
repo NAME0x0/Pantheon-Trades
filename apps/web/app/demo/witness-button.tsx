@@ -155,7 +155,7 @@ async function waitForReceipt(txHash: string, timeoutMs = 60_000): Promise<{
 export function WitnessButton({
   scenario,
   title = "Run this demo on Arc Testnet",
-  helper = "Submits a permissionless tx to VisitorWitness on Arc Testnet. Costs fractions of a cent in USDC. Proves your wallet ran the council demo — your tx shows up on the dashboard restraint feed within seconds.",
+  helper = "What this proves: the Arc Testnet pipeline works for visitors end-to-end (wallet → contract → arcscan → dashboard feed). What it does NOT prove: that the council picks profitable trades. See the empirical backtest panel below for that. Cost: fractions of a cent in testnet USDC.",
 }: {
   scenario: string;
   title?: string;
