@@ -24,13 +24,15 @@ import { MeanderStrip, MedallionOrnament } from "./ornaments";
 
 const COUNCIL = [
   { name: "Ares", greek: "ΑΡΗΣ", role: "presenting the long case" },
-  { name: "Athena", greek: "ΑΘΗΝΑ", role: "drafting the synthesis" },
   { name: "Hades", greek: "ΑΙΔΗΣ", role: "tracing hidden depth" },
+  { name: "Athena", greek: "ΑΘΗΝΑ", role: "drafting the synthesis" },
   { name: "Cassandra", greek: "ΚΑΣΣΑΝΔΡΑ", role: "naming the tail" },
   { name: "Zeus", greek: "ΖΕΥΣ", role: "weighing the gate" },
   { name: "Solon", greek: "ΣΟΛΩΝ", role: "reading the constitution" },
   { name: "Themis", greek: "ΘΕΜΙΣ", role: "verifying the trace" },
   { name: "Hephaestus", greek: "ΗΦΑΙΣΤΟΣ", role: "designing the fill" },
+  { name: "Daedalus", greek: "ΔΑΙΔΑΛΟΣ", role: "auditing the structure" },
+  { name: "Humans", greek: "ΑΝΘΡΩΠΟΙ", role: "speaking for the crowd" },
   { name: "Eris", greek: "ΕΡΙΣ", role: "arguing the minority side" },
 ];
 

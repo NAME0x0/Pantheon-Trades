@@ -96,6 +96,7 @@ const AGENT_WEIGHTS = [
   { name: "Hephaestus", weight: 1.0, veto: false },
   { name: "Daedalus",   weight: 1.0, veto: false },
   { name: "Humans",     weight: 1.0, veto: false },
+  { name: "Eris",       weight: 0.8, veto: false },
 ];
 const MIN_QUORUM = 7;
 const APPROVAL_THRESHOLD = 0.6;

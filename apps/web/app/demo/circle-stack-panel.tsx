@@ -107,16 +107,12 @@ export function CircleStackPanel() {
 
   return (
     <Card className="border-primary/30">
-      <CardHeader className="space-y-2 pb-3">
-        <div className="display text-[10px] uppercase tracking-[0.4em] text-primary/70">
-          Settles on Arc · powered by Circle
-        </div>
-        <CardTitle className="display text-xl tracking-[0.06em] text-foreground">
-          {shipped.length} Circle tools shipped · {wired.length} wired · {partial.length} partial
+      <CardHeader className="space-y-3 pb-3">
+        <CardTitle className="font-display text-lg font-semibold tracking-[0.02em] text-foreground">
+          {shipped.length} shipped · {wired.length} wired · {partial.length} partial
         </CardTitle>
-        <p className="serif max-w-3xl text-sm italic text-muted-foreground">
-          Pantheon Trades is built for Circle&apos;s Arc — sub-second deterministic finality,
-          ~$0.01 USDC gas, no volatile token to source. Every row below is verifiable
+        <p className="font-serif text-base leading-[1.6] text-muted-foreground">
+          Sub-second deterministic finality. ~$0.01 USDC gas. Every row verifiable
           by clicking the path into the repo.
         </p>
       </CardHeader>

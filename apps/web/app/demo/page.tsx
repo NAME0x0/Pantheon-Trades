@@ -63,127 +63,156 @@ export default function DemoPage({
   const scenario = resolveScenario(searchParams.scenario);
   const meta = SCENARIOS[scenario];
 
+  const isTwinScenario =
+    scenario === "btc-120k-approve" || scenario === "btc-120k-restraint";
+
   return (
-    <div className="space-y-8 py-8">
-      <header className="space-y-3">
-        <Badge variant="outline" className="border-primary/40 font-display tracking-[0.25em]">
+    <div className="space-y-16 py-10">
+      {/* ── Page header ─────────────────────────────────────────────── */}
+      <header className="space-y-5">
+        <Badge variant="outline" className="border-primary/40 font-display tracking-[0.32em]">
           Council replay · {meta.label}
         </Badge>
-        <h1 className="font-display text-4xl md:text-5xl font-medium tracking-[0.02em] text-foreground">
+        <h1 className="font-display text-4xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-5xl">
           {meta.title}
         </h1>
-        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
+        <p className="max-w-3xl font-serif text-lg leading-[1.65] text-muted-foreground md:text-xl">
           {meta.intro}
         </p>
-        {(scenario === "btc-120k-approve" || scenario === "btc-120k-restraint") && (
-          <div className="mt-4 max-w-3xl rounded-md border border-primary/25 bg-primary/[0.04] p-4">
-            <p className="font-mono text-xs uppercase tracking-[0.18em] text-primary/80">
-              Twin scenarios — same signal, different portfolio
+      </header>
+
+      {/* ── Try-it-yourself row: wallet + witness + faucet ──────────── */}
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <span className="display text-[11px] uppercase tracking-[0.32em] text-primary">
+            Try it yourself · free, no charge
+          </span>
+          <h2 className="font-display text-3xl font-medium leading-[1.1] tracking-[-0.01em] text-foreground md:text-4xl">
+            Sign one tx. Your wallet lands on chain.
+          </h2>
+        </div>
+        <WalletConnect />
+        <div className="grid gap-6 lg:grid-cols-2">
+          <WitnessButton scenario={scenario} />
+          <FaucetCard />
+        </div>
+      </section>
+
+      {/* ── Council replay ─────────────────────────────────────────── */}
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <span className="display text-[11px] uppercase tracking-[0.32em] text-primary">
+            Captured deliberation · production code paths
+          </span>
+          <h2 className="font-display text-3xl font-medium leading-[1.1] tracking-[-0.01em] text-foreground md:text-4xl">
+            Watch the council deliberate.
+          </h2>
+        </div>
+
+        {isTwinScenario && (
+          <div className="max-w-3xl rounded-md border border-primary/25 bg-primary/[0.04] p-5">
+            <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-primary">
+              Twin scenarios · same signal, different portfolio
             </p>
-            <p className="mt-2 font-serif text-sm leading-[1.6] text-muted-foreground">
-              The Bitcoin approval and Bitcoin restraint scenarios use the
-              <em> identical</em> +17pp edge signal — 0.59 oracle vs 0.42 market.
-              What differs is the portfolio state: clean book → APPROVED, already-correlated
-              book → VETOED. This is the discipline the system encodes: an edge alone
-              does not justify a trade; the constitution still gates it.
+            <p className="mt-2 font-serif text-base leading-[1.6] text-muted-foreground">
+              Approval and Restraint scenarios share the <em>identical</em> +17pp
+              edge signal (0.59 oracle vs 0.42 market). What differs is the
+              portfolio state: clean book → APPROVED, already-correlated book →
+              VETOED. An edge alone does not justify a trade.
             </p>
           </div>
         )}
-      </header>
 
-      <WalletConnect />
+        <ReplayPlayer scenario={scenario} />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <WitnessButton
-          scenario={scenario}
-          title="Run this demo on Arc Testnet"
-        />
-        <FaucetCard />
-      </div>
+        <p className="max-w-3xl rounded-md border border-primary/20 bg-card/40 px-4 py-3 text-xs leading-[1.55] text-muted-foreground">
+          <strong className="font-mono uppercase tracking-wider text-foreground">
+            Source ·
+          </strong>{" "}
+          Dialogue is captured from prior live Gemini runs. Signal scoring,
+          Areopagus verdict, half-Kelly sizing, and paper trade all compute through
+          production code paths (<code className="font-mono">apollo.scorer</code>,{" "}
+          <code className="font-mono">areopagus.court</code>,{" "}
+          <code className="font-mono">strategos.paper</code>).
+        </p>
+      </section>
 
-      <ReplayPlayer scenario={scenario} />
-
-      <p className="rounded-md border border-primary/20 bg-card/40 p-4 text-xs text-muted-foreground">
-        <strong className="font-mono text-foreground">Source:</strong>{" "}
-        Agent dialogue is curated from prior live Gemini runs; signal scoring, Areopagus
-        verdict, half-Kelly sizing, and the paper trade are computed by the actual
-        production code paths (<code className="font-mono">apollo.scorer</code>,{" "}
-        <code className="font-mono">areopagus.court</code>,{" "}
-        <code className="font-mono">strategos.paper</code>) at bundle-build time.
-      </p>
-
-      <div className="space-y-3 pt-6">
-        <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
-          Pipeline integrity check — real BTC bars, no council
-        </h2>
-        <div className="max-w-3xl rounded-md border border-amber-500/40 bg-amber-500/5 p-4">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-amber-200">
-            ⚠ This panel is NOT the council — it&apos;s the plumbing check
+      {/* ── CoinGecko paper-trade — plumbing check ─────────────────── */}
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <span className="display text-[11px] uppercase tracking-[0.32em] text-primary">
+            Pipeline integrity check · NOT the council
+          </span>
+          <h2 className="font-display text-3xl font-medium leading-[1.1] tracking-[-0.01em] text-foreground md:text-4xl">
+            Real BTC bars, naïve estimator.
+          </h2>
+        </div>
+        <div className="max-w-3xl rounded-md border border-amber-500/40 bg-amber-500/5 px-5 py-4">
+          <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-amber-200">
+            ⚠ This panel lost money — by design
           </p>
-          <p className="mt-2 font-serif text-sm leading-[1.6] text-muted-foreground">
-            What you are about to see lost $3,951 on $10,000 starting equity. That is{" "}
-            <em>by design</em>. The panel uses a deliberately naïve momentum estimator
-            (long if last bar was up, short if down) in place of the council so we can
-            prove the plumbing — Apollo signal → Areopagus half-Kelly → Strategos paper
-            book — survives real market data without simulator tricks. A 4% round-trip
-            cost mathematically kills naïve momentum. The council&apos;s job is to refuse
-            those trades. The empirical backtest panel below shows what happens when
-            the council <em>is</em> in the loop.
+          <p className="mt-2 font-serif text-base leading-[1.6] text-muted-foreground">
+            The strategy is naïve momentum (long if last bar up, short if down) — a
+            deliberate stand-in for the council. The point is to prove the plumbing
+            survives real market data: 4% round-trip fees mathematically kill
+            momentum. The council&apos;s job is to refuse those trades.
           </p>
         </div>
-        <p className="max-w-3xl font-serif text-base leading-[1.7] text-muted-foreground">
+        <p className="max-w-3xl font-serif text-base leading-[1.65] text-muted-foreground md:text-lg">
           Run:{" "}
-          <code className="font-mono text-primary">scripts/live_paper_trade_coingecko.py</code>{" "}
-          against 7 days of BTC/USD hourly bars. Fills go through the real{" "}
-          <code className="font-mono">strategos.paper.PaperBook</code> with half-spread,
-          slippage, and 2% taker fees. No mock.
+          <code className="font-mono text-primary">
+            scripts/live_paper_trade_coingecko.py
+          </code>{" "}
+          on 7 days of BTC/USD hourly bars. Fills route through the real{" "}
+          <code className="font-mono">strategos.paper.PaperBook</code> with
+          half-spread, slippage, and 2% taker fees.
         </p>
-      </div>
+        <CoinGeckoPanel />
+      </section>
 
-      <CoinGeckoPanel />
-
-      <div className="space-y-3 pt-8">
-        <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
-          Empirical backtest — does the council actually beat the market?
-        </h2>
-        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
+      {/* ── Empirical backtest — does the council help? ─────────────── */}
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <span className="display text-[11px] uppercase tracking-[0.32em] text-primary">
+            Empirical backtest · 200 resolved markets
+          </span>
+          <h2 className="font-display text-3xl font-medium leading-[1.1] tracking-[-0.01em] text-foreground md:text-4xl">
+            Does the council help?
+          </h2>
+        </div>
+        <p className="max-w-3xl font-serif text-base leading-[1.65] text-muted-foreground md:text-lg">
           200 resolved Manifold binary markets, run through the 5-role council via{" "}
-          <code className="font-mono">scripts/backtest_sources_xml.py</code>. Brier scores,
-          per-source adoption verdicts, $0.12 cost on Gemini flash-lite.
+          <code className="font-mono">scripts/backtest_sources_xml.py</code>. Brier
+          decomposition, per-source verdicts, $0.12 cost on Gemini flash-lite.
         </p>
-      </div>
+        <BacktestPanel />
+      </section>
 
-      <BacktestPanel />
+      {/* ── Edge sources panel — the council's prior ──────────────── */}
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <span className="display text-[11px] uppercase tracking-[0.32em] text-primary">
+            What the council sees · 12 sources, 2 adopted
+          </span>
+          <h2 className="font-display text-3xl font-medium leading-[1.1] tracking-[-0.01em] text-foreground md:text-4xl">
+            Where the prior comes from.
+          </h2>
+        </div>
+        <EdgeSourcesPanel />
+      </section>
 
-      <div className="space-y-3 pt-8">
-        <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
-          Where the council&apos;s prior comes from
-        </h2>
-        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
-          12 Pythia data sources are plumbed in, but only the 2 that have survived
-          empirical Brier-delta falsification on a 200-market Manifold sample contribute
-          to <code className="font-mono">Signal.oracle_probability</code>. Each ADOPTED
-          delta is capped at ±0.05 — combined cap ±0.35. The remaining 10 stay HOLD until
-          a Polymarket-flavoured corpus is available. The council still votes on top of
-          this prior; the constitution still gates the size.
-        </p>
-      </div>
-
-      <EdgeSourcesPanel />
-
-      <div className="space-y-3 pt-8">
-        <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
-          Settles on Arc — powered by Circle
-        </h2>
-        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
-          Pantheon is built end-to-end on Circle&apos;s developer platform. USDC is the
-          native settlement currency; Arc gives sub-second finality at ~$0.01/tx.
-          Builder codes attribute every fill to a payout address. Trace anchors hash
-          every council deliberation onto Arc.
-        </p>
-      </div>
-
-      <CircleStackPanel />
+      {/* ── Circle stack panel ─────────────────────────────────────── */}
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <span className="display text-[11px] uppercase tracking-[0.32em] text-primary">
+            Settles on Arc · powered by Circle
+          </span>
+          <h2 className="font-display text-3xl font-medium leading-[1.1] tracking-[-0.01em] text-foreground md:text-4xl">
+            Built end-to-end on the Circle stack.
+          </h2>
+        </div>
+        <CircleStackPanel />
+      </section>
     </div>
   );
 }

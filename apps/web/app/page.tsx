@@ -277,7 +277,6 @@ export default function Home() {
         <div className="-mx-6 my-10 border-y border-primary/15 bg-card/30 py-5">
           <Marquee speed={48}>
             {[
-              "ΑΠΟΛΛΩΝ — sees the future",
               "ΑΡΗΣ — argues the long case",
               "ΑΘΗΝΑ — synthesises the council",
               "ΖΕΥΣ — supreme veto",
@@ -286,7 +285,9 @@ export default function Home() {
               "ΘΕΜΙΣ — procedural integrity",
               "ΚΑΣΣΑΝΔΡΑ — flags tail risk",
               "ΑΙΔΗΣ — surfaces hidden depth",
+              "ΔΑΙΔΑΛΟΣ — verifies the structure",
               "ΑΝΘΡΩΠΟΙ — crowd sentiment",
+              "ΕΡΙΣ — the adversarial dissenter",
             ].map((t) => (
               <span
                 key={t}
@@ -379,10 +380,10 @@ export default function Home() {
         </ol>
       </section>
 
-      {/* ── TIER A-G — what landed after the founding council ──────── */}
+      {/* ── TIER A-J — what landed after the founding council ──────── */}
       <section className="py-20">
         <Reveal>
-          <Eyebrow numeral="II·5" label="Seven tiers of hardening" />
+          <Eyebrow numeral="II·5" label="Ten tiers of hardening" />
         </Reveal>
         <Reveal delay={0.05}>
           <h2 className="display mb-6 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-6xl">
@@ -394,11 +395,10 @@ export default function Home() {
           </h2>
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="serif mb-12 max-w-3xl text-xl leading-[1.7] text-muted-foreground">
-            Thirty-five commits across seven tiers landed the safety,
-            intelligence, observability, and venue surface a live trading
-            council needs. Every upstream picked is open-source MIT or
-            Apache — no paid vendor lock-in.
+          <p className="serif mb-12 max-w-3xl text-xl leading-[1.65] text-muted-foreground">
+            Ten tiers of hardening landed the safety, intelligence,
+            observability, and venue surface a live trading council needs. Every
+            upstream is open-source MIT or Apache — no paid vendor lock-in.
           </p>
         </Reveal>
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -453,10 +453,10 @@ export default function Home() {
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="serif mb-12 max-w-2xl text-xl leading-[1.7] text-muted-foreground">
-              The full council. Three states. Real weights from the
-              constitution. Click an agent to cycle their vote — watch the
-              verdict update live. Zeus and Solon can veto the whole room.
+            <p className="serif mb-12 max-w-2xl text-xl leading-[1.65] text-muted-foreground">
+              Eleven councillors. Three vote states. Real weights from the
+              constitution. Click any agent to cycle their vote — watch the
+              verdict update live. Zeus and Solon hold the supreme veto.
             </p>
           </Reveal>
           <Reveal delay={0.15}>
@@ -608,10 +608,10 @@ export default function Home() {
           </h2>
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="serif mb-14 max-w-2xl text-xl leading-[1.7] text-muted-foreground">
-            Eleven deliberate; two more — Apollo and Boule — orchestrate the
-            room. Each has a name, a weight, and a voice. Zeus or Solon can
-            halt a trade unilaterally if it breaches the constitution.
+          <p className="serif mb-14 max-w-2xl text-xl leading-[1.65] text-muted-foreground">
+            Eleven councillors deliberate. Two more — Apollo, the oracle, and
+            Boule, the assembly — orchestrate the room. Zeus and Solon hold the
+            supreme veto: either can halt a trade on constitutional grounds.
           </p>
         </Reveal>
 

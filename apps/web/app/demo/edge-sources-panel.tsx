@@ -130,33 +130,30 @@ export function EdgeSourcesPanel() {
 
   return (
     <Card className="border-primary/30">
-      <CardHeader className="space-y-2 pb-3">
-        <div className="display text-[10px] uppercase tracking-[0.4em] text-primary/70">
-          What the council sees
-        </div>
-        <CardTitle className="display text-xl tracking-[0.06em] text-foreground">
+      <CardHeader className="space-y-3 pb-3">
+        <CardTitle className="font-display text-lg font-semibold tracking-[0.02em] text-foreground">
           2 ADOPTED · 10 in falsification · ±0.35 combined cap
         </CardTitle>
-        <p className="serif max-w-3xl text-sm leading-[1.55] italic text-muted-foreground">
-          12 sources are wired, but only 2 have <strong className="not-italic">survived
-          empirical Brier-delta testing</strong> on a 200-market Manifold sample (Wikipedia
-          attention + Nitter crowd_sentiment). The other 10 are HOLD or UNTESTABLE pending
-          a Polymarket-flavoured corpus once the geo-block proxy is deployed. Honest empirical
-          posture: a source is only ADOPTED when negative Brier-delta beats noise.
+        <p className="font-serif text-base leading-[1.6] text-muted-foreground">
+          12 sources are plumbed in. Only 2 have survived empirical Brier-delta
+          testing — Wikipedia attention + Nitter crowd_sentiment. The other 10 are
+          HOLD or UNTESTABLE pending a Polymarket-flavoured corpus. A source only
+          graduates to ADOPT when its negative Brier-delta beats noise.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <Section title="High signal-to-noise" rows={byTier.high} />
         <Section title="Medium signal-to-noise" rows={byTier.medium} />
         <Section title="Experimental / qualitative" rows={byTier.experimental} />
-        <p className="rounded-md border border-primary/15 bg-card/40 p-3 text-xs leading-[1.55] text-muted-foreground">
-          <strong className="font-mono text-foreground">Falsification protocol:</strong>{" "}
-          all 12 sources are plumbed into <code className="font-mono">apollo.scorer.MarketSnapshot</code>,
-          but a source only graduates from HOLD → ADOPT after a paired Brier test on a real
-          resolved-market sample beats the council baseline by &gt;0.002. The 10 non-adopted
-          sources stay live for telemetry but their oracle delta is set to zero. Re-run{" "}
-          <code className="font-mono">scripts/backtest_sources_xml.py</code> on every new
-          corpus. No source ships unfalsified.
+        <p className="rounded-md border border-primary/15 bg-card/40 px-4 py-3 text-xs leading-[1.55] text-muted-foreground">
+          <strong className="font-mono uppercase tracking-wider text-foreground">
+            Falsification protocol ·
+          </strong>{" "}
+          all 12 sources plumb into{" "}
+          <code className="font-mono">apollo.scorer.MarketSnapshot</code>. A source
+          graduates HOLD → ADOPT only when its paired Brier test beats the council
+          baseline by &gt;0.002. Non-adopted sources stay live for telemetry; their
+          oracle delta is set to zero. No source ships unfalsified.
         </p>
       </CardContent>
     </Card>

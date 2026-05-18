@@ -166,8 +166,8 @@ export default async function Dashboard() {
     <section className="space-y-16 py-12">
       {/* ── Header ─────────────────────────────────────────────────── */}
       <Reveal>
-        <div>
-          <div className="display flex items-center gap-3 text-[10px] uppercase tracking-[0.45em] text-primary">
+        <div className="space-y-5">
+          <div className="display flex items-center gap-3 text-[11px] uppercase tracking-[0.32em] text-primary">
             <span
               className={`inline-block size-1.5 rounded-full ${
                 liveRpc ? "bg-emerald-400 animate-pulse" : "bg-amber-500"
@@ -175,20 +175,19 @@ export default async function Dashboard() {
             />
             {liveRpc ? "Arc Testnet · live" : "Arc Testnet · unreachable"}
           </div>
-          <h1 className="display mt-4 text-6xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-7xl">
+          <h1 className="display text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-6xl">
             Dashboard
           </h1>
-          <p className="serif mt-4 max-w-2xl text-xl leading-[1.7] text-muted-foreground">
-            Direct read of Arc Testnet — block height, gas, and every{" "}
-            <code className="mono text-primary">Restrained</code> event ever
-            written by the council. No backend dependency.
+          <p className="serif max-w-2xl text-lg leading-[1.65] text-muted-foreground md:text-xl">
+            Live Arc Testnet read. Every council restraint and every visitor
+            witness, indexed straight off chain.
           </p>
-          <p className="mt-3 max-w-2xl rounded-md border border-amber-500/30 bg-amber-500/5 p-3 font-mono text-xs leading-[1.5] text-amber-200/85">
-            ⚠ Testnet only. Contracts have passed{" "}
-            <code className="text-amber-100">forge test</code> + Halmos symbolic
-            verification on <code className="text-amber-100">ProofOfRestraint</code> and{" "}
-            <code className="text-amber-100">PantheonConstitution</code>, but have not
-            undergone external audit. Do not deploy to mainnet without one.
+          <p className="max-w-2xl rounded-md border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-xs leading-[1.55] text-amber-200/85">
+            <strong className="font-mono uppercase tracking-wider text-amber-100">
+              Testnet only.
+            </strong>{" "}
+            Contracts pass Foundry + Halmos symbolic verification but are not
+            externally audited — do not mainnet-deploy without one.
           </p>
         </div>
       </Reveal>
@@ -229,9 +228,9 @@ export default async function Dashboard() {
             </a>
           </div>
           {restraints.length === 0 ? (
-            <div className="serif rounded-2xl border border-primary/15 bg-card/40 p-10 text-center text-muted-foreground">
+            <div className="serif rounded-2xl border border-primary/15 bg-card/40 p-10 text-center text-base leading-[1.6] text-muted-foreground">
               {liveRpc
-                ? "No restraint witnesses anchored in the last ~16 hours. The council has approved everything we've seen so far — or simply has not been running."
+                ? "No restraint witnesses in the last ~16 hours. Either the council ran clean — or the operator isn't running it right now."
                 : "Arc RPC unreachable. Retry in a moment."}
             </div>
           ) : (
@@ -282,18 +281,12 @@ export default async function Dashboard() {
             </a>
           </div>
           {visits.length === 0 ? (
-            <div className="serif rounded-2xl border border-primary/15 bg-card/40 p-10 text-center text-muted-foreground">
-              <p>
-                Nobody has run the demo on Arc yet.{" "}
-                <a
-                  href="/demo"
-                  className="text-primary underline-offset-4 hover:underline"
-                >
-                  Open the demo
-                </a>
-                , connect a wallet, and witness your visit on chain — it shows
-                up here within seconds.
-              </p>
+            <div className="serif rounded-2xl border border-primary/15 bg-card/40 p-10 text-center text-base leading-[1.6] text-muted-foreground">
+              No visitor witnesses yet.{" "}
+              <a href="/demo" className="text-primary underline-offset-4 hover:underline">
+                Run the demo
+              </a>{" "}
+              from your wallet — it lands here within seconds.
             </div>
           ) : (
             <ol className="space-y-px overflow-hidden rounded-2xl border border-primary/15">
