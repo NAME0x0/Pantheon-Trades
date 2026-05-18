@@ -35,9 +35,13 @@ const RESTRAINED_TOPIC =
 const VISITED_TOPIC =
   "0x5c375a1d562e39c417094b3e0b5fe2e49202eaaa8fc9cd51306d6caed52102ce";
 
-// 1_000_000-block log scan window — Arc Testnet runs ~1 s blocks so this
-// covers roughly the last 11 days, comfortably past the PoR deploy.
-const LOG_SCAN_WINDOW = 1_000_000;
+// Arc Testnet RPC caps eth_getLogs at a 10,000-block range (error -32614).
+// We scan multiple chunks back from head to cover ~14 hours of testnet
+// activity — enough to surface every recent restraint + visitor witness
+// without tripping the rate-limit.
+const LOG_CHUNK = 9_500;
+const LOG_CHUNK_COUNT = 6;
+const LOG_SCAN_WINDOW = LOG_CHUNK * LOG_CHUNK_COUNT;
 
 type ArcStatus = {
   block: number | null;
@@ -89,24 +93,43 @@ async function fetchArcStatus(): Promise<ArcStatus> {
   };
 }
 
+type RawLog = {
+  transactionHash: string;
+  blockNumber: string;
+  topics: string[];
+};
+
+async function fetchLogsChunked(
+  address: string,
+  topic: string,
+  latestBlock: number,
+): Promise<RawLog[]> {
+  // Build chunk windows back from latest until LOG_SCAN_WINDOW exhausted.
+  const ranges: Array<{ from: number; to: number }> = [];
+  let head = latestBlock;
+  for (let i = 0; i < LOG_CHUNK_COUNT && head > 0; i++) {
+    const from = Math.max(head - LOG_CHUNK + 1, 0);
+    ranges.push({ from, to: head });
+    head = from - 1;
+  }
+  const results = await Promise.all(
+    ranges.map((r) =>
+      rpc<RawLog[]>("eth_getLogs", [
+        {
+          address,
+          topics: [topic],
+          fromBlock: "0x" + r.from.toString(16),
+          toBlock: "0x" + r.to.toString(16),
+        },
+      ]),
+    ),
+  );
+  return results.flatMap((r) => (Array.isArray(r) ? r : []));
+}
+
 async function fetchRecentRestraints(latestBlock: number | null): Promise<RestraintLog[]> {
   if (latestBlock === null) return [];
-  const fromBlock = "0x" + Math.max(latestBlock - LOG_SCAN_WINDOW, 0).toString(16);
-  const logs = await rpc<
-    Array<{
-      transactionHash: string;
-      blockNumber: string;
-      topics: string[];
-    }>
-  >("eth_getLogs", [
-    {
-      address: POR_CONTRACT,
-      topics: [RESTRAINED_TOPIC],
-      fromBlock,
-      toBlock: "latest",
-    },
-  ]);
-  if (!Array.isArray(logs)) return [];
+  const logs = await fetchLogsChunked(POR_CONTRACT, RESTRAINED_TOPIC, latestBlock);
   return logs
     .map((l) => ({
       txHash: l.transactionHash,
@@ -114,27 +137,12 @@ async function fetchRecentRestraints(latestBlock: number | null): Promise<Restra
       signalHash: l.topics[2] ?? "0x",
       onchainProofId: parseInt(l.topics[1] ?? "0x0", 16),
     }))
-    .reverse();
+    .sort((a, b) => b.blockNumber - a.blockNumber);
 }
 
 async function fetchRecentVisits(latestBlock: number | null): Promise<VisitLog[]> {
   if (latestBlock === null) return [];
-  const fromBlock = "0x" + Math.max(latestBlock - LOG_SCAN_WINDOW, 0).toString(16);
-  const logs = await rpc<
-    Array<{
-      transactionHash: string;
-      blockNumber: string;
-      topics: string[];
-    }>
-  >("eth_getLogs", [
-    {
-      address: VW_CONTRACT,
-      topics: [VISITED_TOPIC],
-      fromBlock,
-      toBlock: "latest",
-    },
-  ]);
-  if (!Array.isArray(logs)) return [];
+  const logs = await fetchLogsChunked(VW_CONTRACT, VISITED_TOPIC, latestBlock);
   return logs
     .map((l) => ({
       txHash: l.transactionHash,
@@ -143,7 +151,7 @@ async function fetchRecentVisits(latestBlock: number | null): Promise<VisitLog[]
       // visitor is indexed topic[2], stored as 32-byte-padded address
       visitor: "0x" + (l.topics[2] ?? "0x").slice(-40),
     }))
-    .reverse();
+    .sort((a, b) => b.blockNumber - a.blockNumber);
 }
 
 export default async function Dashboard() {
@@ -216,7 +224,7 @@ export default async function Dashboard() {
           {restraints.length === 0 ? (
             <div className="serif rounded-2xl border border-primary/15 bg-card/40 p-10 text-center text-muted-foreground">
               {liveRpc
-                ? "No restraint witnesses anchored in the last ~11 days. The council has approved everything we've seen so far — or simply has not been running."
+                ? "No restraint witnesses anchored in the last ~16 hours. The council has approved everything we've seen so far — or simply has not been running."
                 : "Arc RPC unreachable. Retry in a moment."}
             </div>
           ) : (
