@@ -507,18 +507,38 @@ def _strip_codefence(text: str) -> str:
 
 
 def parse_response(text: str) -> list[MarketEval]:
-    """Parse the strict <evaluations> XML payload."""
+    """Parse the strict <evaluations> XML payload, with two graceful
+    fallbacks for models that drift off-format:
+
+    1. Strip code fences (``` blocks).
+    2. Slice to the first ``<evaluations>`` … ``</evaluations>``.
+    3. If no XML found, try a JSON fallback: an array of objects
+       with ``market_id`` + ``baseline_p`` (and optional source
+       adjustments). This is what gemini CLI's Pro model
+       sometimes returns despite XML-only instructions.
+    """
     cleaned = _strip_codefence(text)
     # Try to locate the root tag even if the model added stray prose.
     start = cleaned.find("<evaluations")
     end = cleaned.rfind("</evaluations>")
     if start >= 0 and end > start:
         cleaned = cleaned[start : end + len("</evaluations>")]
-    try:
-        root = ET.fromstring(cleaned)
-    except ET.ParseError as exc:
-        raise RuntimeError(f"failed to parse evaluations XML: {exc}\nfirst 400 chars: {cleaned[:400]}")
+        try:
+            root = ET.fromstring(cleaned)
+            return _evals_from_xml_root(root)
+        except ET.ParseError:
+            # fall through to JSON attempt
+            pass
+    # JSON fallback — look for a top-level array.
+    json_evals = _try_parse_json(cleaned)
+    if json_evals:
+        return json_evals
+    raise RuntimeError(
+        f"failed to parse evaluations XML or JSON\nfirst 400 chars: {cleaned[:400]}"
+    )
 
+
+def _evals_from_xml_root(root) -> list[MarketEval]:
     out: list[MarketEval] = []
     for m_el in root.findall("market"):
         mid = m_el.get("id") or ""
@@ -541,6 +561,72 @@ def parse_response(text: str) -> list[MarketEval]:
             ev.source_applies[name] = applies
         out.append(ev)
     return out
+
+
+def _try_parse_json(text: str) -> list[MarketEval]:
+    """Best-effort JSON parser for model outputs that drifted from XML.
+
+    Accepts shapes:
+      [{"market_id": "X", "baseline_p": 0.5, "sources": {...}}, ...]
+      [{"market_id": "X", "baseline_p": 0.5}, ...]
+      {"evaluations": [...]}
+    """
+    import json as _json
+    # Find the first '[' or '{' that starts a JSON value.
+    candidates = []
+    for opener in ("[", "{"):
+        i = text.find(opener)
+        if i >= 0:
+            candidates.append(i)
+    if not candidates:
+        return []
+    start = min(candidates)
+    # Try progressively shorter suffixes to find a valid JSON value.
+    for end in range(len(text), start, -1):
+        snippet = text[start:end]
+        try:
+            obj = _json.loads(snippet)
+        except _json.JSONDecodeError:
+            continue
+        # Normalise to a list of evaluation dicts.
+        if isinstance(obj, dict):
+            obj = obj.get("evaluations") or obj.get("markets") or [obj]
+        if not isinstance(obj, list):
+            return []
+        out: list[MarketEval] = []
+        for row in obj:
+            if not isinstance(row, dict):
+                continue
+            mid = str(row.get("market_id") or row.get("id") or "")
+            if not mid:
+                continue
+            try:
+                baseline = float(row.get("baseline_p") or row.get("p") or 0.5)
+            except (TypeError, ValueError):
+                baseline = 0.5
+            baseline = max(0.01, min(0.99, baseline))
+            ev = MarketEval(market_id=mid, baseline_p=baseline)
+            # Optional source adjustments under "sources" or top-level keys.
+            srcs = row.get("sources") or {}
+            if isinstance(srcs, dict):
+                for src_name, src_val in srcs.items():
+                    if isinstance(src_val, dict):
+                        applies = bool(src_val.get("applies", False))
+                        try:
+                            adj = float(src_val.get("adjustment", 0.0))
+                        except (TypeError, ValueError):
+                            adj = 0.0
+                    else:
+                        try:
+                            adj = float(src_val)
+                        except (TypeError, ValueError):
+                            adj = 0.0
+                        applies = adj != 0.0
+                    ev.source_adjustments[src_name] = max(-0.10, min(0.10, adj))
+                    ev.source_applies[src_name] = applies
+            out.append(ev)
+        return out
+    return []
 
 
 # ─── Council aggregation ────────────────────────────────────────────

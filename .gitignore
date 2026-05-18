@@ -54,3 +54,11 @@ contracts/broadcast/
 # Logs
 *.log
 logs/
+
+# Local-only experimental scripts (zero-cost CLI council, etc.) and
+# their artifacts. Kept on the operator's machine for weekly
+# recalibration; never committed.
+scripts/backtest_council_cli.py
+artifacts/sources_brier_cli_*.json
+artifacts/_tmp_council_cli/
+artifacts/_cli_council_*_log.txt

@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import sys
 import time
 from datetime import datetime, timezone
@@ -62,8 +63,12 @@ from strategos.paper import PaperBook  # noqa: E402
 # ─── Polymarket REST ──────────────────────────────────────────────────
 
 
-POLYMARKET_GAMMA = "https://gamma-api.polymarket.com"
-POLYMARKET_CLOB = "https://clob.polymarket.com"
+POLYMARKET_GAMMA = os.environ.get(
+    "POLYMARKET_GAMMA", "https://gamma-api.polymarket.com"
+)
+POLYMARKET_CLOB = os.environ.get(
+    "POLYMARKET_CLOB", "https://clob.polymarket.com"
+)
 
 
 SYNTHETIC_MARKETS: list[dict[str, Any]] = [

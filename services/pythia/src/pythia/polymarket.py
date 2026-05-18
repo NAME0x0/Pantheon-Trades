@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-
+import os
 
 from pantheon_core.schema import utc_now
 
 from pythia.base import DataSource, SourceSnapshot
 
-CLOB_API = "https://clob.polymarket.com"
+# Honours POLYMARKET_CLOB env so an operator behind a geo-block can
+# point us at a Vercel edge proxy (see apps/web/app/api/polymarket-proxy/).
+CLOB_API = os.environ.get("POLYMARKET_CLOB", "https://clob.polymarket.com")
 
 
 class PolymarketSource(DataSource):

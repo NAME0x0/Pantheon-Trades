@@ -23,7 +23,7 @@ from tenacity import (
 
 log = structlog.get_logger("strategos.clob")
 
-DEFAULT_HOST = "https://clob.polymarket.com"
+DEFAULT_HOST = os.environ.get("POLYMARKET_CLOB", "https://clob.polymarket.com")
 DEFAULT_CHAIN_ID = 137  # Polymarket settles on Polygon
 
 Side = Literal["BUY", "SELL"]

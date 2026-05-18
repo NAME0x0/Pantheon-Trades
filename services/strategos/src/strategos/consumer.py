@@ -17,13 +17,16 @@ from typing import Any
 import httpx
 import redis.asyncio as aioredis
 import structlog
-
 from pantheon_core.schema import ApprovalToken, Thesis
 
 from strategos.live import LiveExecutor
 from strategos.paper import PaperBook
 from strategos.polymarket_clob import PolymarketClobClient
 from strategos.router import Strategos
+
+# Honours POLYMARKET_CLOB env so an operator behind a geo-block can
+# point us at a Vercel edge proxy (see apps/web/app/api/polymarket-proxy/).
+POLYMARKET_CLOB = os.environ.get("POLYMARKET_CLOB", "https://clob.polymarket.com")
 
 log = structlog.get_logger("strategos.consumer")
 
@@ -68,7 +71,7 @@ async def _fetch_book(
     """
     try:
         resp = await http.get(
-            f"https://clob.polymarket.com/markets/{market_id}", timeout=10.0
+            f"{POLYMARKET_CLOB}/markets/{market_id}", timeout=10.0
         )
         resp.raise_for_status()
         market = resp.json()
@@ -87,7 +90,7 @@ async def _fetch_book(
     if yes_token:
         try:
             book_resp = await http.get(
-                "https://clob.polymarket.com/book",
+                f"{POLYMARKET_CLOB}/book",
                 params={"token_id": yes_token},
                 timeout=10.0,
             )

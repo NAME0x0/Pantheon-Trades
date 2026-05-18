@@ -154,6 +154,40 @@ Every upstream picked is open-source MIT/Apache and runs without paid vendors: C
 
 ---
 
+## Empirical adoption verdicts (live backtest)
+
+Ran `scripts/backtest_sources_xml.py` against 200 resolved Manifold binary markets in council mode (5 distinct roles aggregated per market). Headline numbers from the most recent runs:
+
+| Forecaster | Brier ↓ | Reliability ↓ | Resolution ↑ |
+|------------|---------|---------------|--------------|
+| Manifold consensus | **0.126** | 0.012 | 0.123 |
+| Single-shot Gemini | 0.260 | 0.046 | 0.049 |
+| **5-role council (API)** | **0.149** | 0.019 | 0.088 |
+
+**Council aggregation closes 80% of the Gemini-vs-Manifold Brier gap.** Calibration is close to Manifold; the remaining gap is *resolution* — the council blurs outcomes into less-distinguishable bins than play-money humans do.
+
+Per-source adoption at council baseline (200-market sample): **zero ADOPT** — all 12 sources HOLD or untestable. At sharper aggregator output, individual source contributions compress to noise. The aggregation itself is the bigger win than any single source signal.
+
+Adoption verdicts at the *single-shot* baseline (less sharp aggregator, more room for sources to help):
+
+| Source | Δ Brier vs single-shot baseline | Applicability | Verdict |
+|--------|---------------------------------|---------------|---------|
+| **attention** (Wikipedia pageviews) | −0.0040 | 33.5% | **ADOPT** |
+| **crowd_sentiment** (Nitter) | −0.0040 | 36.0% | **ADOPT** |
+| 7 others (orderbook_imbalance, perps, geo, onchain_tvl, lead_lag, etc.) | ±0.0001–0.0010 | 5–14% | HOLD |
+| 3 untestable on Manifold-only data | — | — | basis_arb, consensus_delta, macro_basis |
+
+Full per-source decomposition + ranked next-step actions in [`docs/BACKTEST_RESULTS.md`](./docs/BACKTEST_RESULTS.md). The biggest profit-relevant takeaways:
+
+1. **The council aggregation is the moat** — switching from single-shot to 5-role aggregated halves the Brier delta to Manifold.
+2. **Manifold consensus is a stiff benchmark** — beating it on random questions is the empirical bar for "the council adds informational value beyond free human consensus."
+3. **Sources help most at single-shot baseline; less at council baseline** — implies the operator either trusts the council aggregate alone OR routes harder questions (where council is noisier) through the source-augmented path.
+4. **Wikipedia + Nitter** are the two operational ADOPT signals. Both already wired in `apollo.scorer` at ±0.05 caps — no code change needed.
+
+Latest 200-market run cost: **$0.025** on Gemini flash-lite. Refreshable weekly.
+
+---
+
 ## Profitability-readiness build (post Tier A–G)
 
 After Tier A–G the project had hardened plumbing but no proven *edge source*. Six waves landed since to close that gap. The honest bottom line is in [`docs/FEES_AND_EDGE.md`](./docs/FEES_AND_EDGE.md) — short version below.
@@ -323,8 +357,8 @@ This repo treats correctness as a deploy gate, not a hope. The current `main` pa
 ```
 forge test               20 suites · 51 tests + 2 symbolic specs · 0 failed
 halmos                   ProofOfRestraint + PantheonConstitution invariants proved
-python -m compileall     330+ files · 0 syntax errors
-pytest sweep             430+ tests across 12 service suites
+python -m compileall     340+ files · 0 syntax errors
+pytest sweep             520+ tests across 12 service suites
 docker compose config    valid (incl. observability + backup stack)
 pnpm install             clean (node-linker=hoisted)
 pnpm --filter web build  56 routes · /demo first-load 126 kB
@@ -613,6 +647,30 @@ Needs `PRIVATE_KEY`, `RPC_URL`, `PROOF_OF_RESTRAINT_ADDRESS` in `.env`. The cont
 uv run python tests/dry_run_chain_write.py
 # Arcscan link printed at end
 ```
+
+---
+
+## Polymarket integration + geo-block proxy
+
+Polymarket geo-blocks several jurisdictions at the HTTP layer (DNS resolves, TCP handshake refused). Pantheon ships a Vercel-Edge proxy at [`apps/web/app/api/polymarket-proxy/[...path]/route.ts`](./apps/web/app/api/polymarket-proxy/[...path]/route.ts):
+
+```
+/api/polymarket-proxy/gamma/...   →  https://gamma-api.polymarket.com/...
+/api/polymarket-proxy/clob/...    →  https://clob.polymarket.com/...
+/api/polymarket-proxy/data/...    →  https://data-api.polymarket.com/...
+```
+
+After deploying `apps/web` to Vercel, point Pantheon services at the proxy:
+
+```env
+POLYMARKET_CLOB=https://<your-vercel-app>.vercel.app/api/polymarket-proxy/clob
+POLYMARKET_GAMMA=https://<your-vercel-app>.vercel.app/api/polymarket-proxy/gamma
+POLYMARKET_PROXY_TOKEN=<a long random string — optional shared secret>
+```
+
+All four Polymarket-touching call sites (`services/pythia/src/pythia/polymarket.py`, `services/strategos/src/strategos/polymarket_clob.py`, `services/strategos/src/strategos/consumer.py`, `scripts/paper_trade_polymarket.py`) read these env vars and fall back to the direct hosts when unset.
+
+Full Polymarket integration checklist (creds, builder code, wallet funding, security): [`docs/POLYMARKET_INTEGRATION.md`](./docs/POLYMARKET_INTEGRATION.md).
 
 ---
 

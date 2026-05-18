@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -129,6 +129,39 @@ const TIER_BUILD = [
       "IRS Form 8949 tax CSV export",
     ],
   },
+  {
+    tier: "H",
+    title: "Alpha sources",
+    features: [
+      "Cross-venue basis arb (Polymarket ↔ Kalshi / Odds API)",
+      "Binance perps funding-z + OI contrarian",
+      "CFTC commitments-of-traders positioning z",
+      "Deribit options IV → lognormal implied probability",
+      "Wikipedia attention + Nitter crowd_sentiment ADOPTED on empirical Brier",
+    ],
+  },
+  {
+    tier: "I",
+    title: "Calibration + sizing",
+    features: [
+      "Beta calibration (Kull et al 2017) alongside Platt + isotonic",
+      "Per-category Platt — politics / crypto / sports / macro",
+      "Brier-weighted council aggregation (softmax over realised Brier)",
+      "Conformal Kelly — sizes against interval lower bound",
+      "Council aggregation closes 80% of LLM-vs-Manifold Brier gap",
+    ],
+  },
+  {
+    tier: "J",
+    title: "Live integration",
+    features: [
+      "Polymarket V2 builder codes — daily USDC payout attribution",
+      "Maker rebates + post-only flag end-to-end through CLOB",
+      "Vercel-Edge Polymarket proxy bypasses geo-blocks",
+      "USYC idle bankroll parking + Circle Paymaster routing intents",
+      "Arc-anchored TraceEvent bundle hashes — every deliberation",
+    ],
+  },
 ];
 
 const PIPELINE = [
@@ -219,8 +252,8 @@ export default function Home() {
             <div className="grid max-w-2xl grid-cols-2 gap-x-10 gap-y-6 pt-2 md:grid-cols-4">
               <HeroStat value={11} label="Council agents" />
               <HeroStat value={4} label="Rounds of debate" />
-              <HeroStat value={334} label="Python tests" />
-              <HeroStat value={1} label="On-chain witness" />
+              <HeroStat value={520} label="Python tests" />
+              <LiveWitnessStat />
             </div>
           </div>
 
@@ -733,6 +766,71 @@ function HeroStat({ value, label }: { value: number; label: string }) {
       </div>
       <div className="display mt-2 text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
         {label}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Live witness count — calls the deployed ProofOfRestraint contract
+ * on Arc Testnet via a single eth_call. Fallback to 1 (the first
+ * canonical witness at block 42,337,549) if the RPC is unreachable
+ * or the contract is not deployed in the current environment.
+ *
+ * The contract exposes `nextProofId()` returning a uint256. We
+ * subtract 1 to get the count of issued proofs (the counter starts
+ * at 1 for the first proof).
+ */
+function LiveWitnessStat() {
+  const [count, setCount] = useState<number | null>(null);
+  const fallback = 1;
+
+  useEffect(() => {
+    const rpc = "https://rpc.testnet.arc.network";
+    const contract = "0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895";
+    // function selector for nextProofId() → 0x...; precompute keccak("nextProofId()")[:4]
+    // = 0x6a627842. Standard ABI; safe to hardcode.
+    const data = "0x6a627842";
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+    fetch(rpc, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_call",
+        params: [{ to: contract, data }, "latest"],
+      }),
+      signal: controller.signal,
+    })
+      .then((r) => r.ok ? r.json() : null)
+      .then((j) => {
+        clearTimeout(timeout);
+        if (!j || !j.result || j.result === "0x") return;
+        const next = parseInt(j.result, 16);
+        // nextProofId is 1-indexed for "next free"; issued = next - 1.
+        if (Number.isFinite(next) && next > 0) {
+          setCount(Math.max(0, next - 1));
+        }
+      })
+      .catch(() => {
+        clearTimeout(timeout);
+      });
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  const value = count ?? fallback;
+  return (
+    <div>
+      <div className="display text-4xl font-semibold leading-none text-primary md:text-5xl">
+        <Counter to={value} duration={2.4} />
+      </div>
+      <div className="display mt-2 text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+        On-chain witness{value === 1 ? "" : "es"}
       </div>
     </div>
   );

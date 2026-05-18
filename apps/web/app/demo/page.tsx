@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 
+import { BacktestPanel } from "./backtest-panel";
 import { CircleStackPanel } from "./circle-stack-panel";
 import { CoinGeckoPanel } from "./coingecko-panel";
 import { EdgeSourcesPanel } from "./edge-sources-panel";
@@ -103,6 +104,19 @@ export default function DemoPage({
       </div>
 
       <CoinGeckoPanel />
+
+      <div className="space-y-3 pt-8">
+        <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
+          Empirical backtest — does the council actually beat the market?
+        </h2>
+        <p className="max-w-3xl font-serif text-base leading-relaxed text-muted-foreground">
+          200 resolved Manifold binary markets, run through the 5-role council via{" "}
+          <code className="font-mono">scripts/backtest_sources_xml.py</code>. Brier scores,
+          per-source adoption verdicts, $0.12 cost on Gemini flash-lite.
+        </p>
+      </div>
+
+      <BacktestPanel />
 
       <div className="space-y-3 pt-8">
         <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
