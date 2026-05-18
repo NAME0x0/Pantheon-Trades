@@ -19,20 +19,19 @@
 
 </div>
 
-> **Hackathon judges:** the submission packet lives at [`docs/HACKATHON_SUBMISSION.md`](./docs/HACKATHON_SUBMISSION.md) — video script, Circle-tools checklist, traction template. Built for the **Agora Agents Hackathon** · Canteen × Circle × Arc · May 11–25 2026 · RFB 02 (Prediction Market Trader Intelligence). Polymarket V2 builder codes + Arc-anchored reasoning traces wired per the hackathon research notes.
-
 ---
 
 ## TL;DR (60 seconds, no jargon)
 
-**What it is.** A trading system that doesn't trade until ten AI agents — each playing a role: bull, bear, risk officer, execution clerk — argue about the trade and vote. Two of them can refuse alone. When the system *declines* a trade, it stamps that decision onto a public blockchain so anyone can audit the discipline later.
+**What it is.** A trading system that doesn't trade until eleven AI agents — each playing a role: bull, bear, risk officer, execution clerk, adversarial dissenter — argue about the trade and vote. Two of them can refuse alone. When the system *declines* a trade, it stamps that decision onto a public blockchain so anyone can audit the discipline later.
 
 **Why that's different.** Most trading bots are a black box optimising one number: profit. This one is glass-box, optimising two things at once — profit *and* a public record of every trade it walked away from. Walking away is half the alpha. *Showing* that you walked away is what makes it auditable.
 
 **What you can do with it right now.**
-1. Open [the live demo](https://pantheon-trades-web.vercel.app/demo). Four real captured deliberations replay event-by-event in your browser — a Bitcoin approval, a Bitcoin veto, a US-election NO trade, and an NFL market the system refused. No login. Optional wallet connect to see the on-chain side.
-2. Clone this repo. The whole thing runs locally with one `docker compose up`. Use `gemini`, `openai`, `anthropic`, `openrouter`, `groq`, `together`, `deepseek`, `xai`, or a local `ollama` / `lm_studio` server — same code path, swap an env var.
-3. Run a paper trade against real CoinGecko prices: `python scripts/live_paper_trade_coingecko.py`. Artifact lands in `artifacts/` with PnL, fees, drawdown, and Sharpe.
+1. Open [the live demo](https://pantheon-trades-web.vercel.app/demo). Four real captured deliberations replay event-by-event in your browser — a Bitcoin approval, a Bitcoin veto, a US-election NO trade, and an NFL market the system refused. No login.
+2. **Witness your visit on Arc Testnet from your own wallet.** Click the "Witness my visit on Arc" card on `/demo`, sign one tx in MetaMask, and your address ends up as a permanent on-chain record on the [`VisitorWitness`](./contracts/src/VisitorWitness.sol) contract at [`0xF35B…AFA7`](https://testnet.arcscan.app/address/0xF35B1fa5A6026C61C187881eA17d77F97Cd1AFA7). The tx costs a fraction of a cent in testnet USDC; the [Circle faucet](https://faucet.circle.com/) drips it free.
+3. Clone this repo. The whole thing runs locally with one `docker compose up`. Use `gemini`, `openai`, `anthropic`, `openrouter`, `groq`, `together`, `deepseek`, `xai`, or a local `ollama` / `lm_studio` server — same code path, swap an env var.
+4. Run a paper trade against real CoinGecko prices: `python scripts/live_paper_trade_coingecko.py`. Artifact lands in `artifacts/` with PnL, fees, drawdown, and Sharpe.
 
 **Will it make you money?** Honest answer further down in the FAQ. Short version: the harness shows the pipeline runs end-to-end on live data, and it also shows naïve strategies lose money to fees. The hard part — finding signals where the edge survives 4% round-trip costs — is what the council exists to filter.
 
@@ -151,6 +150,28 @@ A seven-tier robustness pass landed in 35 commits. Highlights below; full per-fe
 | **G — safety hygiene** | mutmut mutation testing scaffold · Shopify Toxiproxy chaos drills · a16z Halmos symbolic specs for ProofOfRestraint + PantheonConstitution · IRS Form 8949 tax CSV export. |
 
 Every upstream picked is open-source MIT/Apache and runs without paid vendors: ChromaDB, Nitter, Kalshi REST, DeFiLlama public API, tradingview-screener, spaCy, Alembic, SOPS + age, slowapi, mutmut, Toxiproxy, Halmos.
+
+---
+
+## Run on Arc Testnet from your own wallet
+
+The website is not a brochure. Visitors can self-execute on chain from `/demo`:
+
+1. **Click "Witness my visit on Arc"** on the demo page. The card uses raw EIP-1193 — no wagmi, no walletconnect — and works in MetaMask, Rabby, Coinbase Wallet, or any injected provider.
+2. **Wallet auto-switches to Arc Testnet** (chain id `5042002`). If the chain isn't added, the EIP-3326 fallback adds it with `wallet_addEthereumChain` and re-prompts.
+3. **One `eth_sendTransaction`** signs and sends a call to `VisitorWitness.witness(bytes32 visitHash, string scenario)` on the public permissionless contract at [`0xF35B1fa5A6026C61C187881eA17d77F97Cd1AFA7`](https://testnet.arcscan.app/address/0xF35B1fa5A6026C61C187881eA17d77F97Cd1AFA7).
+4. **Tx confirms in ~1 second** on Arc and the page renders the arcscan link + the visitor's personal on-chain witness count (`visits[address]`).
+5. **The public `/dashboard`** scans the chain via `eth_getLogs` and renders every visit in the "Visitor witness feed" alongside the council's own "On-chain restraint feed" — no backend, no database, the chain is the database.
+
+Cost per witness: <$0.01 USDC of testnet gas, dripped free from the [Circle faucet](https://faucet.circle.com/). You will not be charged anything. There is no token, no signup, no email capture — only your on-chain receipt.
+
+To seed the dashboard with realistic restraint + visitor activity for screenshots:
+
+```bash
+pwsh scripts/seed_arc_witnesses.ps1 -RestraintCount 4 -VisitorCount 3
+```
+
+The deployer wallet (`PRIVATE_KEY` in `.env`) holds the `RESTRAINT_ROLE`, so it can write `Restrained` records to the council's contract; anyone can write `Visited` records to `VisitorWitness`.
 
 ---
 
@@ -355,13 +376,13 @@ uv run python tests/dry_run_chain_write.py
 This repo treats correctness as a deploy gate, not a hope. The current `main` passes:
 
 ```
-forge test               20 suites · 51 tests + 2 symbolic specs · 0 failed
+forge test               21 suites · 57 tests + 2 symbolic specs · 0 failed
 halmos                   ProofOfRestraint + PantheonConstitution invariants proved
 python -m compileall     340+ files · 0 syntax errors
 pytest sweep             520+ tests across 12 service suites
 docker compose config    valid (incl. observability + backup stack)
 pnpm install             clean (node-linker=hoisted)
-pnpm --filter web build  56 routes · /demo first-load 126 kB
+pnpm --filter web build  57 routes · /demo first-load 133 kB
 tests/bench.py           every microbenchmark gate green
 ruff check               all checks passed
 ```
@@ -429,7 +450,7 @@ tests/          Cross-service benchmarks + live dry-runs
 | Doc | What's inside |
 |-----|---------------|
 | [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | End-to-end system design |
-| [AGENTS.md](./docs/AGENTS.md) | All 22 agents, weights, veto authority |
+| [AGENTS.md](./docs/AGENTS.md) | 11 council agents + service agents, weights, veto authority |
 | [CONSTITUTION.md](./docs/CONSTITUTION.md) | Immutable system rules — quorum, vetoes, position caps |
 | [SIGNAL_SPEC.md](./docs/SIGNAL_SPEC.md) | Signal envelope schema and scoring dimensions |
 | [THESIS_SCHEMA.md](./docs/THESIS_SCHEMA.md) | Thesis structure produced by Boule |
@@ -453,8 +474,9 @@ tests/          Cross-service benchmarks + live dry-runs
 - Observability: Prometheus metrics on every council service · provisioned Grafana dashboard at :3001
 - Backup: hourly pg_dump + Redis BGSAVE · retention configurable · operator runbook in `infra/backup`
 - Secrets: SOPS + age for encrypted `.env.enc` and `infra/secrets/*.yaml`
-- Static demo site on Vercel with interactive council replay + Sankey trace · approval card · leaderboard primitives
-- **Proof of Restraint anchored on Arc Testnet — first witness in [block 42,337,549](https://testnet.arcscan.app/tx/0xf9ae0e7ba73ecaece1af840b20e2ef5a20868df960e62ba238e53a828dfa4edb)** · multi-sig migration script ready in `contracts/script/TransferRestraintAdmin.s.sol`
+- Live demo on Vercel with interactive council replay + Sankey trace · approval card · leaderboard primitives · per-visitor on-chain witness via `VisitorWitness` contract
+- **Proof of Restraint anchored on Arc Testnet — first witness in [block 42,337,549](https://testnet.arcscan.app/tx/0xf9ae0e7ba73ecaece1af840b20e2ef5a20868df960e62ba238e53a828dfa4edb)** · 5 restraint witnesses + visitor witnesses streaming live to `/dashboard` · multi-sig migration script ready in `contracts/script/TransferRestraintAdmin.s.sol`
+- **`VisitorWitness` deployed at [`0xF35B…AFA7`](https://testnet.arcscan.app/address/0xF35B1fa5A6026C61C187881eA17d77F97Cd1AFA7)** — public permissionless contract, anyone can record an on-chain proof from the website
 - Symbolic verification (Halmos) on `ProofOfRestraint` and `PantheonConstitution` runs in CI alongside Foundry tests
 - 53+ Foundry suites · 334+ Python tests · full compose stack healthy
 

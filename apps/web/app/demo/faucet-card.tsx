@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  */
 
 const CIRCLE_FAUCET = "https://faucet.circle.com/";
-const ARC_FAUCET = "https://faucet.testnet.arc.network/";
+const CIRCLE_CONSOLE = "https://console.circle.com/";
 
 export function FaucetCard() {
   return (
@@ -23,25 +23,25 @@ export function FaucetCard() {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm leading-[1.6] text-muted-foreground">
-          Arc Testnet uses USDC as native gas. The faucets drip free testnet USDC to
-          any wallet — no real funds required. Each demo witness tx costs less than
-          one US cent.
+          Arc Testnet uses USDC as native gas. Circle&apos;s developer faucet drips
+          free testnet USDC to any wallet — no real funds required. Each demo
+          witness tx costs less than one US cent and is 100% covered by the drip.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <FaucetLink
             href={CIRCLE_FAUCET}
             label="Circle Faucet"
-            note="Multi-chain USDC drip (select Arc Sepolia / Arc Testnet)"
+            note="Select Arc Sepolia — paste your 0x address, drip arrives in seconds"
           />
           <FaucetLink
-            href={ARC_FAUCET}
-            label="Arc Testnet Faucet"
-            note="Direct from the Arc team — paste your 0x address"
+            href={CIRCLE_CONSOLE}
+            label="Circle Console"
+            note="Sign in for a higher-limit faucet + full Arc developer dashboard"
           />
         </div>
         <p className="text-xs text-muted-foreground/70">
-          After connecting your wallet, paste your address into one of the faucets
-          above. Drip arrives in seconds.
+          You will not be charged anything. Testnet USDC has no real value — it&apos;s
+          purely for paying the fractional gas cost of the on-chain witness tx.
         </p>
       </CardContent>
     </Card>
