@@ -36,6 +36,32 @@ const VISITOR_WITNESS_ADDRESS =
 
 // keccak("witness(bytes32,string)")[:4] — computed via `cast sig`.
 const WITNESS_SELECTOR = "639637ce";
+// keccak("visits(address)")[:4] — public mapping getter on VisitorWitness.
+const VISITS_SELECTOR = "f5bcc01b";
+
+async function fetchWalletVisitCount(address: string): Promise<number | null> {
+  // ABI-encode visits(address): selector + 32-byte left-padded address.
+  const padded = address.toLowerCase().replace(/^0x/, "").padStart(64, "0");
+  const data = "0x" + VISITS_SELECTOR + padded;
+  try {
+    const r = await fetch(ARC_RPC, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_call",
+        params: [{ to: VISITOR_WITNESS_ADDRESS, data }, "latest"],
+      }),
+    });
+    const j = await r.json();
+    if (!j?.result || j.result === "0x") return 0;
+    const n = parseInt(j.result, 16);
+    return Number.isFinite(n) ? n : null;
+  } catch {
+    return null;
+  }
+}
 
 interface Eip1193 {
   request: (args: { method: string; params?: unknown[] | object }) => Promise<unknown>;
@@ -138,9 +164,27 @@ export function WitnessButton({
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [address, setAddress] = useState<string | null>(null);
   const [chainId, setChainId] = useState<string | null>(null);
+  const [walletVisits, setWalletVisits] = useState<number | null>(null);
 
   const provider = typeof window !== "undefined" ? window.ethereum : undefined;
   const onArc = chainId === ARC_CHAIN_HEX;
+
+  // Refresh the connected wallet's on-chain visit tally whenever the
+  // address changes OR a new witness tx confirms. This is the visitor's
+  // personal proof tally — independent of the global feed.
+  useEffect(() => {
+    if (!address) {
+      setWalletVisits(null);
+      return;
+    }
+    let cancelled = false;
+    fetchWalletVisitCount(address).then((n) => {
+      if (!cancelled) setWalletVisits(n);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [address, status.kind]);
 
   useEffect(() => {
     if (!provider) return;
@@ -262,6 +306,17 @@ export function WitnessButton({
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm leading-[1.6] text-muted-foreground">{helper}</p>
+
+        {address && walletVisits !== null && (
+          <div className="flex items-baseline justify-between rounded-md border border-primary/20 bg-card/60 p-3 text-sm">
+            <span className="font-mono uppercase tracking-wider text-muted-foreground">
+              {address.slice(0, 6)}…{address.slice(-4)} · on-chain witnesses
+            </span>
+            <span className="font-mono text-lg font-semibold text-primary">
+              {walletVisits}
+            </span>
+          </div>
+        )}
 
         {!provider && (
           <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-200">
