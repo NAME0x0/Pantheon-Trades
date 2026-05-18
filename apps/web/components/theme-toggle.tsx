@@ -37,13 +37,22 @@ export function ThemeToggle({ className }: { className?: string }) {
     setTheme(next);
   }
 
+  // Button previews the theme it switches TO — when currently dark and
+  // showing the Sun (light), button itself is light-themed; when currently
+  // light and showing the Moon (dark), button itself is dark-themed.
+  const previewClasses =
+    theme === "dark"
+      ? "border-amber-200/50 bg-amber-50 text-amber-900 hover:border-amber-300 hover:bg-amber-100"
+      : "border-slate-700 bg-slate-950 text-amber-200 hover:border-amber-200/70 hover:bg-slate-900";
+
   return (
     <button
       type="button"
       onClick={toggle}
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
       className={cn(
-        "group relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary/30 bg-card/60 text-primary transition-all hover:border-primary/60 hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
+        "group relative inline-flex h-9 w-9 items-center justify-center rounded-full border transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
+        previewClasses,
         className,
       )}
     >

@@ -94,7 +94,7 @@ If a name confuses you in any document, look here first.
 
 | | |
 |---|---|
-| **Ten agents, four rounds** | Bull pair (Ares, Hades), bear pair (Athena, Cassandra), risk triad (Zeus, Solon, Themis), execution triad (Hephaestus, Daedalus, Humans). Openings → challenges → Athena synthesis → blind votes. |
+| **Eleven agents, four rounds** | Bull pair (Ares, Hades), bear pair (Athena, Cassandra), risk triad (Zeus, Solon, Themis), execution triad (Hephaestus, Daedalus, Humans), adversarial dissenter (Eris). Openings → challenges → Athena synthesis → blind votes. |
 | **Two veto powers** | Zeus and Solon can halt a trade unilaterally on a constitutional violation. Early-veto short-circuits the debate to save tokens. |
 | **Half-Kelly with caps** | Areopagus sizes positions using directional edge and a confidence-weighted half-Kelly fraction, then clamps against constitutional position limits and category exposure. |
 | **Proof of Restraint** | When the council declines, Areopagus writes a `Restrained(signalHash, marketId, reasonCode, note)` record to a deployed Solidity contract on Arc. The repo's flagship feature is provably live at [`0x4b35…4895`](https://testnet.arcscan.app/address/0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895). |
@@ -227,7 +227,7 @@ python scripts/paper_trade_polymarket.py --markets=50 --edge-threshold=0.04
 flowchart TD
     Pythia([<b>Pythia</b><br/><i>oracle</i><br/>Polymarket · news · prices])
     Apollo([<b>Apollo</b><br/><i>signals</i><br/>7-dim scoring · A/B/C bands])
-    Boule([<b>Boule</b><br/><i>council</i><br/>10 agents · 4 rounds])
+    Boule([<b>Boule</b><br/><i>council</i><br/>11 agents · 4 rounds])
     Areopagus{{<b>Areopagus</b><br/><i>court</i><br/>gates · half-Kelly}}
     Strategos([<b>Strategos</b><br/><i>execution</i><br/>CLOB router])
     Parthenon[(<b>Parthenon</b><br/><i>archive</i><br/>IPFS · Irys · Merkle)]
@@ -478,7 +478,7 @@ uv run --project services/boule --with httpx python scripts/live_test_gemini.py
 # -> artifacts/live_test_<UTC>.json
 ```
 
-Walks ten agents through round 1 (opening) and round 4 (vote) against `gemini-2.5-flash-lite` (overridable via `BOULE_GEMINI_MODEL`). Records per-call duration, token in/out, finish reason, model fingerprint, and an estimated USD cost. Spacing defaults to 6.2s for free-tier compliance — bump down via `LIVE_TEST_SPACING_S=0.5` on paid tier (25k RPD).
+Walks eleven agents through round 1 (opening) and round 4 (vote) against `gemini-2.5-flash-lite` (overridable via `BOULE_GEMINI_MODEL`). Records per-call duration, token in/out, finish reason, model fingerprint, and an estimated USD cost. Spacing defaults to 6.2s for free-tier compliance — bump down via `LIVE_TEST_SPACING_S=0.5` on paid tier (25k RPD).
 
 The canonical artifact is checked in at [`artifacts/live_test_20260517T034219Z.json`](./artifacts/live_test_20260517T034219Z.json) — 20/20 successful calls, 364 seconds, **$0.00266 estimated cost**. See [artifacts/README.md](./artifacts/README.md) for full schema.
 

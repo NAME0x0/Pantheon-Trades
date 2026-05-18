@@ -68,58 +68,58 @@ export function ChamberClock({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative aspect-square w-full max-w-[180px] select-none",
+        "relative aspect-square w-full max-w-[220px] select-none",
         className,
       )}
       aria-hidden
     >
-      <svg viewBox="0 0 200 200" className="h-full w-full">
-        {/* Outer ring */}
+      <svg viewBox="0 0 220 220" className="h-full w-full">
+        {/* Outer ring — pushed outward so beads + labels don't collide */}
         <circle
-          cx={100}
-          cy={100}
-          r={92}
+          cx={110}
+          cy={110}
+          r={104}
           fill="none"
           stroke="currentColor"
           strokeWidth={0.8}
           className="text-primary/40"
         />
         <circle
-          cx={100}
-          cy={100}
-          r={84}
+          cx={110}
+          cy={110}
+          r={95}
           fill="none"
           stroke="currentColor"
           strokeWidth={0.6}
           className="text-primary/25"
         />
-        {/* Beaded inner ring rotates slowly */}
+        {/* Beaded ring orbits outside the hour glyphs (r=86 vs labels at r=60) */}
         <g
-          transform={`rotate(${angle} 100 100)`}
+          transform={`rotate(${angle} 110 110)`}
           style={{ transition: "transform 1s linear" }}
           className="text-primary/55"
         >
           {Array.from({ length: 60 }).map((_, i) => {
             const a = (i / 60) * Math.PI * 2;
-            const x = 100 + Math.cos(a) * 78;
-            const y = 100 + Math.sin(a) * 78;
+            const x = 110 + Math.cos(a) * 86;
+            const y = 110 + Math.sin(a) * 86;
             return (
               <circle
                 key={i}
                 cx={x}
                 cy={y}
-                r={i % 5 === 0 ? 1.5 : 0.7}
+                r={i % 5 === 0 ? 1.6 : 0.8}
                 fill="currentColor"
               />
             );
           })}
         </g>
-        {/* Hour glyphs: I (12), II (3), III (6), IV (9) — placed cardinal */}
+        {/* Hour glyphs at radius 60 — inside the bead orbit, outside medallion */}
         {([
-          { x: 100, y: 32, label: "I" },
-          { x: 168, y: 105, label: "II" },
-          { x: 100, y: 178, label: "III" },
-          { x: 32, y: 105, label: "IV" },
+          { x: 110, y: 56, label: "I" },
+          { x: 164, y: 114, label: "II" },
+          { x: 110, y: 168, label: "III" },
+          { x: 56, y: 114, label: "IV" },
         ] as const).map((p) => (
           <text
             key={p.label}
@@ -127,7 +127,7 @@ export function ChamberClock({ className }: { className?: string }) {
             y={p.y}
             textAnchor="middle"
             fontFamily="serif"
-            fontSize={12}
+            fontSize={13}
             className="fill-primary/70"
           >
             {p.label}
@@ -135,20 +135,20 @@ export function ChamberClock({ className }: { className?: string }) {
         ))}
         {/* Central medallion */}
         <circle
-          cx={100}
-          cy={100}
-          r={28}
+          cx={110}
+          cy={110}
+          r={30}
           fill="none"
           stroke="currentColor"
           strokeWidth={0.9}
           className="text-primary/60"
         />
         <text
-          x={100}
-          y={106}
+          x={110}
+          y={117}
           textAnchor="middle"
           fontFamily="serif"
-          fontSize={18}
+          fontSize={20}
           className="fill-primary"
         >
           Π

@@ -23,11 +23,21 @@ export const revalidate = 30;
 const ARC_RPC = "https://rpc.testnet.arc.network";
 const ARCSCAN = "https://testnet.arcscan.app";
 const POR_CONTRACT = "0x4b35CE4Bf71B976205f60Fda1EBAb82eD4D34895";
+const VW_CONTRACT =
+  process.env.NEXT_PUBLIC_VISITOR_WITNESS_ADDRESS ??
+  "0xF35B1fa5A6026C61C187881eA17d77F97Cd1AFA7";
 const ARC_CHAIN_ID = 5042002;
 
 // keccak256("Restrained(uint256,bytes32,string,string,string,address,uint64)")
 const RESTRAINED_TOPIC =
   "0x86071ec604ff0d442a66a1c44538c3b91553fb8f55fdc5ea10f8841ba6412f0a";
+// keccak256("Visited(uint256,address,bytes32,string,uint64)")
+const VISITED_TOPIC =
+  "0x5c375a1d562e39c417094b3e0b5fe2e49202eaaa8fc9cd51306d6caed52102ce";
+
+// 1_000_000-block log scan window — Arc Testnet runs ~1 s blocks so this
+// covers roughly the last 11 days, comfortably past the PoR deploy.
+const LOG_SCAN_WINDOW = 1_000_000;
 
 type ArcStatus = {
   block: number | null;
@@ -40,6 +50,13 @@ type RestraintLog = {
   blockNumber: number;
   signalHash: string;
   onchainProofId: number;
+};
+
+type VisitLog = {
+  txHash: string;
+  blockNumber: number;
+  visitor: string;
+  proofId: number;
 };
 
 async function rpc<T>(method: string, params: unknown[]): Promise<T | null> {
@@ -74,8 +91,7 @@ async function fetchArcStatus(): Promise<ArcStatus> {
 
 async function fetchRecentRestraints(latestBlock: number | null): Promise<RestraintLog[]> {
   if (latestBlock === null) return [];
-  // 200_000-block window — generous for testnet without overloading the RPC.
-  const fromBlock = "0x" + Math.max(latestBlock - 200_000, 0).toString(16);
+  const fromBlock = "0x" + Math.max(latestBlock - LOG_SCAN_WINDOW, 0).toString(16);
   const logs = await rpc<
     Array<{
       transactionHash: string;
@@ -98,12 +114,44 @@ async function fetchRecentRestraints(latestBlock: number | null): Promise<Restra
       signalHash: l.topics[2] ?? "0x",
       onchainProofId: parseInt(l.topics[1] ?? "0x0", 16),
     }))
-    .reverse(); // newest first
+    .reverse();
+}
+
+async function fetchRecentVisits(latestBlock: number | null): Promise<VisitLog[]> {
+  if (latestBlock === null) return [];
+  const fromBlock = "0x" + Math.max(latestBlock - LOG_SCAN_WINDOW, 0).toString(16);
+  const logs = await rpc<
+    Array<{
+      transactionHash: string;
+      blockNumber: string;
+      topics: string[];
+    }>
+  >("eth_getLogs", [
+    {
+      address: VW_CONTRACT,
+      topics: [VISITED_TOPIC],
+      fromBlock,
+      toBlock: "latest",
+    },
+  ]);
+  if (!Array.isArray(logs)) return [];
+  return logs
+    .map((l) => ({
+      txHash: l.transactionHash,
+      blockNumber: parseInt(l.blockNumber, 16),
+      proofId: parseInt(l.topics[1] ?? "0x0", 16),
+      // visitor is indexed topic[2], stored as 32-byte-padded address
+      visitor: "0x" + (l.topics[2] ?? "0x").slice(-40),
+    }))
+    .reverse();
 }
 
 export default async function Dashboard() {
   const arc = await fetchArcStatus();
-  const restraints = await fetchRecentRestraints(arc.block);
+  const [restraints, visits] = await Promise.all([
+    fetchRecentRestraints(arc.block),
+    fetchRecentVisits(arc.block),
+  ]);
   const liveRpc = arc.block !== null;
 
   return (
@@ -132,7 +180,7 @@ export default async function Dashboard() {
 
       {/* ── Chain stats ────────────────────────────────────────────── */}
       <Reveal delay={0.05}>
-        <div className="grid gap-px overflow-hidden rounded-2xl border border-primary/15 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-px overflow-hidden rounded-2xl border border-primary/15 sm:grid-cols-2 lg:grid-cols-5">
           <Stat
             label="Block height"
             value={arc.block !== null ? arc.block.toLocaleString() : "—"}
@@ -147,6 +195,7 @@ export default async function Dashboard() {
             note={arc.chainId === ARC_CHAIN_ID ? "verified" : undefined}
           />
           <Stat label="Restraints anchored" value={restraints.length.toString()} />
+          <Stat label="Demo visits" value={visits.length.toString()} />
         </div>
       </Reveal>
 
@@ -167,7 +216,7 @@ export default async function Dashboard() {
           {restraints.length === 0 ? (
             <div className="serif rounded-2xl border border-primary/15 bg-card/40 p-10 text-center text-muted-foreground">
               {liveRpc
-                ? "No restraint witnesses anchored in the last 200,000 blocks."
+                ? "No restraint witnesses anchored in the last ~11 days. The council has approved everything we've seen so far — or simply has not been running."
                 : "Arc RPC unreachable. Retry in a moment."}
             </div>
           ) : (
@@ -203,6 +252,70 @@ export default async function Dashboard() {
         </div>
       </Reveal>
 
+      {/* ── Visitor witness feed — populated by /demo's WitnessButton */}
+      <Reveal delay={0.15}>
+        <div>
+          <div className="display mb-4 flex items-baseline justify-between text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+            <span>Visitor witness feed</span>
+            <a
+              href={`${ARCSCAN}/address/${VW_CONTRACT}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary transition-colors hover:text-primary/70"
+            >
+              VisitorWitness contract ↗
+            </a>
+          </div>
+          {visits.length === 0 ? (
+            <div className="serif rounded-2xl border border-primary/15 bg-card/40 p-10 text-center text-muted-foreground">
+              <p>
+                Nobody has run the demo on Arc yet.{" "}
+                <a
+                  href="/demo"
+                  className="text-primary underline-offset-4 hover:underline"
+                >
+                  Open the demo
+                </a>
+                , connect a wallet, and witness your visit on chain — it shows
+                up here within seconds.
+              </p>
+            </div>
+          ) : (
+            <ol className="space-y-px overflow-hidden rounded-2xl border border-primary/15">
+              {visits.map((v) => (
+                <li
+                  key={v.txHash}
+                  className="group grid grid-cols-[5rem_1fr_auto] items-center gap-4 bg-card/40 px-6 py-5 transition-colors hover:bg-primary/[0.04]"
+                >
+                  <span className="display text-2xl font-semibold text-primary">
+                    #{v.proofId}
+                  </span>
+                  <div>
+                    <div className="display text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                      Block {v.blockNumber.toLocaleString()} · visitor{" "}
+                      <span className="mono text-primary/80">
+                        {v.visitor.slice(0, 6)}…{v.visitor.slice(-4)}
+                      </span>
+                    </div>
+                    <div className="mono mt-1 truncate text-sm text-primary">
+                      {v.txHash}
+                    </div>
+                  </div>
+                  <a
+                    href={`${ARCSCAN}/tx/${v.txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="display shrink-0 text-[10px] uppercase tracking-[0.32em] text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Verify ↗
+                  </a>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+      </Reveal>
+
       {/* ── Static facts ───────────────────────────────────────────── */}
       <Reveal delay={0.15}>
         <div>
@@ -210,7 +323,7 @@ export default async function Dashboard() {
             Constants
           </div>
           <div className="grid gap-px overflow-hidden rounded-2xl border border-primary/15 sm:grid-cols-2 lg:grid-cols-4">
-            <Constant k="Council agents" v="10" />
+            <Constant k="Council agents" v="11" />
             <Constant k="Veto powers" v="2 — Zeus, Solon" />
             <Constant k="Rounds of debate" v="4" />
             <Constant k="Foundry tests" v="51 / 51" />
@@ -266,7 +379,7 @@ function Constant({ k, v }: { k: string; v: string }) {
       <div className="display text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
         {k}
       </div>
-      <div className="display mt-2 text-base tracking-[0.04em] text-foreground">
+      <div className="display mt-2 text-lg tracking-[0.04em] text-foreground">
         {v}
       </div>
     </div>

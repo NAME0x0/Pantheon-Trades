@@ -167,7 +167,7 @@ const TIER_BUILD = [
 const PIPELINE = [
   { numeral: "I",   name: "Pythia",     role: "the oracle",      what: "Watches Polymarket. Watches the news. Listens." },
   { numeral: "II",  name: "Apollo",     role: "the seer",        what: "Scores every signal across seven dimensions." },
-  { numeral: "III", name: "Boule",      role: "the assembly",    what: "Calls the council. Four rounds. Ten voices." },
+  { numeral: "III", name: "Boule",      role: "the assembly",    what: "Calls the council. Four rounds. Eleven voices." },
   { numeral: "IV",  name: "Areopagus",  role: "the court",       what: "Gates the verdict. Sizes by half-Kelly. Vetoes the rest." },
   { numeral: "V",   name: "Strategos",  role: "the general",     what: "Routes the trade. Or watches it pass." },
   { numeral: "VI",  name: "Parthenon",  role: "the temple",      what: "Anchors the witness. On chain. Forever." },
@@ -212,7 +212,7 @@ export default function Home() {
                 A council of
                 <br />
                 <span className="serif font-medium italic text-primary">
-                  ten gods
+                  eleven gods
                 </span>
                 <br />
                 debates every trade.
@@ -328,7 +328,7 @@ export default function Home() {
           <p className="serif dropcap text-[1.25rem] leading-[1.8] text-muted-foreground">
             Pantheon Trades is built on a single conviction: discipline is alpha.
             Every Polymarket signal flows through a structured four-round
-            deliberation between ten Greek-god-named AI agents. The bulls
+            deliberation between eleven Greek-god-named AI agents. The bulls
             argue the long case. The bears challenge it. The risk triad —
             Zeus, Solon, Themis — checks the constitution. Athena synthesises.
             Then the council votes. The verdict, whether to trade or to refuse,
@@ -369,7 +369,7 @@ export default function Home() {
                     {step.role}
                   </div>
                 </div>
-                <p className="serif col-start-2 text-lg leading-[1.7] text-muted-foreground md:col-start-3 md:text-xl">
+                <p className="serif col-start-2 text-xl leading-[1.7] text-muted-foreground md:col-start-3 md:text-2xl">
                   {step.what}
                 </p>
               </div>
@@ -394,7 +394,7 @@ export default function Home() {
           </h2>
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="serif mb-12 max-w-3xl text-lg leading-[1.7] text-muted-foreground">
+          <p className="serif mb-12 max-w-3xl text-xl leading-[1.7] text-muted-foreground">
             Thirty-five commits across seven tiers landed the safety,
             intelligence, observability, and venue surface a live trading
             council needs. Every upstream picked is open-source MIT or
@@ -413,11 +413,11 @@ export default function Home() {
                     {t.title}
                   </span>
                 </header>
-                <ul className="space-y-2">
+                <ul className="space-y-2.5">
                   {t.features.map((f) => (
                     <li
                       key={f}
-                      className="serif text-sm leading-relaxed text-foreground/90"
+                      className="serif text-base leading-[1.55] text-foreground/90"
                     >
                       <span className="mr-2 text-primary/60">·</span>
                       {f}
@@ -600,7 +600,7 @@ export default function Home() {
         </Reveal>
         <Reveal delay={0.05}>
           <h2 className="display mb-4 max-w-3xl text-5xl font-medium leading-[1.05] tracking-[-0.01em] text-foreground md:text-6xl">
-            Twelve in the chamber.
+            Eleven in the chamber.
             <br />
             <span className="serif italic text-primary">
               Two with the supreme veto.
@@ -609,9 +609,9 @@ export default function Home() {
         </Reveal>
         <Reveal delay={0.1}>
           <p className="serif mb-14 max-w-2xl text-xl leading-[1.7] text-muted-foreground">
-            Ten deliberate. Two more orchestrate the room. Each has a name,
-            a weight, and a voice — and Zeus or Solon can halt a trade
-            unilaterally if it breaches the constitution.
+            Eleven deliberate; two more — Apollo and Boule — orchestrate the
+            room. Each has a name, a weight, and a voice. Zeus or Solon can
+            halt a trade unilaterally if it breaches the constitution.
           </p>
         </Reveal>
 
@@ -633,7 +633,7 @@ export default function Home() {
                     </span>
                   )}
                 </div>
-                <div className="serif mt-3 text-base leading-[1.6] text-muted-foreground">
+                <div className="serif mt-3 text-lg leading-[1.6] text-muted-foreground">
                   {a.role}
                 </div>
                 <div className="mt-4 h-px w-8 bg-primary/40 transition-all duration-500 group-hover:w-20" />
@@ -682,10 +682,10 @@ export default function Home() {
             <Reveal key={s.k} delay={i * 0.04}>
               <Magnetic strength={6}>
                 <div className="h-full bg-card/40 p-6 transition-colors hover:bg-primary/[0.04]">
-                  <div className="display text-[10px] uppercase tracking-[0.35em] text-primary/60">
+                  <div className="display text-[11px] uppercase tracking-[0.35em] text-primary/60">
                     {s.k}
                   </div>
-                  <div className="display mt-2 text-lg tracking-[0.06em] text-foreground">
+                  <div className="display mt-2 text-xl tracking-[0.06em] text-foreground">
                     {s.v}
                   </div>
                 </div>
@@ -723,7 +723,7 @@ export default function Home() {
         </Reveal>
         <Reveal delay={0.15}>
           <p className="serif mx-auto mt-6 max-w-xl text-xl leading-[1.65] text-muted-foreground">
-            A captured Gemini deliberation. Ten agents. Four rounds.
+            A captured Gemini deliberation. Eleven agents. Four rounds.
             Watch Areopagus size — or refuse — the trade.
           </p>
         </Reveal>

@@ -34,16 +34,16 @@ const mono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Pantheon Trades — A council of ten gods debates every trade",
+    default: "Pantheon Trades — A council of eleven gods debates every trade",
     template: "%s · Pantheon Trades",
   },
   description:
-    "A ten-agent AI council debates every Polymarket trade. Every approval — and every restraint — is anchored on Circle's Arc Testnet.",
+    "An eleven-agent AI council debates every Polymarket trade. Every approval — and every restraint — is anchored on Circle's Arc Testnet.",
   metadataBase: new URL("https://pantheon-trades-web.vercel.app"),
   openGraph: {
     title: "Pantheon Trades",
     description:
-      "A ten-agent AI council debates every prediction-market trade and anchors every restraint on-chain.",
+      "An eleven-agent AI council debates every prediction-market trade and anchors every restraint on-chain.",
     type: "website",
     siteName: "Pantheon Trades",
   },

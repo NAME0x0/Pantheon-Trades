@@ -4,13 +4,15 @@ import { BacktestPanel } from "./backtest-panel";
 import { CircleStackPanel } from "./circle-stack-panel";
 import { CoinGeckoPanel } from "./coingecko-panel";
 import { EdgeSourcesPanel } from "./edge-sources-panel";
+import { FaucetCard } from "./faucet-card";
 import { ReplayPlayer } from "./replay-player";
 import { WalletConnect } from "./wallet-connect";
+import { WitnessButton } from "./witness-button";
 
 export const metadata = {
   title: "Demo — Pantheon Council deliberation",
   description:
-    "Replay a captured Gemini council deliberation: ten agents, four rounds, Areopagus verdict, Proof of Restraint.",
+    "Replay a captured Gemini council deliberation: eleven agents, four rounds, Areopagus verdict, Proof of Restraint.",
 };
 
 const SCENARIOS = {
@@ -18,7 +20,7 @@ const SCENARIOS = {
     title: "Pantheon Council — BTC $120k by 2026-12-31",
     label: "Crypto · Approval",
     intro:
-      "Ten agents deliberate a +17pp edge signal on a Bitcoin price-target market. Watch the four rounds, the synthesis, the votes, and the Areopagus verdict that sizes the position at the constitutional cap.",
+      "Eleven agents deliberate a +17pp edge signal on a Bitcoin price-target market. Watch the four rounds, the synthesis, the votes, and the Areopagus verdict that sizes the position at the constitutional cap.",
   },
   "btc-120k-restraint": {
     title: "Pantheon Council — BTC $120k by 2026-12-31",
@@ -77,6 +79,14 @@ export default function DemoPage({
 
       <WalletConnect />
 
+      <div className="grid gap-6 lg:grid-cols-2">
+        <WitnessButton
+          scenario={scenario}
+          title="Run this demo on Arc Testnet"
+        />
+        <FaucetCard />
+      </div>
+
       <ReplayPlayer scenario={scenario} />
 
       <p className="rounded-md border border-primary/20 bg-card/40 p-4 text-xs text-muted-foreground">
@@ -92,7 +102,7 @@ export default function DemoPage({
         <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
           Live paper trade — real BTC bars
         </h2>
-        <p className="max-w-3xl font-serif text-base leading-relaxed text-muted-foreground">
+        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
           Below: the checked-in run of{" "}
           <code className="font-mono">scripts/live_paper_trade_coingecko.py</code> against
           the last 7 days of BTC/USD hourly bars from CoinGecko. The plumbing is real
@@ -109,7 +119,7 @@ export default function DemoPage({
         <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
           Empirical backtest — does the council actually beat the market?
         </h2>
-        <p className="max-w-3xl font-serif text-base leading-relaxed text-muted-foreground">
+        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
           200 resolved Manifold binary markets, run through the 5-role council via{" "}
           <code className="font-mono">scripts/backtest_sources_xml.py</code>. Brier scores,
           per-source adoption verdicts, $0.12 cost on Gemini flash-lite.
@@ -122,7 +132,7 @@ export default function DemoPage({
         <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
           Where the council&apos;s prior comes from
         </h2>
-        <p className="max-w-3xl font-serif text-base leading-relaxed text-muted-foreground">
+        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
           12 Pythia data sources feed 7 bounded Apollo features into{" "}
           <code className="font-mono">Signal.oracle_probability</code>. Each delta is
           capped at ±0.05 — combined cap ±0.35. The council still votes on top of
@@ -136,7 +146,7 @@ export default function DemoPage({
         <h2 className="font-display text-3xl font-medium tracking-[0.02em] text-foreground md:text-4xl">
           Settles on Arc — powered by Circle
         </h2>
-        <p className="max-w-3xl font-serif text-base leading-relaxed text-muted-foreground">
+        <p className="max-w-3xl font-serif text-lg leading-[1.7] text-muted-foreground">
           Pantheon is built end-to-end on Circle&apos;s developer platform. USDC is the
           native settlement currency; Arc gives sub-second finality at ~$0.01/tx.
           Builder codes attribute every fill to a payout address. Trace anchors hash
